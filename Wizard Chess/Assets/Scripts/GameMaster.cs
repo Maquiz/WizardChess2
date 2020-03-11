@@ -37,6 +37,7 @@ public class GameMaster : MonoBehaviour {
 	public bool isPieceSelected;
 	public PieceMove selectedPiece;
 	public List<ChessMove> moveHistory;
+    private int teamMove;
 
 	//Instantiated objects
 	public GameObject blackSquare;
@@ -45,6 +46,7 @@ public class GameMaster : MonoBehaviour {
 	public GameObject[] pieceUI;
 
 	void Start () {
+        teamMove = 2;
 		boardPos = new GameObject[boardSize, boardSize];
 		boardSize = 8;
 		createBoard (boardSize);
@@ -70,10 +72,9 @@ public class GameMaster : MonoBehaviour {
 			//PieceMove checkMove(int x,int y, Square square) checkSquare with raycast
 			//Physics.Raycast(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)), new Vector3(0,-1, 0), out hit)
 			//if(Physics.Raycast(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)), new Vector3(0,-1, 0),out hit)){
+
 			if (Physics.Raycast (ray, out hit)) {
-
 				//check if it creates check for your king
-
 				if(hit.collider.gameObject.tag == "Piece") {
 					PieceMove p = hit.collider.gameObject.GetComponent<PieceMove> ();
 					if (p.color != selectedPiece.color && selectedPiece.checkPath (selectedPiece.curSquare.x, selectedPiece.curSquare.y)) {
@@ -82,12 +83,12 @@ public class GameMaster : MonoBehaviour {
 							takePiece (p);
 							selectedPiece.movePiece (p.curx, p.cury, p.curSquare);
 							deSelectPiece ();
+                            swapTeam();
 						}
 					}
 				}
 
 				//Move to location & sent piece to grave yard ?  graveyard a physical location where all pieces line up in order they die or in order they are placed on board
-
 				//if it is 
 				 else if (hit.collider.gameObject.tag == "Board") {
 					Square s = hit.collider.gameObject.GetComponent<Square> ();
@@ -98,6 +99,7 @@ public class GameMaster : MonoBehaviour {
 							if (Input.GetMouseButtonDown (0)) {
 								selectedPiece.movePiece (selectedPiece.lastx, selectedPiece.lasty, s);
 								deSelectPiece ();
+                                swapTeam();
 							}
 						} else {
 							swapUIIcon (MouseUI.CANTMOVE);
@@ -119,6 +121,15 @@ public class GameMaster : MonoBehaviour {
 		isPieceSelected = false;
 		lr.enabled = false;
 	}
+    void swapTeam() {
+        //Designed for  2 team
+        if (teamMove == 2) {
+            teamMove = 1;
+        }
+        else {
+            teamMove = 2;
+        }
+    }
 
 	public void selectPiece (Transform t, PieceMove piece) {
 		lr.enabled = true;

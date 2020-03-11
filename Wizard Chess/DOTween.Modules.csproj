@@ -63,10 +63,10 @@
      <Compile Include="Assets\Programming Assets\Demigiant\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
      <Compile Include="Assets\Programming Assets\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
  <Reference Include="UnityEditor.UI">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AIModule">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.4f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -254,38 +254,41 @@
  <Reference Include="UnityEditor.WindowsStandalone.Extensions">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.4f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
  </Reference>
+ <Reference Include="UnityEditor.Android.Extensions">
+ <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.4f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
+ </Reference>
  <Reference Include="DemiLib">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Assets/Programming Assets/Demigiant/DemiLib/Core/DemiLib.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Assets/Programming Assets/Demigiant/DemiLib/Core/DemiLib.dll</HintPath>
  </Reference>
  <Reference Include="DemiEditor">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/DemiEditor.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/DemiEditor.dll</HintPath>
  </Reference>
  <Reference Include="DOTween">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Assets/Programming Assets/Demigiant/DOTween/DOTween.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Assets/Programming Assets/Demigiant/DOTween/DOTween.dll</HintPath>
  </Reference>
  <Reference Include="DOTweenEditor">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Assets/Programming Assets/Demigiant/DOTween/Editor/DOTweenEditor.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Assets/Programming Assets/Demigiant/DOTween/Editor/DOTweenEditor.dll</HintPath>
  </Reference>
  <Reference Include="DOTweenPro">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Assets/Programming Assets/Demigiant/DOTweenPro/DOTweenPro.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Assets/Programming Assets/Demigiant/DOTweenPro/DOTweenPro.dll</HintPath>
  </Reference>
  <Reference Include="DOTweenProEditor">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Assets/Programming Assets/Demigiant/DOTweenPro/Editor/DOTweenProEditor.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Assets/Programming Assets/Demigiant/DOTweenPro/Editor/DOTweenProEditor.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Advertisements">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Analytics.Editor">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Library/PackageCache/com.unity.analytics@3.3.5/Unity.Analytics.Editor.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/PackageCache/com.unity.analytics@3.3.5/Unity.Analytics.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Analytics.Tracker">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Library/PackageCache/com.unity.analytics@3.3.5/Unity.Analytics.Tracker.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/PackageCache/com.unity.analytics@3.3.5/Unity.Analytics.Tracker.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Analytics.StandardEvents">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Library/PackageCache/com.unity.analytics@3.3.5/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/PackageCache/com.unity.analytics@3.3.5/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Purchasing">
- <HintPath>E:/Unity Projects/WizardChess/Wizard Chess/Library/PackageCache/com.unity.purchasing@2.0.6/Editor/UnityEditor.Purchasing.dll</HintPath>
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/PackageCache/com.unity.purchasing@2.0.6/Editor/UnityEditor.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="netstandard">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.4f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
