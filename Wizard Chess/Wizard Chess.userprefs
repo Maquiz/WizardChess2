@@ -1,0 +1,18 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PieceMove.cs">
+    <Files>
+      <File FileName="Assets\Scripts\GameMaster.cs" Line="99" Column="28" />
+      <File FileName="Assets\Scripts\PieceMove.cs" Line="107" Column="88" />
+      <File FileName="Assets\Scripts\Square.cs" Line="31" Column="11" />
+      <File FileName="Assets\Scripts\PieceUI.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\BoardUI.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ChessMove.cs" Line="65" Column="1" />
+      <File FileName="Assets\Scripts\CameraMove.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
