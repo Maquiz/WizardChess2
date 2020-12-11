@@ -80,9 +80,6 @@ public class GameMaster : MonoBehaviour
             {
                 selectedPiece.hideMovesHelper();
                 deSelectPiece();
-
-                
-                
             }
             //Line renderer
             setUpLine();
@@ -125,7 +122,7 @@ public class GameMaster : MonoBehaviour
                     //if it is 
                     else if (hit.collider.gameObject.tag == "Board")
                     {
-                        Debug.Log("Check Board");
+                        //Debug.Log("Check Board");
                         Square s = hit.collider.gameObject.GetComponent<Square>();
                         if (selectedPiece != null)
                         {
@@ -189,6 +186,7 @@ public class GameMaster : MonoBehaviour
         isPieceSelected = true;
         selectedUI.setTransformPosition(t.position);
         selectedPiece = piece;
+        selectedPiece.createPieceMoves(selectedPiece.piece);
     }
 
     public void takePiece(PieceMove p)
