@@ -15,11 +15,11 @@ E:/Unity Projects/WizardChess/Wizard Chess
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-25775
+62662
 Successfully changed project path to: E:/Unity Projects/WizardChess/Wizard Chess
 E:/Unity Projects/WizardChess/Wizard Chess
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 53.30 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 40.54 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2020.2.0b2 (90b2443a8df1)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/Resources/UnitySubsystems
@@ -35,51 +35,1195 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56316
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56000
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001751 seconds.
+Registered in 0.001674 seconds.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 30.61 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 31.46 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.300 seconds
+- Completed reload, in  1.128 seconds
 Registering precompiled user dll's ...
-Registered in 0.079724 seconds.
+Registered in 0.081131 seconds.
 Platform modules already initialized, skipping
 Begin MonoManager ReloadAssembly
 Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.53 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.49 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.084 seconds
+- Completed reload, in  0.877 seconds
 Platform modules already initialized, skipping
 ========================================================================
 Worker process is ready to serve import requests
 Launched and connected shader compiler UnityShaderCompiler.exe after 0.04 seconds
-Refreshing native plugins compatible for Editor in 0.76 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.56 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 1673 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 96.3 MB.
-System memory in use after: 94.4 MB.
+System memory in use before: 95.9 MB.
+System memory in use after: 94.1 MB.
 
 Unloading 109 unused Assets to reduce memory usage. Loaded Objects now: 2048.
-Total: 3.484500 ms (FindLiveObjects: 0.556100 ms CreateObjectMapping: 0.160000 ms MarkObjects: 1.667800 ms  DeleteObjects: 1.099200 ms)
+Total: 3.282800 ms (FindLiveObjects: 0.466500 ms CreateObjectMapping: 0.118900 ms MarkObjects: 1.554900 ms  DeleteObjects: 1.141200 ms)
 
 ========================================================================
 Received Import Request.
-  path: Assets/Prefabs/New Prefab.prefab
-  artifactKey: Guid(bed6639e0dec86846a29b344a8f59a67) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Prefabs/New Prefab.prefab using Guid(bed6639e0dec86846a29b344a8f59a67) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e6dfc2e413c5db4333009a1055ddfc79') in 0.131247 seconds
-  Import took 0.134663 seconds .
+  path: Assets/Scripts/OutofBounds.cs
+  artifactKey: Guid(63f7a3493e20c22408dcb62ba866f4c5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/OutofBounds.cs using Guid(63f7a3493e20c22408dcb62ba866f4c5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ddf0f04fcd89ad54a2e1c6dfcf568c46') in 0.027890 seconds
+  Import took 0.031295 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000259 seconds.
+  path: Assets/Scripts/GameMaster.cs
+  artifactKey: Guid(48504f270e216d843a053f3f52ba9ce7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameMaster.cs using Guid(48504f270e216d843a053f3f52ba9ce7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1935dedb6fa51de23a49f3a7fd2f6f7e') in 0.001818 seconds
+  Import took 0.005038 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000334 seconds.
+  path: Assets/Scripts/Square.cs
+  artifactKey: Guid(9e1c6a2c8d5f4b84fbc07e8777e91239) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/Square.cs using Guid(9e1c6a2c8d5f4b84fbc07e8777e91239) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c679d8d49eb90fee32ada60e37af8813') in 0.001412 seconds
+  Import took 0.004975 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000273 seconds.
+  path: Assets/Scripts/PieceMove.cs
+  artifactKey: Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ed827676ffcee9801ff77baa30c628d0') in 0.001865 seconds
+  Import took 0.005170 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 4.392794 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib
+  artifactKey: Guid(7dffdcce7e792574e9a75f8925170465) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib using Guid(7dffdcce7e792574e9a75f8925170465) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b0bf99ed0f5bb4d320130ae6a6f9ac57') in 0.001837 seconds
+  Import took 0.005570 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000235 seconds.
+  path: Assets/2DxFX/Resources/2dxfx-icon-clip_down.png
+  artifactKey: Guid(bfa1aad1c8eb3e244a75deaf1df78797) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/2dxfx-icon-clip_down.png using Guid(bfa1aad1c8eb3e244a75deaf1df78797) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'de20c230edd182ecc548c289f01c7ea6') in 0.221138 seconds
+  Import took 0.225626 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000282 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignHC.png
+  artifactKey: Guid(b9e0e5a8836018e4c810fbceba55a1b4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignHC.png using Guid(b9e0e5a8836018e4c810fbceba55a1b4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5977bc00129f92cd1e6373e25158d8b4') in 0.006290 seconds
+  Import took 0.009350 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000209 seconds.
+  path: Assets/Free Low Poly Chess Set/Knight/Materials/KnightLight.mat
+  artifactKey: Guid(0d997373e4b0f7349a0bcfd9f75af5c4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Knight/Materials/KnightLight.mat using Guid(0d997373e4b0f7349a0bcfd9f75af5c4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f69472c8917ac4f43fef0e91eab7a11a') in 0.077843 seconds
+  Import took 0.081277 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000238 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Liquid.cs
+  artifactKey: Guid(f40d78aeafe77db4c9191438047f3e6d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Liquid.cs using Guid(f40d78aeafe77db4c9191438047f3e6d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '97fe386006c99ce5cae1f94eba8d29b4') in 0.002095 seconds
+  Import took 0.005020 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000260 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignCR.png
+  artifactKey: Guid(6f504a3fa8848264bb4fb9bb7d582dd5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignCR.png using Guid(6f504a3fa8848264bb4fb9bb7d582dd5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1a6f6b9d559ee31eae34179fd4b6c139') in 0.004909 seconds
+  Import took 0.009535 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000224 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_distributeHAlignT.png
+  artifactKey: Guid(1ccb12a4b0bf8f447b2cc114851732f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_distributeHAlignT.png using Guid(1ccb12a4b0bf8f447b2cc114851732f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '239e6752e8688ceaf3cbb246806b97cf') in 0.005352 seconds
+  Import took 0.009533 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000221 seconds.
+  path: Assets/Art Assets/Example Assets/CircleOutline.png
+  artifactKey: Guid(b9549988911ba764fb4276784faa1259) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Art Assets/Example Assets/CircleOutline.png using Guid(b9549988911ba764fb4276784faa1259) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5891b2f1c4837940259b85c2bd6be028') in 0.017607 seconds
+  Import took 0.020821 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000182 seconds.
+  path: Assets/Programming Assets/Demigiant/DOTween/Editor/DOTweenEditor.dll
+  artifactKey: Guid(45d5034162d6cf04dbe46da84fc7d074) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DOTween/Editor/DOTweenEditor.dll using Guid(45d5034162d6cf04dbe46da84fc7d074) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a776e3ea36f9faac37fb2aecd7f7e6f4') in 0.007524 seconds
+  Import took 0.010408 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000197 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/DemiLib.xml
+  artifactKey: Guid(9bf2564c9817bb34988453ae948954d2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/DemiLib.xml using Guid(9bf2564c9817bb34988453ae948954d2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd85e7ad23bd512912910db24e5ec6d8c') in 0.014178 seconds
+  Import took 0.017743 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000173 seconds.
+  path: Assets/Free Low Poly Chess Set/Bishop/Materials/BishopLight.mat
+  artifactKey: Guid(00912c1e55787984d8a57cef15d87a8b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Bishop/Materials/BishopLight.mat using Guid(00912c1e55787984d8a57cef15d87a8b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a716f7d69c3ee738c8ce111e618273da') in 0.019895 seconds
+  Import took 0.023155 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000179 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignT.png
+  artifactKey: Guid(b4785ec6d937dab4fa59da70b69afc9d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignT.png using Guid(b4785ec6d937dab4fa59da70b69afc9d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5bb49d29f49159072b84d65ddb57d022') in 0.004775 seconds
+  Import took 0.007758 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000201 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignVC.png
+  artifactKey: Guid(d1d45eadab0e41c4a82cdffb6396b1d7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignVC.png using Guid(d1d45eadab0e41c4a82cdffb6396b1d7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'afb6b49fc3cd32543ca7527434a5c7d8') in 0.005208 seconds
+  Import took 0.008721 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000208 seconds.
+  path: Assets/2DxFX/Resources/2dxfx-icon-clip_right.png
+  artifactKey: Guid(fd258c577b2148d409806e12c7002622) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/2dxfx-icon-clip_right.png using Guid(fd258c577b2148d409806e12c7002622) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7a94fb1bf4bc86d577c2017fbdcd4219') in 0.005734 seconds
+  Import took 0.009091 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000233 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Liquify.shader
+  artifactKey: Guid(b992613785dbd614fb73f2b16234f079) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Liquify.shader using Guid(b992613785dbd614fb73f2b16234f079) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1081aca8d133fb8bfb4be368f5004c9b') in 0.004919 seconds
+  Import took 0.008465 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000219 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_distributeVAlignL.png
+  artifactKey: Guid(32eaa0efb2b38774ea9705b40fdcc00a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_distributeVAlignL.png using Guid(32eaa0efb2b38774ea9705b40fdcc00a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5a25021585778c7a7149ff4d8074abe5') in 0.004458 seconds
+  Import took 0.008331 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000197 seconds.
+  path: Assets/Free Low Poly Chess Set/Board/Materials/Lights.mat
+  artifactKey: Guid(e3dbe1d6695680f4bb62ee7b5fd3a90f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Board/Materials/Lights.mat using Guid(e3dbe1d6695680f4bb62ee7b5fd3a90f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'db99f7e24c776a72613316cad49b972d') in 0.020897 seconds
+  Import took 0.024239 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000229 seconds.
+  path: Assets/Art Assets/Audio/108615__juskiddink__billiard-balls-single-hit-dry.wav
+  artifactKey: Guid(bb87429088fa56044a9e6102a325fb70) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Art Assets/Audio/108615__juskiddink__billiard-balls-single-hit-dry.wav using Guid(bb87429088fa56044a9e6102a325fb70) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b4b5e69e371db94fe19ff155cb6c3e85') in 0.048890 seconds
+  Import took 0.051886 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000223 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignBC.png
+  artifactKey: Guid(2cdc0bc527f7a434496c6be9236e636f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignBC.png using Guid(2cdc0bc527f7a434496c6be9236e636f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '61d1c7992561b35359787f2aeaee7ae6') in 0.004872 seconds
+  Import took 0.008236 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000217 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Lightning.cs
+  artifactKey: Guid(4ee9ad4c74b2eff478c683de37b56cee) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Lightning.cs using Guid(4ee9ad4c74b2eff478c683de37b56cee) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd8b0010733656fdd1d67914bfb799551') in 0.001525 seconds
+  Import took 0.004656 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000202 seconds.
+  path: Assets/Free Low Poly Chess Set/Queen/Prefabs/QueenLight.prefab
+  artifactKey: Guid(be3573ba2ba53ea4f8979e64874c493d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Queen/Prefabs/QueenLight.prefab using Guid(be3573ba2ba53ea4f8979e64874c493d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8b5fae3ec83acacfcd65973393b3a51f') in 0.026010 seconds
+  Import took 0.029090 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000230 seconds.
+  path: Assets/Free Low Poly Chess Set/King/Prefabs/KingLight.prefab
+  artifactKey: Guid(27d2608cb94ae2d44811af52793c3562) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/King/Prefabs/KingLight.prefab using Guid(27d2608cb94ae2d44811af52793c3562) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4cf7477d6d09d9b9404cd54ca2b36a7f') in 0.020577 seconds
+  Import took 0.023585 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000162 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Outline.cs
+  artifactKey: Guid(671e5299f45539b4fa8402eed33d84d2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Outline.cs using Guid(671e5299f45539b4fa8402eed33d84d2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd67abd099836dd554006fc19e2653e4c') in 0.001755 seconds
+  Import took 0.004727 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000163 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/DemiLib.dll
+  artifactKey: Guid(54be29b67d0d29a478da2c6e5c62f091) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/DemiLib.dll using Guid(54be29b67d0d29a478da2c6e5c62f091) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '940872d2ddae431d60cd5a642d849225') in 0.001860 seconds
+  Import took 0.005344 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000206 seconds.
+  path: Assets/Free Low Poly Chess Set/Pawn/Prefab/PawnLight.prefab
+  artifactKey: Guid(391882f14be491c40962add653844907) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Pawn/Prefab/PawnLight.prefab using Guid(391882f14be491c40962add653844907) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '708f03461c4a1e2be40c92faedb59f84') in 0.021615 seconds
+  Import took 0.024500 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000233 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignCL.png
+  artifactKey: Guid(2a8208d8e80f90944b8ff2978292b03b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignCL.png using Guid(2a8208d8e80f90944b8ff2978292b03b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'df53120d45bb378a913c5b7574aa1bbb') in 0.004961 seconds
+  Import took 0.008221 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000241 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Clipping.cs
+  artifactKey: Guid(4ee0f73377eaa3449a308aad97d79e1a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Clipping.cs using Guid(4ee0f73377eaa3449a308aad97d79e1a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '21d80041f04c0ec4d594775dccad2444') in 0.002150 seconds
+  Import took 0.005952 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000169 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignR.png
+  artifactKey: Guid(727ba41e4cc95fe4a98b07301e3ebfc8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignR.png using Guid(727ba41e4cc95fe4a98b07301e3ebfc8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a081bd3f96bbda91cb8a422b1c6d78e4') in 0.005083 seconds
+  Import took 0.008325 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000210 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Liquify.cs
+  artifactKey: Guid(0caf47ae7a836574182abaef50e0cdc6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Liquify.cs using Guid(0caf47ae7a836574182abaef50e0cdc6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8126575de6a77ac9f774dc25e07a8f9e') in 0.001633 seconds
+  Import took 0.005251 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000250 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Slim.shader
+  artifactKey: Guid(d0a5513821ffe7e4f96b578b3f06e789) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Slim.shader using Guid(d0a5513821ffe7e4f96b578b3f06e789) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '017c9249e93ab42ae054f7a3184b5092') in 0.002275 seconds
+  Import took 0.005273 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000193 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_LightningTXT.jpg
+  artifactKey: Guid(1260d87d5f2035f429de8f538a1e73f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_LightningTXT.jpg using Guid(1260d87d5f2035f429de8f538a1e73f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '98bfd399578040b1e8976c54f169e8f8') in 0.009597 seconds
+  Import took 0.012613 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000196 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Lightning2TXT.jpg
+  artifactKey: Guid(21297ee56dfcb3744aeca141dd1a29de) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Lightning2TXT.jpg using Guid(21297ee56dfcb3744aeca141dd1a29de) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9b90e71178edcb0e376f8a5a3f05c32f') in 0.005599 seconds
+  Import took 0.008662 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000212 seconds.
+  path: Assets/Free Low Poly Chess Set/Queen/Materials/QueenLight.mat
+  artifactKey: Guid(1ed4f381fcff50d47acee09c5d1fdef2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Queen/Materials/QueenLight.mat using Guid(1ed4f381fcff50d47acee09c5d1fdef2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '16c90d11640231eea7175ba0535046e6') in 0.007367 seconds
+  Import took 0.010297 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000281 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_LightningBolt.shader
+  artifactKey: Guid(ecb567a10d1dcb54188d09bd49416a12) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_LightningBolt.shader using Guid(ecb567a10d1dcb54188d09bd49416a12) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e71029b326313524b99005792d38406b') in 0.003011 seconds
+  Import took 0.006513 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000238 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_flipV.png
+  artifactKey: Guid(c44ae4a96937e2c4b8be481648364682) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_flipV.png using Guid(c44ae4a96937e2c4b8be481648364682) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6b41f959ca5d6aef9e39316021aecf25') in 0.004492 seconds
+  Import took 0.007589 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000207 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_light_border.png
+  artifactKey: Guid(252f207d01ecc87419cdba1d1c0ab1ea) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_light_border.png using Guid(252f207d01ecc87419cdba1d1c0ab1ea) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bae24102b57c7a432849d29d9943958b') in 0.004996 seconds
+  Import took 0.008157 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000238 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignB.png
+  artifactKey: Guid(8b6b31f71cd528243b053cfc488e73f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignB.png using Guid(8b6b31f71cd528243b053cfc488e73f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '66eeb063aec3f4913d67ce9eb9597e9b') in 0.004339 seconds
+  Import took 0.007630 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000225 seconds.
+  path: Assets/Free Low Poly Chess Set/Knight/Prefabs/KnightLight.prefab
+  artifactKey: Guid(85ad2c556fdbd5747ac7f5f67f10e59b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Knight/Prefabs/KnightLight.prefab using Guid(85ad2c556fdbd5747ac7f5f67f10e59b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5bbe04d62457de89c9da4921d4644d02') in 0.007679 seconds
+  Import took 0.010627 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000166 seconds.
+  path: Assets/Free Low Poly Chess Set/Rook/Materials/RookLight.mat
+  artifactKey: Guid(3e8d44cfbd3c32a48b671135be64d6ac) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Rook/Materials/RookLight.mat using Guid(3e8d44cfbd3c32a48b671135be64d6ac) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'dce95ddeac349613cc9a0f442f870b41') in 0.015495 seconds
+  Import took 0.018417 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000172 seconds.
+  path: Assets/Free Low Poly Chess Set/Pawn/Materials/PawnLight.mat
+  artifactKey: Guid(b5a19b2be2f034c4a892e205b62b52c8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Pawn/Materials/PawnLight.mat using Guid(b5a19b2be2f034c4a892e205b62b52c8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'eee26a0b9c925819c5bc976ff9592f25') in 0.007418 seconds
+  Import took 0.010713 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000217 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Outline.shader
+  artifactKey: Guid(de520773f9a4021489f5eb10014b9c8f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Outline.shader using Guid(de520773f9a4021489f5eb10014b9c8f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5249ec6dffde636ba36d48338d7c9b49') in 0.002190 seconds
+  Import took 0.005583 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000221 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignTR.png
+  artifactKey: Guid(e01c0b07c87513844ab88bb432bcf85a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignTR.png using Guid(e01c0b07c87513844ab88bb432bcf85a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1eaba4fa1b2320ac804d3c91397a4d8a') in 0.004912 seconds
+  Import took 0.008134 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000201 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_LightningBolt.cs
+  artifactKey: Guid(a6af0fe8c6a5ff4439f02d6477362106) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_LightningBolt.cs using Guid(a6af0fe8c6a5ff4439f02d6477362106) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ebc9afe23836b63cb5376870c2424904') in 0.001914 seconds
+  Import took 0.005125 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000200 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Liquid.shader
+  artifactKey: Guid(910822b3116d8c949b6aa4aab2f52a49) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Liquid.shader using Guid(910822b3116d8c949b6aa4aab2f52a49) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'eaffe21e741627d13d640768eae44d86') in 0.003990 seconds
+  Import took 0.007858 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000281 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignBR.png
+  artifactKey: Guid(eeac3acbf7d1cd54fabfb1c4a12f9fc8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignBR.png using Guid(eeac3acbf7d1cd54fabfb1c4a12f9fc8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fa5e3ddf444ce69eb550473f1ad34b8c') in 0.005012 seconds
+  Import took 0.008306 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000229 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Lightning.shader
+  artifactKey: Guid(ac0b9b6edb218f04c9b83210cc10501d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Lightning.shader using Guid(ac0b9b6edb218f04c9b83210cc10501d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd50baae26268cb7f7b644fa2feed50f1') in 0.002383 seconds
+  Import took 0.005213 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000200 seconds.
+  path: Assets/Free Low Poly Chess Set/Bishop/Prefabs/BishopLight.prefab
+  artifactKey: Guid(1c0f2faf14460a5478057fd4e0575576) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Bishop/Prefabs/BishopLight.prefab using Guid(1c0f2faf14460a5478057fd4e0575576) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '72ca9888994ec5046b96048ef50ec0db') in 0.007873 seconds
+  Import took 0.011954 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000228 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Slim.cs
+  artifactKey: Guid(a4192eb3c7cdee042a709908e4ccd1d4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Slim.cs using Guid(a4192eb3c7cdee042a709908e4ccd1d4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9e57c685fc901b91641820a29d136044') in 0.002034 seconds
+  Import took 0.006409 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000239 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignCC.png
+  artifactKey: Guid(8f0cb66458819764b94b93250bae94b6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignCC.png using Guid(8f0cb66458819764b94b93250bae94b6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '797464865e9825734edf9432b4432c4c') in 0.004770 seconds
+  Import took 0.008103 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000282 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/DemiLib.dll.mdb
+  artifactKey: Guid(995cf2d9b4a41f840b3a41712e9b3bc0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/DemiLib.dll.mdb using Guid(995cf2d9b4a41f840b3a41712e9b3bc0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'dfcfa43602b9116758752ed909bb0767') in 0.006940 seconds
+  Import took 0.010102 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000215 seconds.
+  path: Assets/2DxFX/Resources/2dxfx-icon-clip_left.png
+  artifactKey: Guid(4e319ba001423bf408db7ca353283ecd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/2dxfx-icon-clip_left.png using Guid(4e319ba001423bf408db7ca353283ecd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fa4669cc7dc3c29dd36e75eee3822847') in 0.004551 seconds
+  Import took 0.007480 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000236 seconds.
+  path: Assets/2DxFX/Resources/2dxfx-icon-clip_up.png
+  artifactKey: Guid(ba5a21653a87cfa458de37077033dc69) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/2dxfx-icon-clip_up.png using Guid(ba5a21653a87cfa458de37077033dc69) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '743c1d4382c828d60d8b8b6d007e2760') in 0.005300 seconds
+  Import took 0.008638 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000251 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Clipping.shader
+  artifactKey: Guid(456ce9da2500be94093854eb83a6057d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Clipping.shader using Guid(456ce9da2500be94093854eb83a6057d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1c89373965ceb62c49be3455d6960fe7') in 0.002372 seconds
+  Import took 0.005459 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000255 seconds.
+  path: Assets/OUTLINED Icons Pack Vol1/OUTLINED Icons Vol1.pdf
+  artifactKey: Guid(0fe7acd3c8b114d2aad117293943e371) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/OUTLINED Icons Pack Vol1/OUTLINED Icons Vol1.pdf using Guid(0fe7acd3c8b114d2aad117293943e371) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd0307e1c2a08b983e0d510a86270fcff') in 0.005045 seconds
+  Import took 0.008795 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000246 seconds.
+  path: Assets/OUTLINED Icons Pack Vol1/PNG/128/military strategy.png
+  artifactKey: Guid(44729048d2ed743eda55cc680bb6341d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/OUTLINED Icons Pack Vol1/PNG/128/military strategy.png using Guid(44729048d2ed743eda55cc680bb6341d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd1de1f594fada604bfab661fb144ff10') in 0.009258 seconds
+  Import took 0.013544 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000206 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignL.png
+  artifactKey: Guid(d18ceface0c20014b8db4bba05a41b83) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignL.png using Guid(d18ceface0c20014b8db4bba05a41b83) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8588b5cfb6c5f3aebd31242df1ba6468') in 0.004727 seconds
+  Import took 0.007896 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000189 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignTC.png
+  artifactKey: Guid(0f79253104349f44cb73978f6c8e93de) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignTC.png using Guid(0f79253104349f44cb73978f6c8e93de) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd434eb9ca4a54dfd98a385b78baafd83') in 0.004102 seconds
+  Import took 0.007228 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000183 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_visibility_off.png
+  artifactKey: Guid(0c0132429106c8a4d89d9d0a6b723ec3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_visibility_off.png using Guid(0c0132429106c8a4d89d9d0a6b723ec3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b970f16104735d66327cc4834678a9b0') in 0.005183 seconds
+  Import took 0.008361 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000215 seconds.
+  path: Assets/Free Low Poly Chess Set/King/Materials/KingLight.mat
+  artifactKey: Guid(adefce1589f7e584ebd7c6d597a46ee9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/King/Materials/KingLight.mat using Guid(adefce1589f7e584ebd7c6d597a46ee9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1b189cba040ce120569adbe990fb8512') in 0.007229 seconds
+  Import took 0.010412 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000204 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignBL.png
+  artifactKey: Guid(abf8a615f379ef44b9ac872a13b7712f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignBL.png using Guid(abf8a615f379ef44b9ac872a13b7712f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '38baf27205a2abb8ac5beff2c5d43940') in 0.005243 seconds
+  Import took 0.008702 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000207 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_light.png
+  artifactKey: Guid(4f69b96f9308d8f4ea239773ef5b55c4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_light.png using Guid(4f69b96f9308d8f4ea239773ef5b55c4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3d72ebcd655ddfe5316fb7c93c757114') in 0.004739 seconds
+  Import took 0.007609 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000209 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignTL.png
+  artifactKey: Guid(6efe1c8569d975640ba0c9f2ac4a9d61) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_alignTL.png using Guid(6efe1c8569d975640ba0c9f2ac4a9d61) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e7b8f9bff52b8e170facb2e4c71a4ba7') in 0.004838 seconds
+  Import took 0.008411 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000233 seconds.
+  path: Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_visibility.png
+  artifactKey: Guid(55c2b426022dac44f9b25f0cba28aa45) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DemiLib/Core/Editor/Imgs/ico_visibility.png using Guid(55c2b426022dac44f9b25f0cba28aa45) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0511f88171a428f7c787c805e45cff3b') in 0.004226 seconds
+  Import took 0.007321 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000196 seconds.
+  path: Assets/Free Low Poly Chess Set/Rook/Prefabs/RookLight.prefab
+  artifactKey: Guid(f1fc282519e5c4a4daaa864f9c3d446f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Rook/Prefabs/RookLight.prefab using Guid(f1fc282519e5c4a4daaa864f9c3d446f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0b672ea3b25f8b620a5f3a4f841adb82') in 0.009364 seconds
+  Import took 0.012733 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.271937 seconds.
+  path: Assets/Programming Assets/Demigiant/DOTweenPro Examples
+  artifactKey: Guid(a2f2d4ea3c27cf14c801e04fc70a81a1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DOTweenPro Examples using Guid(a2f2d4ea3c27cf14c801e04fc70a81a1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '362d8d967fa20e17733c2caa4184edfa') in 0.002236 seconds
+  Import took 0.005298 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000181 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Blur.cs
+  artifactKey: Guid(62e1382121f580942b336eae8354701d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Blur.cs using Guid(62e1382121f580942b336eae8354701d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '29a1080a5008c1fd57b0bb0783c2c5d7') in 0.001975 seconds
+  Import took 0.004975 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000170 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_ColorRGB.shader
+  artifactKey: Guid(6a5def8daa8e86e479081efa80a752c9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_ColorRGB.shader using Guid(6a5def8daa8e86e479081efa80a752c9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f99c3836ff497af8dccf6e3f185bc5b6') in 0.002474 seconds
+  Import took 0.005272 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000235 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_GrassMultiFX.shader
+  artifactKey: Guid(aac7379120a72794a94e8e9769ac8dd6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_GrassMultiFX.shader using Guid(aac7379120a72794a94e8e9769ac8dd6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e436a12047f73a25baeaafdfbf3df87b') in 0.002572 seconds
+  Import took 0.005834 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000205 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Blood.shader
+  artifactKey: Guid(451aea98d8f0ad24989d9a33ad4be318) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Blood.shader using Guid(451aea98d8f0ad24989d9a33ad4be318) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4a2983bd0f4f99093667b4d8c2b0bbd8') in 0.002213 seconds
+  Import took 0.005187 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000262 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_MetalFX.cs
+  artifactKey: Guid(fb12cb093623d7047baa93e71322d481) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_MetalFX.cs using Guid(fb12cb093623d7047baa93e71322d481) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '78fdda70c7742d36a719fe232099b449') in 0.001630 seconds
+  Import took 0.004514 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000249 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_EdgeColor.shader
+  artifactKey: Guid(9f6f5764ea9c1fe4eb7edce591a7c442) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_EdgeColor.shader using Guid(9f6f5764ea9c1fe4eb7edce591a7c442) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c19eb88bfffb98b92944f32c990e5ffa') in 0.002176 seconds
+  Import took 0.005337 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000199 seconds.
+  path: Assets/Free Low Poly Chess Set/Example
+  artifactKey: Guid(17f63639778de4241bb1bc2b9522e1f9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Example using Guid(17f63639778de4241bb1bc2b9522e1f9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5a961b5dac2d60cb6d42eba13d4d4f9c') in 0.002233 seconds
+  Import took 0.005684 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000314 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_ColorChange.shader
+  artifactKey: Guid(9f1ae124906dd1a41bee3c95860f3a4f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_ColorChange.shader using Guid(9f1ae124906dd1a41bee3c95860f3a4f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f4f1e3b581f975f4dfd578232db3b5ec') in 0.002181 seconds
+  Import took 0.005277 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000252 seconds.
+  path: Assets/Art Assets/Materials
+  artifactKey: Guid(ce4fd7a39a1494749a1e95239933ec15) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Art Assets/Materials using Guid(ce4fd7a39a1494749a1e95239933ec15) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ad3fea4787144e431379117e74a582b5') in 0.001553 seconds
+  Import took 0.004621 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000275 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Color.shader
+  artifactKey: Guid(974b3eabc8626e944a34ed8cfc635bb2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Color.shader using Guid(974b3eabc8626e944a34ed8cfc635bb2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a33ff92155ca4dce78ff8c8674713a68') in 0.002286 seconds
+  Import took 0.005279 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000290 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Blur.shader
+  artifactKey: Guid(bc6864c647dc317489a4e7b363e8af8f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Blur.shader using Guid(bc6864c647dc317489a4e7b363e8af8f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '996e0d498db720a5363f08dba699e4cf') in 0.002664 seconds
+  Import took 0.005762 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000152 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_EdgeColor.cs
+  artifactKey: Guid(5b2d233f2f94c9541945c2d0e9d1d813) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_EdgeColor.cs using Guid(5b2d233f2f94c9541945c2d0e9d1d813) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '192f8a09a1d8f15e5915c1d35992e1d9') in 0.002148 seconds
+  Import took 0.005201 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000200 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Flame.shader
+  artifactKey: Guid(916a950cd2026c64283786b8c95b5f7e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Flame.shader using Guid(916a950cd2026c64283786b8c95b5f7e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '36c67e5214f27731999705db262e6cbe') in 0.003145 seconds
+  Import took 0.006859 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000259 seconds.
+  path: Assets/2DxFX/Examples
+  artifactKey: Guid(dd5572f9245c47341b3297c69e82a326) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Examples using Guid(dd5572f9245c47341b3297c69e82a326) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6f5d7adaba4451223143568a0ea62db9') in 0.001483 seconds
+  Import took 0.004463 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000284 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_FlameTXT.jpg
+  artifactKey: Guid(625d2cf45ccf03f4091560689e30f266) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_FlameTXT.jpg using Guid(625d2cf45ccf03f4091560689e30f266) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '15b5e417fb25b648bc7ef208f2edaa97') in 0.010968 seconds
+  Import took 0.013876 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000169 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Hologram.shader
+  artifactKey: Guid(2a375af75347a884b99848eca6643a8f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Hologram.shader using Guid(2a375af75347a884b99848eca6643a8f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c61cfa99448803ceb4ee2d628ee5279e') in 0.002842 seconds
+  Import took 0.006014 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000279 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Hologram3.cs
+  artifactKey: Guid(c210118d0d76476458332068d0564f99) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Hologram3.cs using Guid(c210118d0d76476458332068d0564f99) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a9282ad8e732703be598edd6650635ad') in 0.001863 seconds
+  Import took 0.004853 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000229 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_JellyAutoMove.cs
+  artifactKey: Guid(81080e786b69f4d45891f920ad5b43c2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_JellyAutoMove.cs using Guid(81080e786b69f4d45891f920ad5b43c2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '80050bdd6c0db2f15596414dfd3bf44d') in 0.001844 seconds
+  Import took 0.004556 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000244 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_GrayScale.cs
+  artifactKey: Guid(b588e800cbc03d84687131f7dc1e9517) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_GrayScale.cs using Guid(b588e800cbc03d84687131f7dc1e9517) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'decd6c5220d6f5a161c69432a23e4bba') in 0.001397 seconds
+  Import took 0.004165 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000188 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_GrayScale.shader
+  artifactKey: Guid(62ced1108742e2c4d99c2a6c0708300f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_GrayScale.shader using Guid(62ced1108742e2c4d99c2a6c0708300f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8de0ac99049420c76fdcf40e1438eb94') in 0.003026 seconds
+  Import took 0.005995 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000171 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_GoldenFX.cs
+  artifactKey: Guid(b6cae330cfb005540b96e39801ac739c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_GoldenFX.cs using Guid(b6cae330cfb005540b96e39801ac739c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '19db48c5e01e9efa0072ff918d48d6aa') in 0.001822 seconds
+  Import took 0.005138 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000219 seconds.
+  path: Assets/2DxFX/Resources/2dxfx-icon-blur.png
+  artifactKey: Guid(19e847fad31b48441b12ac38e813b93b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/2dxfx-icon-blur.png using Guid(19e847fad31b48441b12ac38e813b93b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ae4c684e551e3b5036160e69f3beb802') in 0.004738 seconds
+  Import took 0.008203 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000247 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Jelly.cs
+  artifactKey: Guid(2608538603b69444a80e635b58eccee7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Jelly.cs using Guid(2608538603b69444a80e635b58eccee7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a75bfd7e17259fb6d6ed5ae0fc1fafdf') in 0.001521 seconds
+  Import took 0.004498 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000228 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Hologram2.cs
+  artifactKey: Guid(2643c4dd9654dcd40bd4afc74cd6ffe2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Hologram2.cs using Guid(2643c4dd9654dcd40bd4afc74cd6ffe2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd3037180ab48604a3272c7a6bc43a68c') in 0.001614 seconds
+  Import took 0.004375 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000271 seconds.
+  path: Assets/2DxFX/Resources/2dxfx-icon-color.png
+  artifactKey: Guid(749219897bdc47d45a4a37a6e629e7ea) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/2dxfx-icon-color.png using Guid(749219897bdc47d45a4a37a6e629e7ea) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9b5f5c01c32e99d1625859cff8a22873') in 0.005389 seconds
+  Import took 0.008587 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000289 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Hologram.cs
+  artifactKey: Guid(846e5bd4bdbf0b745adfe7440b320b1e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Hologram.cs using Guid(846e5bd4bdbf0b745adfe7440b320b1e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bfdfcd82b84d7a2009e5d7e6d80e559d') in 0.001857 seconds
+  Import took 0.005458 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000227 seconds.
+  path: Assets/Programming Assets/Demigiant/DOTween/Modules
+  artifactKey: Guid(ad4f19e76570f5f429be03e1eda6f89e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DOTween/Modules using Guid(ad4f19e76570f5f429be03e1eda6f89e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7090789f7857462fe159199a18ff4a47') in 0.001402 seconds
+  Import took 0.004139 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000220 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_BlackHole.shader
+  artifactKey: Guid(df6ed0d676613f74b873ec673f5ab9b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_BlackHole.shader using Guid(df6ed0d676613f74b873ec673f5ab9b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8d4deaa88d0e9cd6137ecbcf8ae0de52') in 0.002636 seconds
+  Import took 0.005590 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000267 seconds.
+  path: Assets/Free Low Poly Chess Set/Queen/Materials
+  artifactKey: Guid(5f23ee2f52ad61142a6268632cfe47c6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Queen/Materials using Guid(5f23ee2f52ad61142a6268632cfe47c6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9fde12312492967b1afdf0e5caaf3c49') in 0.001579 seconds
+  Import took 0.004811 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000164 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Hologram3.shader
+  artifactKey: Guid(067c960c8cf22704395ae36e67a762c9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Hologram3.shader using Guid(067c960c8cf22704395ae36e67a762c9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '389bf3e51303b84190082950a4449041') in 0.002347 seconds
+  Import took 0.005473 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000188 seconds.
+  path: Assets/Free Low Poly Chess Set/Knight/Materials
+  artifactKey: Guid(52167b9b82d1e3d4d89e83737998425d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Knight/Materials using Guid(52167b9b82d1e3d4d89e83737998425d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bb961532eea52e1498249305854e0057') in 0.002000 seconds
+  Import took 0.005366 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000265 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_CircleFade.cs
+  artifactKey: Guid(14764895ad4d9354385a82af09b83dc1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_CircleFade.cs using Guid(14764895ad4d9354385a82af09b83dc1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c613e1865fabbb3a3751f5873ad5065c') in 0.002008 seconds
+  Import took 0.005204 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000273 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Color.cs
+  artifactKey: Guid(68f645ec4b7575a459c4b2b20e4f0062) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Color.cs using Guid(68f645ec4b7575a459c4b2b20e4f0062) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '99e2229e7adf6d0dbaa65e0a762576af') in 0.001481 seconds
+  Import took 0.004495 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000257 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_GoldenFX.shader
+  artifactKey: Guid(59eb8cf642da9824ca1d7b5383d03370) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_GoldenFX.shader using Guid(59eb8cf642da9824ca1d7b5383d03370) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8ab67eec3a24b2b4f731ab462bdf214e') in 0.002580 seconds
+  Import took 0.005617 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000218 seconds.
+  path: Assets/2DxFX/Resources/2dxfx-icon-blue.png
+  artifactKey: Guid(a37852f4c10adc8488632b67309af3ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/2dxfx-icon-blue.png using Guid(a37852f4c10adc8488632b67309af3ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fc912984f6d77f0440de74778b3d94fd') in 0.005242 seconds
+  Import took 0.008471 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000228 seconds.
+  path: Assets/Art Assets/Figures/Materials
+  artifactKey: Guid(4127097ddeb0c364f98484bf166ee5ec) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Art Assets/Figures/Materials using Guid(4127097ddeb0c364f98484bf166ee5ec) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9954115cc5db565482fc06876bf5c5ce') in 0.001757 seconds
+  Import took 0.005034 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000280 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_ColorChange.cs
+  artifactKey: Guid(b2c315c7ef0836841b9a78876cdfb259) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_ColorChange.cs using Guid(b2c315c7ef0836841b9a78876cdfb259) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8662cb441a438e6eb2cfa9c1cad9190d') in 0.001875 seconds
+  Import took 0.005099 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000267 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_GoldFX.cs
+  artifactKey: Guid(ffd018828d6f5ec4ba743658e129a408) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_GoldFX.cs using Guid(ffd018828d6f5ec4ba743658e129a408) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '066b7457d098d78ff45c6ba08f1cb3d0') in 0.001677 seconds
+  Import took 0.004522 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000163 seconds.
+  path: Assets/2DxFX/Resources/2dxfx-icon-value.png
+  artifactKey: Guid(e9e73ed4fd6e11146b687f9338abc2da) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/2dxfx-icon-value.png using Guid(e9e73ed4fd6e11146b687f9338abc2da) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '894622d4c78df357f12d11ce57a0c2c6') in 0.005771 seconds
+  Import took 0.009273 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000257 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Jelly.shader
+  artifactKey: Guid(ad8b56bc4cc5ab940847444fa9dd2a2d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Jelly.shader using Guid(ad8b56bc4cc5ab940847444fa9dd2a2d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1ef13e4da23ffcda6f6cab8ca2bca0ee') in 0.002606 seconds
+  Import took 0.006469 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000239 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_GoldFX.shader
+  artifactKey: Guid(e119c2182318cab46b7ce5b0e7bc3e15) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_GoldFX.shader using Guid(e119c2182318cab46b7ce5b0e7bc3e15) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '78d10919c02b871ff3d1d1fc97d02167') in 0.002622 seconds
+  Import took 0.006143 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000237 seconds.
+  path: Assets/Free Low Poly Chess Set/Board/Materials
+  artifactKey: Guid(a3ae66cc0bed32c49aed16fb8e9059f6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Board/Materials using Guid(a3ae66cc0bed32c49aed16fb8e9059f6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b3c6262cd852ac32ae41c53321688ad2') in 0.001513 seconds
+  Import took 0.004670 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000246 seconds.
+  path: Assets/Programming Assets/Demigiant/DOTweenPro Examples/Examples Assets
+  artifactKey: Guid(05e4ced8c461a11448edfcfbd2bd8150) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Programming Assets/Demigiant/DOTweenPro Examples/Examples Assets using Guid(05e4ced8c461a11448edfcfbd2bd8150) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7b56de139261db848dd48163015f94a8') in 0.006291 seconds
+  Import took 0.009563 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000266 seconds.
+  path: Assets/2DxFX/Resources/2dxfx-icon-pixel.png
+  artifactKey: Guid(cadb2f46d145ae642926e0354015345f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/2dxfx-icon-pixel.png using Guid(cadb2f46d145ae642926e0354015345f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'caf05d532799aadbc8946b9eb714f275') in 0.005198 seconds
+  Import took 0.008374 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000221 seconds.
+  path: Assets/Art Assets/Example Assets
+  artifactKey: Guid(bd70e8243d25f1a468c3e5fcfe8c659e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Art Assets/Example Assets using Guid(bd70e8243d25f1a468c3e5fcfe8c659e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ac03f7cf667b56f34e1bdfd9f7145451') in 0.002077 seconds
+  Import took 0.005742 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000219 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_GrassMultiFX.cs
+  artifactKey: Guid(a1352de30b09f0d4e9e1a25e3112a765) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_GrassMultiFX.cs using Guid(a1352de30b09f0d4e9e1a25e3112a765) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8c7eb77a2f0e47bbbfba4e733f3f271a') in 0.001895 seconds
+  Import took 0.005236 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000221 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_MetalFX.shader
+  artifactKey: Guid(f657db44191bf5040a7b146bb7de1c4d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_MetalFX.shader using Guid(f657db44191bf5040a7b146bb7de1c4d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b63a781b665224a91ac13efc729199bf') in 0.002889 seconds
+  Import took 0.006022 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000268 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_ColorRGB.cs
+  artifactKey: Guid(3d1f3183e74f9c74895e0e5ecc62b35d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_ColorRGB.cs using Guid(3d1f3183e74f9c74895e0e5ecc62b35d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f37a67813d4dd083990eb003901b6603') in 0.001712 seconds
+  Import took 0.005240 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000260 seconds.
+  path: Assets/Free Low Poly Chess Set/King/Materials
+  artifactKey: Guid(cf95054ca68dbde44a707628358c8e94) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/King/Materials using Guid(cf95054ca68dbde44a707628358c8e94) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '89390d4f552e5a9c1db161b6c3e11bc9') in 0.002040 seconds
+  Import took 0.005229 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000250 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Flame.cs
+  artifactKey: Guid(700d5b8e805801643a7148dc2b1dd3d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Flame.cs using Guid(700d5b8e805801643a7148dc2b1dd3d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'cb0b0fc5d347da2db159bcbbc8304a84') in 0.002260 seconds
+  Import took 0.005762 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000243 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_BlackHole.cs
+  artifactKey: Guid(c157e859182832f4a990dfa12ed41351) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_BlackHole.cs using Guid(c157e859182832f4a990dfa12ed41351) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '96c40dd145034d068a4fb84b9e8f8640') in 0.001925 seconds
+  Import took 0.006776 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000219 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_Hologram2.shader
+  artifactKey: Guid(e4902c6983700bb45857a32e3d6365e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_Hologram2.shader using Guid(e4902c6983700bb45857a32e3d6365e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4b334a575821ed0f931dbaee2324e7ac') in 0.002417 seconds
+  Import took 0.005884 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000198 seconds.
+  path: Assets/Free Low Poly Chess Set/Rook/Materials
+  artifactKey: Guid(7fa8ccd1581357b458e28c4dcb6ee7ee) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Rook/Materials using Guid(7fa8ccd1581357b458e28c4dcb6ee7ee) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '14622a11ef8def71b88451060771b3ab') in 0.001920 seconds
+  Import took 0.005399 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000226 seconds.
+  path: Assets/Free Low Poly Chess Set/Bishop/Materials
+  artifactKey: Guid(8e758238cf9304646a0977d0ee444aa8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Bishop/Materials using Guid(8e758238cf9304646a0977d0ee444aa8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6bf09b19c52e84985b13266b9e44e905') in 0.002052 seconds
+  Import took 0.006158 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000180 seconds.
+  path: Assets/2DxFX/Scripts/_2dxFX_Blood.cs
+  artifactKey: Guid(07ac7fa7466b4da4294c286d0b528e66) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Scripts/_2dxFX_Blood.cs using Guid(07ac7fa7466b4da4294c286d0b528e66) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'edb288822348ed6e3d46da58dc70cd66') in 0.001686 seconds
+  Import took 0.005777 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000249 seconds.
+  path: Assets/Free Low Poly Chess Set/Example/PostProcessingProfiles
+  artifactKey: Guid(a7aca35bc6a4e604582abd1193c386c4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Example/PostProcessingProfiles using Guid(a7aca35bc6a4e604582abd1193c386c4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b541e32d3230a96beaed7731e5f4684f') in 0.001544 seconds
+  Import took 0.004744 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000223 seconds.
+  path: Assets/Free Low Poly Chess Set/Pawn/Materials
+  artifactKey: Guid(69932d061a594ad409b3d728805fb23b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Free Low Poly Chess Set/Pawn/Materials using Guid(69932d061a594ad409b3d728805fb23b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd7d3387b7c889a54e22ad72f6ae423ee') in 0.038035 seconds
+  Import took 0.044733 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000183 seconds.
+  path: Assets/2DxFX/Resources/_2dxFX_CircleFade.shader
+  artifactKey: Guid(b2ab8e766cb012d42875a0247992eaa4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/2DxFX/Resources/_2dxFX_CircleFade.shader using Guid(b2ab8e766cb012d42875a0247992eaa4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '85858f6b68f9fbde3a1cce9fb5c4676e') in 0.002629 seconds
+  Import took 0.006475 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 36.820413 seconds.
+  path: Packages/com.unity.2d.sprite
+  artifactKey: Guid(0901a6b758d060e9422c4f8d588d5895) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.2d.sprite using Guid(0901a6b758d060e9422c4f8d588d5895) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '31fe4b967da9f2cf8b764316a36640dd') in 0.002477 seconds
+  Import took 0.007093 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000286 seconds.
+  path: Packages/com.unity.purchasing
+  artifactKey: Guid(3f0c4389c854bcaf848af1ea310dbada) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.purchasing using Guid(3f0c4389c854bcaf848af1ea310dbada) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0d04ddbe5d92233b5e94023b92d94288') in 0.003376 seconds
+  Import took 0.006816 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000218 seconds.
+  path: Packages/com.unity.ads
+  artifactKey: Guid(17b632677410799367a53dc7ab96a8c2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.ads using Guid(17b632677410799367a53dc7ab96a8c2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2c730ab214e111b1e7e0358b65d67961') in 0.002302 seconds
+  Import took 0.007166 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.001225 seconds.
+  path: Packages/com.unity.multiplayer-hlapi
+  artifactKey: Guid(4ba212f756d9cc9dcb3828005b00486d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.multiplayer-hlapi using Guid(4ba212f756d9cc9dcb3828005b00486d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3e11b8e54886700e6d21bfe2f94df187') in 0.002569 seconds
+  Import took 0.008112 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000265 seconds.
+  path: Packages/com.unity.collab-proxy
+  artifactKey: Guid(1adad61bfb44214ee3e887b5febc4396) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.collab-proxy using Guid(1adad61bfb44214ee3e887b5febc4396) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8e8031925d16888fac8c9f89b01d4808') in 0.002425 seconds
+  Import took 0.007254 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000297 seconds.
+  path: Packages/nuget.mono-cecil
+  artifactKey: Guid(bb50d27322dc8d9773ac50d2158b9b8d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/nuget.mono-cecil using Guid(bb50d27322dc8d9773ac50d2158b9b8d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1580c0fbb5a8e9490f672ddde4fba5fe') in 0.001972 seconds
+  Import took 0.006500 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000208 seconds.
+  path: Packages/com.unity.ext.nunit
+  artifactKey: Guid(25a477c2f24db8778a4179421a32cc21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.ext.nunit using Guid(25a477c2f24db8778a4179421a32cc21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0a758ab8a84eb113c3c9765e961340cc') in 0.003082 seconds
+  Import took 0.007692 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000212 seconds.
+  path: Packages/com.unity.ugui
+  artifactKey: Guid(8f7652e09069a1943278893d4264401e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.ugui using Guid(8f7652e09069a1943278893d4264401e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8cb9e97a83bda9b0122102069a0c615b') in 0.002020 seconds
+  Import took 0.005865 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000222 seconds.
+  path: Packages/com.unity.timeline
+  artifactKey: Guid(a4610cf559d77b9f256416d9ccaeac55) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.timeline using Guid(a4610cf559d77b9f256416d9ccaeac55) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6aadaeb7e50bea0f5ad139bf45b27732') in 0.002107 seconds
+  Import took 0.005892 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000262 seconds.
+  path: Packages/com.unity.analytics
+  artifactKey: Guid(5c38c5679d98faa4ae7df9fae0a8226e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.analytics using Guid(5c38c5679d98faa4ae7df9fae0a8226e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8d6efc8b3355f705dbdfe6aa8b012768') in 0.002478 seconds
+  Import took 0.006302 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000222 seconds.
+  path: Packages/com.unity.test-framework
+  artifactKey: Guid(6023f2b823fc19b4e4a90875281ff117) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.test-framework using Guid(6023f2b823fc19b4e4a90875281ff117) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f6ac47f08ba69ead8ccbf7eb925ba7c1') in 0.002577 seconds
+  Import took 0.051500 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000190 seconds.
+  path: Packages/com.unity.ide.rider
+  artifactKey: Guid(ea5aa18a49e4f29d74984ea0ea11a238) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.ide.rider using Guid(ea5aa18a49e4f29d74984ea0ea11a238) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9cc020b6d69c36bb479b0ff3c371f6f3') in 0.002602 seconds
+  Import took 0.007510 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000185 seconds.
+  path: Packages/com.unity.2d.tilemap
+  artifactKey: Guid(4e00cf00a7281e0d7ee16a9f76f3c3bb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.2d.tilemap using Guid(4e00cf00a7281e0d7ee16a9f76f3c3bb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '768abd9e7bb5bf575327532d2975b492') in 0.002003 seconds
+  Import took 0.006256 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000199 seconds.
+  path: Packages/com.unity.xr.legacyinputhelpers
+  artifactKey: Guid(9f273d1aeb919930a9018672d8e70f4b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.xr.legacyinputhelpers using Guid(9f273d1aeb919930a9018672d8e70f4b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7c8edd3ff06d9201d0f125670dc9d95d') in 0.002144 seconds
+  Import took 0.006260 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000195 seconds.
+  path: Packages/com.unity.ide.visualstudio
+  artifactKey: Guid(9db636ca49aa246019dd93b7c8b689f4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.ide.visualstudio using Guid(9db636ca49aa246019dd93b7c8b689f4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ac78229861d88c219c825be7c461f9d7') in 0.002093 seconds
+  Import took 0.006073 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000192 seconds.
+  path: Packages/com.unity.ide.vscode
+  artifactKey: Guid(1c61a04a5b7737c4d16673d64be4194e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.ide.vscode using Guid(1c61a04a5b7737c4d16673d64be4194e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3acd2f0488d78c4a5e07b99ca2865d2e') in 0.001834 seconds
+  Import took 0.005725 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000193 seconds.
+  path: Packages/com.unity.textmeshpro
+  artifactKey: Guid(cabaa672b0e3ee91fa7b6da4daab7970) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.textmeshpro using Guid(cabaa672b0e3ee91fa7b6da4daab7970) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2dedaf9cd085bc1c2ed26c1290eacad3') in 0.001646 seconds
+  Import took 0.005174 seconds .
 
 ========================================================================
 Received Prepare
@@ -87,700 +1231,37 @@ Reloading mono domain
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002165 seconds.
+Registered in 0.002423 seconds.
 Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 34.73 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 41.95 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  0.921 seconds
+- Completed reload, in  1.137 seconds
 Registering precompiled user dll's ...
-Registered in 0.082264 seconds.
+Registered in 0.104601 seconds.
 Platform modules already initialized, skipping
 Begin MonoManager ReloadAssembly
 Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.46 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.59 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.086 seconds
+- Completed reload, in  1.242 seconds
 Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 1.00 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.87 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 69.0 MB.
+System memory in use before: 68.9 MB.
 System memory in use after: 67.1 MB.
 
-Unloading 111 unused Assets to reduce memory usage. Loaded Objects now: 2060.
-Total: 4.315800 ms (FindLiveObjects: 0.730700 ms CreateObjectMapping: 0.168500 ms MarkObjects: 1.927500 ms  DeleteObjects: 1.487500 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002145 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 45.07 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.142 seconds
-Registering precompiled user dll's ...
-Registered in 0.086818 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.48 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  0.954 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.74 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 69.2 MB.
-System memory in use after: 67.3 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2064.
-Total: 4.653500 ms (FindLiveObjects: 0.516800 ms CreateObjectMapping: 0.085700 ms MarkObjects: 2.166300 ms  DeleteObjects: 1.883000 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002818 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 37.64 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.020 seconds
-Registering precompiled user dll's ...
-Registered in 0.088527 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.49 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.026 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.49 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 69.5 MB.
-System memory in use after: 67.6 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2068.
-Total: 3.616600 ms (FindLiveObjects: 0.462300 ms CreateObjectMapping: 0.116200 ms MarkObjects: 1.770700 ms  DeleteObjects: 1.266600 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001562 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 36.21 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.037 seconds
-Registering precompiled user dll's ...
-Registered in 0.104061 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.57 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.100 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.55 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 69.5 MB.
-System memory in use after: 67.6 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2072.
-Total: 3.298000 ms (FindLiveObjects: 0.398800 ms CreateObjectMapping: 0.110700 ms MarkObjects: 1.507500 ms  DeleteObjects: 1.279800 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001550 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 42.29 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.168 seconds
-Registering precompiled user dll's ...
-Registered in 0.092977 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.94 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.168 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.49 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 69.9 MB.
-System memory in use after: 68.1 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2076.
-Total: 3.827000 ms (FindLiveObjects: 0.421200 ms CreateObjectMapping: 0.096600 ms MarkObjects: 1.925300 ms  DeleteObjects: 1.382100 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001597 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 36.52 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.149 seconds
-Registering precompiled user dll's ...
-Registered in 0.085099 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.46 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.282 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.73 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.2 MB.
-System memory in use after: 68.3 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2080.
-Total: 3.850800 ms (FindLiveObjects: 0.517000 ms CreateObjectMapping: 0.138700 ms MarkObjects: 1.899600 ms  DeleteObjects: 1.293400 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002476 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 41.15 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.258 seconds
-Registering precompiled user dll's ...
-Registered in 0.086694 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.47 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.161 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.46 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.5 MB.
-System memory in use after: 68.6 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2084.
-Total: 3.237800 ms (FindLiveObjects: 0.382300 ms CreateObjectMapping: 0.081200 ms MarkObjects: 1.501000 ms  DeleteObjects: 1.272200 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002383 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 53.18 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.643 seconds
-Registering precompiled user dll's ...
-Registered in 0.098348 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.55 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.620 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.57 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.5 MB.
-System memory in use after: 68.6 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2088.
-Total: 5.429700 ms (FindLiveObjects: 0.735800 ms CreateObjectMapping: 0.294700 ms MarkObjects: 2.589000 ms  DeleteObjects: 1.808500 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002214 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 50.27 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.606 seconds
-Registering precompiled user dll's ...
-Registered in 0.093243 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.65 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.559 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.49 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.0 MB.
-System memory in use after: 68.1 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2092.
-Total: 3.100000 ms (FindLiveObjects: 0.367600 ms CreateObjectMapping: 0.078700 ms MarkObjects: 1.365900 ms  DeleteObjects: 1.286600 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001830 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 46.46 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.702 seconds
-Registering precompiled user dll's ...
-Registered in 0.106818 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.66 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.719 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.95 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.2 MB.
-System memory in use after: 68.3 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2096.
-Total: 4.651500 ms (FindLiveObjects: 0.642900 ms CreateObjectMapping: 0.161300 ms MarkObjects: 1.906900 ms  DeleteObjects: 1.938800 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001550 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 36.27 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.380 seconds
-Registering precompiled user dll's ...
-Registered in 0.081179 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.46 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.453 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.48 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.5 MB.
-System memory in use after: 68.6 MB.
-
 Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2100.
-Total: 3.713200 ms (FindLiveObjects: 0.433800 ms CreateObjectMapping: 0.093300 ms MarkObjects: 1.810800 ms  DeleteObjects: 1.373600 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002359 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 50.72 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.628 seconds
-Registering precompiled user dll's ...
-Registered in 0.089292 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.47 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.632 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.60 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.6 MB.
-System memory in use after: 68.7 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2104.
-Total: 3.195400 ms (FindLiveObjects: 0.498900 ms CreateObjectMapping: 0.095500 ms MarkObjects: 1.365300 ms  DeleteObjects: 1.234600 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001876 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 43.66 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.649 seconds
-Registering precompiled user dll's ...
-Registered in 0.093205 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.86 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.685 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.45 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.0 MB.
-System memory in use after: 68.1 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2108.
-Total: 3.664300 ms (FindLiveObjects: 0.423900 ms CreateObjectMapping: 0.088600 ms MarkObjects: 1.758700 ms  DeleteObjects: 1.391200 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001602 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 40.19 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.619 seconds
-Registering precompiled user dll's ...
-Registered in 0.084465 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.50 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.918 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.49 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.2 MB.
-System memory in use after: 68.4 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2112.
-Total: 4.495200 ms (FindLiveObjects: 0.508600 ms CreateObjectMapping: 0.199600 ms MarkObjects: 1.799700 ms  DeleteObjects: 1.985200 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002564 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 49.10 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  2.194 seconds
-Registering precompiled user dll's ...
-Registered in 0.118585 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.53 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  2.113 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 1.03 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.5 MB.
-System memory in use after: 68.6 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2116.
-Total: 5.100200 ms (FindLiveObjects: 0.707800 ms CreateObjectMapping: 0.145500 ms MarkObjects: 2.796000 ms  DeleteObjects: 1.449600 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002513 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 37.57 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.842 seconds
-Registering precompiled user dll's ...
-Registered in 0.098651 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.46 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.722 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.77 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.6 MB.
-System memory in use after: 68.7 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2120.
-Total: 5.572600 ms (FindLiveObjects: 0.929800 ms CreateObjectMapping: 0.226100 ms MarkObjects: 2.635800 ms  DeleteObjects: 1.779300 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001566 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 47.27 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.922 seconds
-Registering precompiled user dll's ...
-Registered in 0.099196 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 1.33 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  2.223 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.48 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.0 MB.
-System memory in use after: 68.1 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2124.
-Total: 3.396100 ms (FindLiveObjects: 0.485500 ms CreateObjectMapping: 0.094400 ms MarkObjects: 1.469700 ms  DeleteObjects: 1.344600 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001565 seconds.
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 43.73 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.867 seconds
-Registering precompiled user dll's ...
-Registered in 0.085862 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image E:\Unity Projects\WizardChess\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.81 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.709 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.46 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 70.3 MB.
-System memory in use after: 68.4 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2128.
-Total: 3.557800 ms (FindLiveObjects: 0.432400 ms CreateObjectMapping: 0.099900 ms MarkObjects: 1.658000 ms  DeleteObjects: 1.366200 ms)
+Total: 3.571900 ms (FindLiveObjects: 0.421700 ms CreateObjectMapping: 0.089900 ms MarkObjects: 1.672500 ms  DeleteObjects: 1.386500 ms)
 
 AssetImportWorkerClient::OnTransportError - code=2 error=End of file
