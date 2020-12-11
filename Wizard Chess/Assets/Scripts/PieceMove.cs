@@ -2,6 +2,7 @@
 using System.Collections;
 using DG.Tweening;
 using System.Globalization;
+using System.Collections.Generic;
 
 //Control of moving from one square to anotehr
 public class PieceMove : MonoBehaviour {
@@ -19,7 +20,10 @@ public class PieceMove : MonoBehaviour {
 	public GameObject last;
 	public GameObject checker;
 
+	public List<Square> moves = new List<Square>();
+
 	public bool canMove;
+	public bool showMoves;
 
 	private bool isSet;
 	public Square curSquare;
@@ -39,7 +43,7 @@ public class PieceMove : MonoBehaviour {
 		pieceMeshFilter = this.gameObject.GetComponent<MeshFilter> ();
 		pieceMeshCollider = this.gameObject.GetComponent<MeshCollider>();
 		pieceMeshRenderer = this.gameObject.GetComponent<MeshRenderer>();
-		
+		showMoves = false;
 	}
 
 	void OnMouseDown () {
@@ -77,7 +81,8 @@ public class PieceMove : MonoBehaviour {
 		curSquare = sq.GetComponent<Square> ();
 		last = sq;
 		isSet = true;
-
+		createRookMoves();
+		printMovesList();
 		ChessMove cm = new ChessMove (this);
 		gm.moveHistory.Add (cm);
 		gm.moveHistory [gm.moveHistory.Count - 1].printMove ();
@@ -98,7 +103,6 @@ public class PieceMove : MonoBehaviour {
 	}
 
 	public void movePiece (int x, int y, Square square) {
-
 		//Physical Movement 
 		Transform t = this.gameObject.transform;
 		t.DOPause ();
@@ -112,92 +116,213 @@ public class PieceMove : MonoBehaviour {
 		setLastPieceLocation (curx, cury);
 		setPieceLocation (x, y);
 		//Movement
-		square.piece = this.gameObject;
+		square.piece = this;
 		curSquare = square;
 		//Debug.Log(p.color.ToString() + p.piece.ToString() + " to " + x.ToString() + y);
 		last = square.gameObject;
 
 		//if not taking another piece
 		ChessMove cm = new ChessMove (this);
+		//Adding  possible moves list
+		hideMovesHelper();
+		moves.Clear();
+		createRookMoves();
+		printMovesList();
 		gm.moveHistory.Add (cm);
 		gm.moveHistory [gm.moveHistory.Count - 1].printMove ();
 	}
 
 	public bool checkPath (int x, int y) {
+		//Testing to see what pieces are in the way
 		//if move legal return true
 		//for straight check each square if it is occupied, else check angle
 		//else return false
 		if (x == curx && y == cury) {
 			return false;
-		}else if (piece == 6) {
+		}else if (piece == 6) {//King
 			if (((x == curx + 1) || (x == curx) || (x == curx - 1)) && ((y == cury + 1) || (y == cury) || (y == cury - 1))) {
-				//Not truly checking rework logic
+	
 				return true;
 			} else {
 				return false;
 			}
-		} else if (piece == 2){ 
-		if (((x == curx) && ((y > cury) || (y < cury))) || ((y == cury) && ((x > curx) || (x < curx)))) {
-				//checkRook (x, y);
-				return true;
+		} else if (piece == 2){ //Rook
+		if (((x == curx) && ((y > cury) || (y < cury))) || ((y == cury) && ((x > curx) || (x < curx)))) { //Availiable positions
+				return checkRookPath(x, y); //Check any spaces inbetween //this should create a range be inclusive if it is an opposing piece
 			} else {
 				return false;
 			}
 		}
 		return false;
 	}
-			
-	/*
-			(piece == 'R') {
-			if (x == lastx) {
-				if (y < lasty) {
-					for (int i = lasty; i > y; i--) {
-						print (x.ToString () + i.ToString ());
-						// Checking the path of squares 		
-						if (gm.boardPos [0, i - 1].gameObject.GetComponent<Square> ().taken) {
-							return false;
-						}
-					}
-					return true;
-				}
-			}
+
+
+	public Square getSquare(int x, int y) {
+		if (isCoordsInBounds(x) && isCoordsInBounds(y))
+		{
+			return gm.boardRows[x].gameObject.transform.GetChild(y).gameObject.GetComponent<Square>();
+		}
+		else return null;
+	}
+
+	public void showMovesHelper()
+	{
+		foreach (Square move in moves)
+		{
+			getSquare(move.x, move.y).showMoveSquare.SetActive(true);
 		}
 	}
 
-	//	return false;
-//	}
+	public void hideMovesHelper()
+	{
+		foreach (Square move in moves)
+		{
+			getSquare(move.x, move.y).showMoveSquare.SetActive(false);
+		}
+		showMoves = false;
+	}
 
-	//	}*/
+	public void printMovesList() {
+		Debug.Log("***********************MOVESLIST*START**************");
+		foreach (Square move in moves) {
+			Debug.Log(move.x + ", " + move.y + " ");
+		}
+		Debug.Log("***********************END**************************");
+	}
 
-	public bool checkRook(int x, int y){
-		if (x == curx) {
-			if (y < cury) {
-				for (int i = cury; i > y; i--) {
-					print (x.ToString () + i.ToString ());
+	public bool checkMoves(int x , int  y) {
+		if (!showMoves) {
+			showMoves = true;
+			showMovesHelper();
+		}
+		for (int i = 0; i < moves.Count; i++) {
+			if (x == moves[i].x && y == moves[i].y) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public bool isCoordsInBounds(int x) {
+		if (x < gm.boardSize && x >= 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+    public void createRookMoves()
+    {//Need a way to keep adding moves until a square is taken unless it is the other team
+        int i = cury;
+        if (curSquare)
+        {
+
+            while (isCoordsInBounds(i))
+            {
+                Debug.Log("Checking coords");
+
+                Square curSquare = getSquare(curx, i);
+				if (curSquare.taken)
+                {
+                    if (color != curSquare.piece.color)
+                    {
+                        moves.Add(curSquare);
+                    }
+                }
+                moves.Add(curSquare);
+                i++;
+
+            }
+        }
+        i = cury;
+        while (isCoordsInBounds(i)) //!getSquare(curx, i).taken ||
+        {
+            Square curSquare = getSquare(curx, i);
+            if (curSquare.taken)
+            {
+                if (color != curSquare.piece.color)
+                {
+                    moves.Add(curSquare);
+                }
+            }
+            moves.Add(curSquare);
+            i--;
+        }
+
+        i = curx;
+        while (isCoordsInBounds(i))//!getSquare(i, cury).taken || 
+        {
+            Square curSquare = getSquare(i, cury);
+            if (curSquare.taken)
+            {
+                if (color != curSquare.piece.color)
+                {
+                    moves.Add(curSquare);
+                }
+            }
+            moves.Add(curSquare);
+            i--;
+        }
+
+        i = curx;
+        while (isCoordsInBounds(i))//!getSquare(i, cury).taken || 
+        {
+            Square curSquare = getSquare(i, cury);
+            if (curSquare.taken)
+            {
+                if (color != curSquare.piece.color)
+                {
+                    moves.Add(curSquare);
+                }
+            }
+            moves.Add(curSquare);
+            i++;
+        }
+    }
+
+
+
+public bool checkRookPath(int x, int y){
+		if (x == curx)
+		{
+			if (y < cury)
+			{
+				print("checking lesser y");
+				for (int i = cury; i > y; i--)
+				{
+					//print(x.ToString() + i.ToString());
 					// Checking the path of squares
 					//Not getting the correct square
 					//Coming back as null
-					print(gm.boardRows[curx].transform.GetChild(i).name);
-					//if (gm.boardRows[curx].gameObject.transform.GetChild(i).gameObject.GetComponent<Square>().taken) {
-						return true;
-					//}
+					//Debug.Log(curx);//(gm.boardRows[curx].transform.GetChild(i).name);
+					if (gm.boardRows[curx].gameObject.transform.GetChild(i).gameObject.GetComponent<Square>().taken)
+						return false;
+				
 				}
 				return true;
 			}
-			if (y > cury) {
-				for (int i = cury; i < y; i++) {
+			if (y > cury)
+			{
+				print("checking greater y");
+				for (int i = cury; i < y; i++)
+				{
 					//print (x.ToString () + i.ToString ());
 					// Checking the path of squares 		
-					if (gm.boardRows[curx].transform.GetChild(i).gameObject.GetComponent<Square>().taken) {
+					//if (gm.boardRows[curx].transform.GetChild(i).gameObject.GetComponent<Square>().taken) {
+					//	return false;
+					//}
+					//print(gm.boardRows[curx].transform.GetChild(i).name);
+					//print(x.ToString() + i.ToString());
+					if (gm.boardRows[curx].gameObject.transform.GetChild(i).gameObject.GetComponent<Square>().taken)
 						return false;
-					}
 				}
 				return true;
 			}
-
 			return true;
 		}
-		return false;
+		return true;
 	}
 
 	public void checkMove (int x, int y, Square square) {
@@ -205,16 +330,17 @@ public class PieceMove : MonoBehaviour {
 		//Color: 1 Black, 2 White, 3 Green, 4 Blue, 5 Red, 6 Yellow
 
 		//Need to check if spot is taken
-		if (piece == 6) {
+		//Needs to check if the move causes a check
+		if (piece == 6) { //King
 			if (x == lastx && y == lasty) {
-				movePiece (x, y, square);
+				movePiece (x, y, square); //Returning to previous square
 			} else if (((x == lastx + 1) || (x == lastx) || (x == lastx - 1)) && ((y == lasty + 1) || (y == lasty) || (y == lasty - 1))) {
 				movePiece (x, y, square);
 				canMove = false;
 			} else {
 				returnpiece ();
 			}
-		} else if (piece == 2) {
+		} else if (piece == 2) { //Rook
 			if (x == lastx && y == lasty) {
 				movePiece (x, y, square);
 			} else if (((x == lastx) && ((y > lasty) || (y < lasty))) || ((y == lasty) && ((x > lastx) || (x < lastx)))) {
@@ -236,9 +362,12 @@ public class PieceMove : MonoBehaviour {
 	}
 
 	public void pieceTaken(){
-		Transform t = this.transform;
+		Transform t = this.gameObject.transform;
 		t.DOMove (hiddenIsland, .1f);
+		t.DOComplete();
 	}
+
+	//Piece and Square Names
 
 	public string printPieceName(){
 		string outString = "";
@@ -292,3 +421,27 @@ public class PieceMove : MonoBehaviour {
 		return outString;
 	}
 }
+
+
+
+/*
+		(piece == 'R') {
+		if (x == lastx) {
+			if (y < lasty) {
+				for (int i = lasty; i > y; i--) {
+					print (x.ToString () + i.ToString ());
+					// Checking the path of squares 		
+					if (gm.boardPos [0, i - 1].gameObject.GetComponent<Square> ().taken) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+	}
+}
+
+//	return false;
+//	}
+
+//	}*/

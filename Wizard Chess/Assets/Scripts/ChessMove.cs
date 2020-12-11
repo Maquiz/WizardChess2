@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//The Data to replay and record a game of chess
+//The Data structure to replay and record a game of chess
+//Records the movements of every piece and its state
 public class ChessMove {
 
 	private PieceMove piece;
@@ -50,7 +51,7 @@ public class ChessMove {
 		isTaken = true;
 	}
 
-	public void printMove () {
+	public void printMove() {
 		string output = "";
 
 		//regular Move
@@ -62,6 +63,6 @@ public class ChessMove {
 		}
 		//isQueened Move
 		//isCastled Move
-		Debug.Log (output);
+		//Debug.Log (output);
 	}
 }

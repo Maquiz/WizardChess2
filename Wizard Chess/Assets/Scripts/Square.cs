@@ -6,8 +6,11 @@ public class Square : MonoBehaviour {
 	private AudioSource hit;
 	//Sound when piece hits the square
 	public bool taken = false;
-	public GameObject piece;
+	public PieceMove piece;
 	public int x, y;
+	public bool showMove;
+	public GameObject showMoveSquare;
+	
 
 	//This should be a ascii calc so it can have a length of N char 0 - A ...
 	public string[] letters = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K" };
@@ -15,21 +18,24 @@ public class Square : MonoBehaviour {
 	void Start () {
 		//Find Hit Sound
 		hit = GameObject.Find ("HitBoard").GetComponent<AudioSource> () as AudioSource;
+		piece = null;
+		showMoveSquare.SetActive(false);
 	}
 
 	void OnCollisionEnter (Collision collision) {
 		//Play Hit Sound
 		hit.Play ();
 		taken = true;
-		piece = collision.gameObject;
+		piece = collision.gameObject.GetComponent<PieceMove>();
 	}
 
 	void OnTriggerEnter (Collider other) {
 		PieceMove p = other.GetComponent<PieceMove> ();
-		if (p.getIsSet () == false) {
-			p.movePiece (x, y, this);
+		if (p.getIsSet ()) {
+			p.setIntitialPiece(x, y, this.gameObject);
 		} else {
-			p.setIntitialPiece (x, y, this.gameObject);
+			
+			p.movePiece(x, y, this);
 		}
 
 		/*
