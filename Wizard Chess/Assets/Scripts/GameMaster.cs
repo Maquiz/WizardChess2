@@ -80,6 +80,7 @@ public class GameMaster : MonoBehaviour
             {
                 selectedPiece.hideMovesHelper();
                 deSelectPiece();
+                return;
             }
             //Line renderer
             setUpLine();
@@ -104,6 +105,7 @@ public class GameMaster : MonoBehaviour
                     //Debug.Log("update square");
                     if (hit.collider.gameObject.tag == "Piece")
                     {
+
                         PieceMove p = hit.collider.gameObject.GetComponent<PieceMove>();
                         if ((p.color != selectedPiece.color) && selectedPiece.checkMoves(p.curx, p.cury))
                         {

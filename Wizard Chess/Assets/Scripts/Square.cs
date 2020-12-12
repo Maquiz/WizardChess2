@@ -33,6 +33,8 @@ public class Square : MonoBehaviour {
 		PieceMove p = other.GetComponent<PieceMove> ();
 		if (p.getIsSet ()) {
 			p.setIntitialPiece(x, y, this.gameObject);
+			p.moves.Clear();
+			p.createPieceMoves(p.piece);
 		} else {
 			
 			p.movePiece(x, y, this);

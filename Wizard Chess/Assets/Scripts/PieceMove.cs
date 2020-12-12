@@ -63,7 +63,7 @@ public class PieceMove : MonoBehaviour
     {
         //Check if you are taking or piece if the player color = piece color
         if (!gm.isPieceSelected)
-        {
+        {            
             gm.selectPiece(this.gameObject.transform, this);
         }
     }
@@ -75,13 +75,14 @@ public class PieceMove : MonoBehaviour
         curSquare = sq.GetComponent<Square>();
         last = sq;
         isSet = true;
-        moves.Clear();
-        createPieceMoves(piece);
+
         //createRookMoves();
         //printMovesList();
         ChessMove cm = new ChessMove(this);
         gm.moveHistory.Add(cm);
         gm.moveHistory[gm.moveHistory.Count - 1].printMove();
+        moves.Clear();
+        createPieceMoves(piece);
     }
 
     public void movePiece(int x, int y, Square square)
@@ -109,12 +110,13 @@ public class PieceMove : MonoBehaviour
         //if not taking another piece
         ChessMove cm = new ChessMove(this);
         //Adding  possible moves list
-        moves.Clear();
-        createPieceMoves(piece);
+ 
        // createRookMoves();
-        printMovesList();
+        //printMovesList();
         gm.moveHistory.Add(cm);
         gm.moveHistory[gm.moveHistory.Count - 1].printMove();
+        moves.Clear();
+        createPieceMoves(piece);
     }
 
 
@@ -135,19 +137,45 @@ public class PieceMove : MonoBehaviour
         return false;
     }
 
+     public void createPieceMoves(int piece)
+    {
+        //1 pawn, 2 rook, 3 knight, 4 bishop, 5 queen, 6 king, 
+        //Color: 1 Black, 2 White, 3 Green, 4 Blue, 5 Red, 6 Yellow
+        moves.Clear();
+        if (piece == 6)
+        { //King
+            createKingMoves();
+        }
+        else if (piece == 2)
+        { //Rook
+            Debug.Log("We clicked a Rook");
+            createRookMoves();
+        }
+        else {
+
+            createPawnMoves();
+        }
+    }
+
     public void createKingMoves()
     {
         //No Check checking
         if (isCoordsInBounds(cury - 1))
         {
-            Square curSquare = getSquare(curx, cury - 1);
-            if (curSquare != null &&  curSquare.taken)
+            Debug.Log("King Move");
+            Square curSquare = getSquare(curx, (cury - 1));
+            if (curSquare != null && curSquare.taken)
             {
+                Debug.Log("King Not Null");
                 if (color != curSquare.piece.color)
                 {
                     moves.Add(curSquare);
                 }
             }
+            else {
+                moves.Add(curSquare);
+            }
+            
 
             if (isCoordsInBounds(curx - 1)) {
                 curSquare = getSquare(curx - 1, cury - 1);
@@ -157,6 +185,10 @@ public class PieceMove : MonoBehaviour
                     {
                         moves.Add(curSquare);
                     }
+                }
+                else
+                {
+                    moves.Add(curSquare);
                 }
             }
 
@@ -170,7 +202,12 @@ public class PieceMove : MonoBehaviour
                         moves.Add(curSquare);
                     }
                 }
+                else
+                {
+                    moves.Add(curSquare);
+                }
             }
+
         }
 
         if (isCoordsInBounds(cury + 1))
@@ -183,6 +220,10 @@ public class PieceMove : MonoBehaviour
                     moves.Add(curSquare);
                 }
             }
+            else
+            {
+                moves.Add(curSquare);
+            }
 
             if (isCoordsInBounds(curx - 1))
             {
@@ -194,17 +235,25 @@ public class PieceMove : MonoBehaviour
                         moves.Add(curSquare);
                     }
                 }
+                else
+                {
+                    moves.Add(curSquare);
+                }
             }
 
             if (isCoordsInBounds(curx + 1))
             {
-                curSquare = getSquare(curx + 1, cury - 1);
+                curSquare = getSquare(curx + 1, cury + 1);
                 if (curSquare!=null && curSquare.taken)
                 {
                     if (color != curSquare.piece.color)
                     {
                         moves.Add(curSquare);
                     }
+                }
+                else
+                {
+                    moves.Add(curSquare);
                 }
             }
         }
@@ -222,6 +271,10 @@ public class PieceMove : MonoBehaviour
                         moves.Add(curSquare);
                     }
                 }
+                else
+                {
+                    moves.Add(curSquare);
+                }
             }
 
             if (isCoordsInBounds(curx + 1))
@@ -233,6 +286,10 @@ public class PieceMove : MonoBehaviour
                     {
                         moves.Add(curSquare);
                     }
+                }
+                else
+                {
+                    moves.Add(curSquare);
                 }
             }
         }
@@ -321,24 +378,6 @@ public class PieceMove : MonoBehaviour
         //  t.DOMove(new Vector3(last.transform.position.x, last.transform.position.y, last.transform.position.z), .3f);
     }
 
-    public void createPieceMoves(int piece)
-    {
-        //1 pawn, 2 rook, 3 knight, 4 bishop, 5 queen, 6 king, 
-        //Color: 1 Black, 2 White, 3 Green, 4 Blue, 5 Red, 6 Yellow
-
-        if (piece == 6)
-        { //King
-            createKingMoves();
-        }
-        else if (piece == 2)
-        { //Rook
-            createRookMoves();
-        }
-        else {
-
-            createPawnMoves();
-        }
-    }
 
     public void pieceTaken()
     {
