@@ -189,6 +189,7 @@ public class GameMaster : MonoBehaviour
         selectedUI.setTransformPosition(t.position);
         selectedPiece = piece;
         selectedPiece.createPieceMoves(selectedPiece.piece);
+        selectedPiece.printMovesList();
     }
 
     public void takePiece(PieceMove p)

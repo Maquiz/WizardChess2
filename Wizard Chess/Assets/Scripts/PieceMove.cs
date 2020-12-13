@@ -81,8 +81,8 @@ public class PieceMove : MonoBehaviour
         ChessMove cm = new ChessMove(this);
         gm.moveHistory.Add(cm);
         gm.moveHistory[gm.moveHistory.Count - 1].printMove();
-        moves.Clear();
         createPieceMoves(piece);
+        Debug.Log("Initiate Piece");
     }
 
     public void movePiece(int x, int y, Square square)
@@ -90,7 +90,8 @@ public class PieceMove : MonoBehaviour
         //Physical Movement 
         removePieceFromSquare();
         hideMovesHelper();
-        moves.Clear();
+        //  moves.Clear();
+        Debug.Log("move Piece");
         Transform t = this.gameObject.transform;
         t.DOPause();
         t.DOMove(new Vector3(this.transform.position.x, 1, this.transform.position.z), .5f);
@@ -115,7 +116,7 @@ public class PieceMove : MonoBehaviour
         //printMovesList();
         gm.moveHistory.Add(cm);
         gm.moveHistory[gm.moveHistory.Count - 1].printMove();
-        moves.Clear();
+        //moves.Clear();
         createPieceMoves(piece);
     }
 
@@ -141,18 +142,18 @@ public class PieceMove : MonoBehaviour
     {
         //1 pawn, 2 rook, 3 knight, 4 bishop, 5 queen, 6 king, 
         //Color: 1 Black, 2 White, 3 Green, 4 Blue, 5 Red, 6 Yellow
-        moves.Clear();
+        
         if (piece == 6)
         { //King
+            moves.Clear();
             createKingMoves();
         }
         else if (piece == 2)
         { //Rook
-            Debug.Log("We clicked a Rook");
+            
             createRookMoves();
         }
         else {
-
             createPawnMoves();
         }
     }
@@ -298,11 +299,11 @@ public class PieceMove : MonoBehaviour
     public void createRookMoves()
     {
         int i = cury;
-        if (curSquare)
-        {
-
+  
+           
             while (isCoordsInBounds(i))
             {
+                
                 Square curSquare = getSquare(curx, i);
                 if (curSquare.taken)
                 {
@@ -317,9 +318,9 @@ public class PieceMove : MonoBehaviour
                 i++;
 
             }
-        }
+
         i = cury;
-        while (isCoordsInBounds(i)) //!getSquare(curx, i).taken ||
+        while (isCoordsInBounds(i)) 
         {
             Square curSquare = getSquare(curx, i);
             if (curSquare.taken)
@@ -336,7 +337,7 @@ public class PieceMove : MonoBehaviour
         }
 
         i = curx;
-        while (isCoordsInBounds(i))//!getSquare(i, cury).taken || 
+        while (isCoordsInBounds(i))
         {
             Square curSquare = getSquare(i, cury);
             if (curSquare.taken)
