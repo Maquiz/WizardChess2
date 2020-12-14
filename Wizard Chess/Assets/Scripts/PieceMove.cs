@@ -26,6 +26,7 @@ public class PieceMove : MonoBehaviour
 
     public bool canMove;
     public bool showMoves;
+    public bool firstMove;
 
     private bool isSet;
     public Square curSquare;
@@ -57,6 +58,7 @@ public class PieceMove : MonoBehaviour
         pieceMeshCollider = this.gameObject.GetComponent<MeshCollider>();
         pieceMeshRenderer = this.gameObject.GetComponent<MeshRenderer>();
         showMoves = false;
+        firstMove = true;
     }
 
     void OnMouseDown()
@@ -75,13 +77,13 @@ public class PieceMove : MonoBehaviour
         curSquare = sq.GetComponent<Square>();
         last = sq;
         isSet = true;
-
         //createRookMoves();
         //printMovesList();
         ChessMove cm = new ChessMove(this);
         gm.moveHistory.Add(cm);
         gm.moveHistory[gm.moveHistory.Count - 1].printMove();
         createPieceMoves(piece);
+
         Debug.Log("Initiate Piece");
     }
 
@@ -371,14 +373,63 @@ public class PieceMove : MonoBehaviour
         }
     }
 
-    public void createPawnMoves() { }
+    public void createPawnMoves() {
+        //if you havent moved can move twice, else can move once forward
+        //check forward direction
+        //can take at a diagonal forward
+        //if firstmove = true
+        //black color = 1 moves -y
+
+        //white color = 2 moves +y
+        if (color == 2)
+        {
+            if (isCoordsInBounds(cury + 1))
+            {
+                Square curSquare = getSquare(curx, (cury + 1));
+                if (curSquare != null && !curSquare.taken)
+                {
+                    moves.Add(curSquare);
+                }
+            }
+            if (firstMove) {
+                Square curSquare = getSquare(curx, (cury + 2));
+                if (curSquare != null && !curSquare.taken)
+                {
+                    moves.Add(curSquare);
+                }
+            }
+            if (isCoordsInBounds(cury + 1)) {
+                if (isCoordsInBounds(curx + 1)) {
+                    Square curSquare = getSquare((curx +1) , (cury + 1));
+                    if (curSquare != null && curSquare.taken)
+                    {
+                        if (color != curSquare.piece.color)
+                        {
+                            moves.Add(curSquare);
+                        }
+                    }
+                }
+                if (isCoordsInBounds(curx - 1))
+                {
+                    Square curSquare = getSquare((curx - 1), (cury + 1));
+                    if (curSquare != null && curSquare.taken)
+                    {
+                        if (color != curSquare.piece.color)
+                        {
+                            moves.Add(curSquare);
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
     public void returnpiece()
     {
         Transform t = this.transform;
         t.DOMove(new Vector3(last.transform.position.x, last.transform.position.y + 6f, last.transform.position.z), .5f);
         //  t.DOMove(new Vector3(last.transform.position.x, last.transform.position.y, last.transform.position.z), .3f);
     }
-
 
     public void pieceTaken()
     {
@@ -459,7 +510,6 @@ public class PieceMove : MonoBehaviour
     }
 
     //Piece and Square Names
-
     public string printPieceName()
     {
         string outString = "";
@@ -498,7 +548,6 @@ public class PieceMove : MonoBehaviour
         }
         return outString;
     }
-
 
     public string printCurSquare()
     {

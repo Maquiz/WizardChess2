@@ -31,13 +31,14 @@ public class Square : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other) {
 		PieceMove p = other.GetComponent<PieceMove> ();
-		if (p.getIsSet ()) {
+		if (p.getIsSet()) {
 			p.setIntitialPiece(x, y, this.gameObject);
 			p.moves.Clear();
 			p.createPieceMoves(p.piece);
 		} else {
-			
 			p.movePiece(x, y, this);
+			p.moves.Clear();
+			p.createPieceMoves(p.piece);
 		}
 
 		/*
