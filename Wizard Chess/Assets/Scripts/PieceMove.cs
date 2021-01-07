@@ -34,6 +34,7 @@ public class PieceMove : MonoBehaviour
     public GameMaster gm;
 
     private Vector3 hiddenIsland = new Vector3(-1000f, -1000f, -1000f);
+    public int hitCount = 0;
 
     public void createPiece(int _piece, int _color, MeshCollider _mc, MeshFilter _mf, MeshRenderer _mr)
     {
@@ -77,8 +78,12 @@ public class PieceMove : MonoBehaviour
         curSquare = sq.GetComponent<Square>();
         last = sq;
         isSet = true;
-        //createRookMoves();
-        //printMovesList();
+        Transform t = this.gameObject.transform;
+
+        t.DOPause();
+        t.DOMove(new Vector3(curSquare.gameObject.transform.position.x, this.transform.position.y, curSquare.gameObject.transform.position.z), .5f);
+        t.DOComplete();
+
         ChessMove cm = new ChessMove(this);
         gm.moveHistory.Add(cm);
         gm.moveHistory[gm.moveHistory.Count - 1].printMove();
@@ -89,37 +94,35 @@ public class PieceMove : MonoBehaviour
 
     public void movePiece(int x, int y, Square square)
     {
-        //Physical Movement 
         removePieceFromSquare();
         hideMovesHelper();
-        //  moves.Clear();
-        Debug.Log("move Piece");
+    
         Transform t = this.gameObject.transform;
         t.DOPause();
-        t.DOMove(new Vector3(this.transform.position.x, 1, this.transform.position.z), .5f);
-        t.DOComplete();
         t.DOMove(new Vector3(square.gameObject.transform.position.x, this.transform.position.y, square.gameObject.transform.position.z), .5f);
         t.DOComplete();
 
         isSet = true;
         setLastPieceLocation(curx, cury);
         setPieceLocation(x, y);
+
+        if (piece == 1 && this.firstMove == true) {
+            this.firstMove = false;
+        }
+
         //Movement
         square.piece = this;
         curSquare = square;
-        //Debug.Log(p.color.ToString() + p.piece.ToString() + " to " + x.ToString() + y);
         last = square.gameObject;
 
         //if not taking another piece
         ChessMove cm = new ChessMove(this);
         //Adding  possible moves list
- 
-       // createRookMoves();
-        //printMovesList();
         gm.moveHistory.Add(cm);
         gm.moveHistory[gm.moveHistory.Count - 1].printMove();
-        //moves.Clear();
+
         createPieceMoves(piece);
+        Debug.Log("move Piece");
     }
 
 
@@ -165,7 +168,6 @@ public class PieceMove : MonoBehaviour
         //No Check checking
         if (isCoordsInBounds(cury - 1))
         {
-            Debug.Log("King Move");
             Square curSquare = getSquare(curx, (cury - 1));
             if (curSquare != null && curSquare.taken)
             {
@@ -378,10 +380,9 @@ public class PieceMove : MonoBehaviour
         //check forward direction
         //can take at a diagonal forward
         //if firstmove = true
-        //black color = 1 moves -y
 
-        //white color = 2 moves +y
-        if (color == 2)
+        //black color = 1 moves +y
+        if (color == 1)
         {
             if (isCoordsInBounds(cury + 1))
             {
@@ -422,7 +423,54 @@ public class PieceMove : MonoBehaviour
                 }
             }
         }
-        
+
+        //white color = 2 moves -y
+        if (color == 2)
+        {
+            if (isCoordsInBounds(cury + 1))
+            {
+                Square curSquare = getSquare(curx, (cury - 1));
+                if (curSquare != null && !curSquare.taken)
+                {
+                    moves.Add(curSquare);
+                }
+            }
+            if (firstMove)
+            {
+                Square curSquare = getSquare(curx, (cury - 2));
+                if (curSquare != null && !curSquare.taken)
+                {
+                    moves.Add(curSquare);
+                }
+            }
+            if (isCoordsInBounds(cury - 1))
+            {
+                if (isCoordsInBounds(curx - 1))
+                {
+                    Square curSquare = getSquare((curx + 1), (cury - 1));
+                    if (curSquare != null && curSquare.taken)
+                    {
+                        if (color != curSquare.piece.color)
+                        {
+                            moves.Add(curSquare);
+                        }
+                    }
+                }
+                if (isCoordsInBounds(curx - 1))
+                {
+                    Square curSquare = getSquare((curx - 1), (cury - 1));
+                    if (curSquare != null && curSquare.taken)
+                    {
+                        if (color != curSquare.piece.color)
+                        {
+                            moves.Add(curSquare);
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
     public void returnpiece()
     {

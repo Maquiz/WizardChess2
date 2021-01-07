@@ -30,13 +30,21 @@ public class Square : MonoBehaviour {
 	}
 
 	void OnTriggerEnter (Collider other) {
+
 		PieceMove p = other.GetComponent<PieceMove> ();
-		if (p.getIsSet()) {
-			p.setIntitialPiece(x, y, this.gameObject);
-			p.moves.Clear();
-			p.createPieceMoves(p.piece);
-		} else {
-			p.movePiece(x, y, this);
+		p.hitCount++;
+		if (p.hitCount == 1)
+		{
+			if (!p.getIsSet())
+			{
+				Debug.Log("Initialized Piece Called");
+				p.setIntitialPiece(x, y, this.gameObject);
+			}
+			else 
+			{
+				Debug.Log("Move Piece Called");
+				p.movePiece(x, y, this);
+			}
 			p.moves.Clear();
 			p.createPieceMoves(p.piece);
 		}
@@ -54,5 +62,14 @@ public class Square : MonoBehaviour {
 		} else {
 
 		}*/
+	}
+
+	private void OnTriggerExit(Collider other)
+	{
+		PieceMove p = other.GetComponent<PieceMove>();
+		p.hitCount--;
+		if (p.hitCount < 0) {
+			p.hitCount = 0;
+		}
 	}
 }
