@@ -155,7 +155,6 @@ public class PieceMove : MonoBehaviour
         }
         else if (piece == 2)
         { //Rook
-            
             createRookMoves();
         }
         else {
@@ -303,11 +302,8 @@ public class PieceMove : MonoBehaviour
     public void createRookMoves()
     {
         int i = cury;
-  
-           
             while (isCoordsInBounds(i))
-            {
-                
+            {    
                 Square curSquare = getSquare(curx, i);
                 if (curSquare.taken)
                 {

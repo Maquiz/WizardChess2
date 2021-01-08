@@ -26,12 +26,12 @@ public class CameraMove : MonoBehaviour {
         }
     }
     void player1Move() {
-        C.DOMove(new Vector3(-4 , 4, -8), 1);
-        C.transform.localEulerAngles = new Vector3(0, 0, 0);
+        C.DOMove(new Vector3(8 , 12, 3.62f), 1);
+        C.transform.localEulerAngles = new Vector3(90, 180, 0);
             }
     void player2Move() {
-        C.DOMove(new Vector3(-6, 7, 25), 1);
-        C.transform.localEulerAngles = new Vector3(0, 180, 0);
+        C.DOMove(new Vector3(-1f, 12, 3.62f), 1);
+        C.transform.localEulerAngles = new Vector3(90, 0, 0);
     }
     void TopMove() {
         C.DOMove(new Vector3(-7, 12, 7), 1);

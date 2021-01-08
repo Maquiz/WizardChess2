@@ -48,7 +48,7 @@ public class GameMaster : MonoBehaviour
     //Instantiated objects
     public GameObject blackSquare;
     public GameObject whiteSquare;
-    public GameObject[] pieces;
+    public PieceMove[] pieces;
     public GameObject[] pieceUI;
     private Transform lastHittedObject = null;
     public bool showMoves;
@@ -168,6 +168,13 @@ public class GameMaster : MonoBehaviour
                 }
 
             }
+        }
+    }
+
+    public void initializeGame() {
+    foreach(PieceMove piece in pieces) {
+            piece.moves.Clear();
+            piece.createPieceMoves(piece.piece);
         }
     }
 
