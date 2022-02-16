@@ -17,7 +17,7 @@ public class GameMaster : MonoBehaviour
     public GameObject Board;
     private Vector3 hiddenIsland = new Vector3(-1000f, -1000f, -1000f);
     public int boardSize;
-
+    public int currentMove = 2;
     //Assuming the board is 8x8
     public string[] letters = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K" };
     enum PieceType
@@ -114,6 +114,7 @@ public class GameMaster : MonoBehaviour
                             {
                                 takePiece(p);
                                 selectedPiece.movePiece(p.curx, p.cury, p.curSquare);
+                                currentMove = currentMove == 1 ? 2 : 1;
                                 deSelectPiece();
                             }
                         }
@@ -135,6 +136,7 @@ public class GameMaster : MonoBehaviour
                                 {
                                     takePiece(s.piece);
                                     selectedPiece.movePiece(s.piece.curx, s.piece.cury, s.piece.curSquare);
+                                    currentMove = currentMove == 1 ? 2 : 1;
                                     deSelectPiece();
                                 }
                             }
@@ -146,6 +148,7 @@ public class GameMaster : MonoBehaviour
                                 if (Input.GetMouseButtonDown(0))
                                 {
                                     selectedPiece.movePiece(selectedPiece.lastx, selectedPiece.lasty, s);
+                                    currentMove = currentMove == 1 ? 2 : 1;
                                     deSelectPiece();
                                 }
                             }
@@ -174,6 +177,7 @@ public class GameMaster : MonoBehaviour
     //Game Piece Control
     void deSelectPiece()
     {
+        //only works for 2 colors
         selectedPiece = null;
         swapUIIcon(MouseUI.START);
         lr.SetPosition(1, hiddenIsland);

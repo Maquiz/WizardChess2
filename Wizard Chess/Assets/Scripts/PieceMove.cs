@@ -64,7 +64,7 @@ public class PieceMove : MonoBehaviour
     void OnMouseDown()
     {
         //Check if you are taking or piece if the player color = piece color
-        if (!gm.isPieceSelected)
+        if (!gm.isPieceSelected && gm.currentMove == color)
         {            
             gm.selectPiece(this.gameObject.transform, this);
         }
@@ -302,7 +302,6 @@ public class PieceMove : MonoBehaviour
     {
         int i = cury;
   
-           
             while (isCoordsInBounds(i))
             {
                 
@@ -381,26 +380,27 @@ public class PieceMove : MonoBehaviour
         //black color = 1 moves -y
 
         //white color = 2 moves +y
-        if (color == 2)
-        {
-            if (isCoordsInBounds(cury + 1))
+
+        int direction = color == 2 ? -1 : 1; 
+  
+            if (isCoordsInBounds(cury + direction))
             {
-                Square curSquare = getSquare(curx, (cury + 1));
+                Square curSquare = getSquare(curx, (cury + direction));
                 if (curSquare != null && !curSquare.taken)
                 {
                     moves.Add(curSquare);
                 }
             }
             if (firstMove) {
-                Square curSquare = getSquare(curx, (cury + 2));
+                Square curSquare = getSquare(curx, (cury + (2 * direction)));
                 if (curSquare != null && !curSquare.taken)
                 {
                     moves.Add(curSquare);
                 }
             }
-            if (isCoordsInBounds(cury + 1)) {
-                if (isCoordsInBounds(curx + 1)) {
-                    Square curSquare = getSquare((curx +1) , (cury + 1));
+            if (isCoordsInBounds(cury + direction)) {
+                if (isCoordsInBounds(curx + direction)) {
+                    Square curSquare = getSquare((curx +1) , (cury + direction));
                     if (curSquare != null && curSquare.taken)
                     {
                         if (color != curSquare.piece.color)
@@ -409,9 +409,9 @@ public class PieceMove : MonoBehaviour
                         }
                     }
                 }
-                if (isCoordsInBounds(curx - 1))
+                if (isCoordsInBounds(curx - direction))
                 {
-                    Square curSquare = getSquare((curx - 1), (cury + 1));
+                    Square curSquare = getSquare((curx - 1), (cury + direction));
                     if (curSquare != null && curSquare.taken)
                     {
                         if (color != curSquare.piece.color)
@@ -421,7 +421,6 @@ public class PieceMove : MonoBehaviour
                     }
                 }
             }
-        }
         
     }
     public void returnpiece()
