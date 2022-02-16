@@ -674,11 +674,11 @@
  <Reference Include="Unity.Rider.Editor">
  <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
  </Reference>
- <Reference Include="UnityEngine.UI">
- <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
- </Reference>
  <Reference Include="UnityEngine.SpatialTracking">
  <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/ScriptAssemblies/UnityEngine.SpatialTracking.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.UI">
+ <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Analytics.DataPrivacy">
  <HintPath>C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
@@ -706,6 +706,16 @@
  </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="DOTween.Modules.csproj">
+      <Project>{D0E7E17C-19E6-E677-BC72-B887C245DE15}</Project>
+      <Name>DOTween.Modules</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="DOTweenPro.Scripts.csproj">
+      <Project>{A048C3C2-9ED5-35E0-8D78-2B466E2AEF24}</Project>
+      <Name>DOTweenPro.Scripts</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

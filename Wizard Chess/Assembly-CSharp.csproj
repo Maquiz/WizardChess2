@@ -869,6 +869,11 @@
  </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{CB2B9628-C141-9C1E-8772-C220C6B9ADD3}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
     <ProjectReference Include="DOTween.Modules.csproj">
       <Project>{D0E7E17C-19E6-E677-BC72-B887C245DE15}</Project>
       <Name>DOTween.Modules</Name>
