@@ -84,7 +84,6 @@ public class GameMaster : MonoBehaviour
             }
             //Line renderer
             setUpLine();
-
             lr.SetPosition(1, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)));
             lr.alignment = LineAlignment.View;
             //PieceMove checkMove(int x,int y, Square square) checkSquare with raycast
@@ -93,16 +92,9 @@ public class GameMaster : MonoBehaviour
             Transform lastHittedObject = null;
             if (Physics.Raycast(ray, out hit))
             {
-                
-               
-               // Debug.Log("Last Hitted " + lastHittedObject +"hit collider" + hit.collider.transform);
-                
-
                 if (lastHittedObject != hit.collider.transform)
-                {
-                   
+                {                    
                     //Selecting a piece
-                    //Debug.Log("update square");
                     if (hit.collider.gameObject.tag == "Piece")
                     {
 

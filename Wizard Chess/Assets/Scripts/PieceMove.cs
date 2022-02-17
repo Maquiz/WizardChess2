@@ -67,6 +67,7 @@ public class PieceMove : MonoBehaviour
         if (!gm.isPieceSelected && gm.currentMove == color)
         {            
             gm.selectPiece(this.gameObject.transform, this);
+
         }
     }
 
@@ -76,7 +77,6 @@ public class PieceMove : MonoBehaviour
         setLastPieceLocation(x, y);
         curSquare = sq.GetComponent<Square>();
         last = sq;
-        isSet = true;
         //createRookMoves();
         //printMovesList();
         ChessMove cm = new ChessMove(this);
@@ -89,37 +89,39 @@ public class PieceMove : MonoBehaviour
 
     public void movePiece(int x, int y, Square square)
     {
-        //Physical Movement 
-        removePieceFromSquare();
-        hideMovesHelper();
-        //  moves.Clear();
-        Debug.Log("move Piece");
-        Transform t = this.gameObject.transform;
-        t.DOPause();
-        t.DOMove(new Vector3(this.transform.position.x, 1, this.transform.position.z), .5f);
-        t.DOComplete();
-        t.DOMove(new Vector3(square.gameObject.transform.position.x, this.transform.position.y, square.gameObject.transform.position.z), .5f);
-        t.DOComplete();
+    
+            //Physical Movement 
+            removePieceFromSquare();
+            hideMovesHelper();
+            //  moves.Clear();
+            Debug.Log("MOVE PIECE");
+            Transform t = this.gameObject.transform;
+            t.DOPause();
+            t.DOMove(new Vector3(this.transform.position.x, 1, this.transform.position.z), .5f);
+            t.DOComplete();
+            t.DOMove(new Vector3(square.gameObject.transform.position.x, this.transform.position.y, square.gameObject.transform.position.z), .5f);
+            t.DOComplete();
 
-        isSet = true;
-        setLastPieceLocation(curx, cury);
-        setPieceLocation(x, y);
-        //Movement
-        square.piece = this;
-        curSquare = square;
-        //Debug.Log(p.color.ToString() + p.piece.ToString() + " to " + x.ToString() + y);
-        last = square.gameObject;
+        if (isSet) { firstMove = false; } else { isSet = true; }
+            
+            setLastPieceLocation(curx, cury);
+            setPieceLocation(x, y);
+            //Movement
+            square.piece = this;
+            curSquare = square;
+            //Debug.Log(p.color.ToString() + p.piece.ToString() + " to " + x.ToString() + y);
+            last = square.gameObject;
 
-        //if not taking another piece
-        ChessMove cm = new ChessMove(this);
-        //Adding  possible moves list
- 
-       // createRookMoves();
-        //printMovesList();
-        gm.moveHistory.Add(cm);
-        gm.moveHistory[gm.moveHistory.Count - 1].printMove();
-        //moves.Clear();
-        createPieceMoves(piece);
+            //if not taking another piece
+            ChessMove cm = new ChessMove(this);
+            //Adding  possible moves list
+
+            // createRookMoves();
+            //printMovesList();
+            gm.moveHistory.Add(cm);
+            gm.moveHistory[gm.moveHistory.Count - 1].printMove();
+            //moves.Clear();
+            createPieceMoves(piece);
     }
 
 
@@ -144,15 +146,14 @@ public class PieceMove : MonoBehaviour
     {
         //1 pawn, 2 rook, 3 knight, 4 bishop, 5 queen, 6 king, 
         //Color: 1 Black, 2 White, 3 Green, 4 Blue, 5 Red, 6 Yellow
-        
+
+        moves.Clear();
         if (piece == 6)
         { //King
-            moves.Clear();
             createKingMoves();
         }
         else if (piece == 2)
         { //Rook
-            
             createRookMoves();
         }
         else {
