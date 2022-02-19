@@ -15,11 +15,11 @@ C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-56469
+64716
 Successfully changed project path to: C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess
 C:/Users/MaxBo/OneDrive/Documents/GitHub/WizardChess2/Wizard Chess
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 55.27 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 45.70 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2020.2.0b2 (90b2443a8df1)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/Resources/UnitySubsystems
@@ -35,70 +35,59 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56072
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56600
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001920 seconds.
+Registered in 0.001853 seconds.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 37.44 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 34.42 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.208 seconds
+- Completed reload, in  1.045 seconds
 Registering precompiled user dll's ...
-Registered in 0.093170 seconds.
+Registered in 0.079911 seconds.
 Platform modules already initialized, skipping
 Begin MonoManager ReloadAssembly
 Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.50 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.52 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  0.910 seconds
+- Completed reload, in  0.793 seconds
 Platform modules already initialized, skipping
 ========================================================================
 Worker process is ready to serve import requests
-Launched and connected shader compiler UnityShaderCompiler.exe after 0.04 seconds
-Refreshing native plugins compatible for Editor in 0.62 ms, found 0 plugins.
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.03 seconds
+Refreshing native plugins compatible for Editor in 0.43 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 1676 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 96.0 MB.
-System memory in use after: 94.1 MB.
+System memory in use before: 96.1 MB.
+System memory in use after: 94.2 MB.
 
 Unloading 109 unused Assets to reduce memory usage. Loaded Objects now: 2051.
-Total: 3.841800 ms (FindLiveObjects: 0.442200 ms CreateObjectMapping: 0.125900 ms MarkObjects: 1.804100 ms  DeleteObjects: 1.468100 ms)
+Total: 3.145900 ms (FindLiveObjects: 0.319900 ms CreateObjectMapping: 0.081600 ms MarkObjects: 1.617600 ms  DeleteObjects: 1.125500 ms)
 
 ========================================================================
 Received Import Request.
-  path: Assets/Scripts/Square.cs
-  artifactKey: Guid(9e1c6a2c8d5f4b84fbc07e8777e91239) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/Square.cs using Guid(9e1c6a2c8d5f4b84fbc07e8777e91239) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bf3a3f977dc544e53d57b6d5bc85ba1e') in 0.048403 seconds
-  Import took 0.052080 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000293 seconds.
   path: Assets/Scripts/PieceMove.cs
   artifactKey: Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6ddfa90eb9a1e3766d292ecf8e468300') in 0.008936 seconds
-  Import took 0.012782 seconds .
+Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '96e8208db515afaa77ae9970b69f6e60') in 0.073877 seconds
+  Import took 0.076805 seconds .
 
 ========================================================================
-Received Prepare
-Refreshing native plugins compatible for Editor in 10.99 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 109 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 65.3 MB.
-System memory in use after: 63.4 MB.
-
-Unloading 108 unused Assets to reduce memory usage. Loaded Objects now: 2051.
-Total: 3.289500 ms (FindLiveObjects: 0.390000 ms CreateObjectMapping: 0.132300 ms MarkObjects: 1.553000 ms  DeleteObjects: 1.212500 ms)
+Received Import Request.
+  Time since last request: 0.000357 seconds.
+  path: Assets/Scenes/Board.unity
+  artifactKey: Guid(0e7593976f562ba428a7ee0c36355788) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/Board.unity using Guid(0e7593976f562ba428a7ee0c36355788) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '82bd73e9f47d7349683925b9c674b4fb') in 0.017833 seconds
+  Import took 0.020931 seconds .
 
 ========================================================================
 Received Prepare
@@ -106,46 +95,101 @@ Reloading mono domain
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001736 seconds.
+Registered in 0.002645 seconds.
 Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 42.71 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 43.19 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  0.945 seconds
+- Completed reload, in  0.849 seconds
 Registering precompiled user dll's ...
-Registered in 0.084381 seconds.
+Registered in 0.078664 seconds.
 Platform modules already initialized, skipping
 Begin MonoManager ReloadAssembly
 Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.49 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.47 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  0.910 seconds
+- Completed reload, in  0.794 seconds
 Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.49 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.45 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 65.6 MB.
+System memory in use after: 63.7 MB.
+
+Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2055.
+Total: 3.245100 ms (FindLiveObjects: 0.531000 ms CreateObjectMapping: 0.099900 ms MarkObjects: 1.448100 ms  DeleteObjects: 1.164800 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 303.765245 seconds.
+  path: Assets/Scripts/PieceMove.cs
+  artifactKey: Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '092521f41f15b98be760d0bdb30b4a28') in 0.002879 seconds
+  Import took 0.005709 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 14.948209 seconds.
+  path: Assets/Scripts/PrintUtils.cs
+  artifactKey: Guid(e7f263a8edf128f41953dd3bfeba0c70) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/PrintUtils.cs using Guid(e7f263a8edf128f41953dd3bfeba0c70) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f0b8df40917f30be5cd80040497288a3') in 0.007120 seconds
+  Import took 0.010552 seconds .
+
+========================================================================
+Received Prepare
+Reloading mono domain
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.001716 seconds.
+Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 41.06 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.916 seconds
+Registering precompiled user dll's ...
+Registered in 0.080754 seconds.
+Platform modules already initialized, skipping
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.58 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.850 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.44 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 113 Unused Serialized files (Serialized files now loaded: 0)
 System memory in use before: 65.9 MB.
 System memory in use after: 64.0 MB.
 
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2055.
-Total: 3.352600 ms (FindLiveObjects: 0.359800 ms CreateObjectMapping: 0.086600 ms MarkObjects: 1.726000 ms  DeleteObjects: 1.178900 ms)
+Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2060.
+Total: 3.380700 ms (FindLiveObjects: 0.338900 ms CreateObjectMapping: 0.084300 ms MarkObjects: 1.717900 ms  DeleteObjects: 1.238400 ms)
 
 ========================================================================
 Received Import Request.
-  Time since last request: 285.663336 seconds.
-  path: Assets/Scripts/PieceMove.cs
-  artifactKey: Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '34505927d874b5785cf26490f654d7b6') in 0.004161 seconds
-  Import took 0.007578 seconds .
+  Time since last request: 1043.650829 seconds.
+  path: Assets/Scripts/PrintUtils.cs
+  artifactKey: Guid(e7f263a8edf128f41953dd3bfeba0c70) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/PrintUtils.cs using Guid(e7f263a8edf128f41953dd3bfeba0c70) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f519174f25f976db47fed64979b30dc4') in 0.004206 seconds
+  Import took 0.007868 seconds .
 
 ========================================================================
 Received Prepare
@@ -153,409 +197,18 @@ Reloading mono domain
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001780 seconds.
+Registered in 0.001738 seconds.
 Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 48.69 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 40.36 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.041 seconds
+- Completed reload, in  0.950 seconds
 Registering precompiled user dll's ...
-Registered in 0.085950 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.51 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  0.951 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.51 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 66.1 MB.
-System memory in use after: 64.2 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2059.
-Total: 3.715500 ms (FindLiveObjects: 0.472300 ms CreateObjectMapping: 0.125200 ms MarkObjects: 1.813600 ms  DeleteObjects: 1.303200 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002103 seconds.
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 53.62 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.077 seconds
-Registering precompiled user dll's ...
-Registered in 0.087120 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.43 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  0.960 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.53 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 66.4 MB.
-System memory in use after: 64.6 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2063.
-Total: 3.314800 ms (FindLiveObjects: 0.347300 ms CreateObjectMapping: 0.084400 ms MarkObjects: 1.729200 ms  DeleteObjects: 1.153100 ms)
-
-========================================================================
-Received Import Request.
-  Time since last request: 28.294678 seconds.
-  path: Assets/Scripts/PieceMove.cs
-  artifactKey: Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2fda94c311f419c32560e9dcc8b39b05') in 0.003744 seconds
-  Import took 0.006658 seconds .
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002004 seconds.
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 48.82 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.217 seconds
-Registering precompiled user dll's ...
-Registered in 0.096370 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.44 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.141 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.47 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 66.7 MB.
-System memory in use after: 64.8 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2067.
-Total: 4.034300 ms (FindLiveObjects: 0.451900 ms CreateObjectMapping: 0.118400 ms MarkObjects: 2.186000 ms  DeleteObjects: 1.276700 ms)
-
-========================================================================
-Received Import Request.
-  Time since last request: 186.198393 seconds.
-  path: Assets/Scripts/PieceMove.cs
-  artifactKey: Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ce85d39588e8d5c173b2bd98034881f6') in 0.003767 seconds
-  Import took 0.006652 seconds .
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001946 seconds.
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 40.52 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.112 seconds
-Registering precompiled user dll's ...
-Registered in 0.103999 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.50 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.226 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.49 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 67.0 MB.
-System memory in use after: 65.1 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2071.
-Total: 3.453000 ms (FindLiveObjects: 0.343000 ms CreateObjectMapping: 0.072300 ms MarkObjects: 1.601500 ms  DeleteObjects: 1.434700 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001816 seconds.
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 48.43 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.285 seconds
-Registering precompiled user dll's ...
-Registered in 0.087046 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.52 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.325 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.61 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 67.2 MB.
-System memory in use after: 65.3 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2075.
-Total: 7.596900 ms (FindLiveObjects: 1.184600 ms CreateObjectMapping: 0.278700 ms MarkObjects: 4.123400 ms  DeleteObjects: 2.004600 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002605 seconds.
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 54.46 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.337 seconds
-Registering precompiled user dll's ...
-Registered in 0.079221 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.48 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.280 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.52 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 66.5 MB.
-System memory in use after: 64.6 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2079.
-Total: 2.947300 ms (FindLiveObjects: 0.325000 ms CreateObjectMapping: 0.074600 ms MarkObjects: 1.331700 ms  DeleteObjects: 1.215000 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002202 seconds.
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 52.67 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.411 seconds
-Registering precompiled user dll's ...
-Registered in 0.091719 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.50 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.387 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.44 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 66.8 MB.
-System memory in use after: 64.9 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2083.
-Total: 4.718500 ms (FindLiveObjects: 0.520600 ms CreateObjectMapping: 0.181400 ms MarkObjects: 2.262300 ms  DeleteObjects: 1.752700 ms)
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002077 seconds.
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 45.92 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.397 seconds
-Registering precompiled user dll's ...
-Registered in 0.091532 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.51 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.387 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.44 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 67.1 MB.
-System memory in use after: 65.2 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2087.
-Total: 3.177100 ms (FindLiveObjects: 0.310300 ms CreateObjectMapping: 0.072800 ms MarkObjects: 1.622200 ms  DeleteObjects: 1.171000 ms)
-
-========================================================================
-Received Import Request.
-  Time since last request: 941.639732 seconds.
-  path: Assets/Scripts/PieceMove.cs
-  artifactKey: Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4e7f00fd1c25a6b546216d4fa1610f4c') in 0.004866 seconds
-  Import took 0.007923 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.001788 seconds.
-  path: Assets/Scripts/PieceMove.cs
-  artifactKey: Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4e7f00fd1c25a6b546216d4fa1610f4c') in 0.003667 seconds
-  Import took 0.008335 seconds .
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001761 seconds.
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 53.58 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.476 seconds
-Registering precompiled user dll's ...
-Registered in 0.096481 seconds.
-Platform modules already initialized, skipping
-Begin MonoManager ReloadAssembly
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.44 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.360 seconds
-Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.44 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 67.2 MB.
-System memory in use after: 65.3 MB.
-
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2091.
-Total: 3.230000 ms (FindLiveObjects: 0.325800 ms CreateObjectMapping: 0.075300 ms MarkObjects: 1.612600 ms  DeleteObjects: 1.215700 ms)
-
-========================================================================
-Received Import Request.
-  Time since last request: 491.202918 seconds.
-  path: Assets/Scripts/GameMaster.cs
-  artifactKey: Guid(48504f270e216d843a053f3f52ba9ce7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/GameMaster.cs using Guid(48504f270e216d843a053f3f52ba9ce7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '91fd616fa0f539c5e8060555cbe6f385') in 0.007847 seconds
-  Import took 0.010735 seconds .
-
-========================================================================
-Received Prepare
-Reloading mono domain
-Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002119 seconds.
-Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 60.58 ms, found 0 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.549 seconds
-Registering precompiled user dll's ...
-Registered in 0.085482 seconds.
+Registered in 0.077782 seconds.
 Platform modules already initialized, skipping
 Begin MonoManager ReloadAssembly
 Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
@@ -566,24 +219,16 @@ Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.537 seconds
+- Completed reload, in  0.921 seconds
 Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.54 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.44 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 66.6 MB.
-System memory in use after: 64.7 MB.
+System memory in use before: 66.1 MB.
+System memory in use after: 64.2 MB.
 
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2095.
-Total: 4.374200 ms (FindLiveObjects: 0.457600 ms CreateObjectMapping: 0.120900 ms MarkObjects: 2.138500 ms  DeleteObjects: 1.656100 ms)
-
-========================================================================
-Received Import Request.
-  Time since last request: 188.627227 seconds.
-  path: Assets/Scripts/PieceMove.cs
-  artifactKey: Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'edd2c00fd366bd34f4a5ef5a0d7887c5') in 0.004161 seconds
-  Import took 0.007793 seconds .
+Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2064.
+Total: 3.781600 ms (FindLiveObjects: 0.450200 ms CreateObjectMapping: 0.129800 ms MarkObjects: 1.598200 ms  DeleteObjects: 1.602100 ms)
 
 ========================================================================
 Received Prepare
@@ -591,18 +236,18 @@ Reloading mono domain
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001725 seconds.
+Registered in 0.001853 seconds.
 Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 51.68 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 44.57 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.493 seconds
+- Completed reload, in  1.007 seconds
 Registering precompiled user dll's ...
-Registered in 0.089946 seconds.
+Registered in 0.079050 seconds.
 Platform modules already initialized, skipping
 Begin MonoManager ReloadAssembly
 Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
@@ -613,15 +258,101 @@ Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.523 seconds
+- Completed reload, in  0.949 seconds
 Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.48 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.45 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 66.9 MB.
-System memory in use after: 65.0 MB.
+System memory in use before: 66.5 MB.
+System memory in use after: 64.6 MB.
 
-Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2099.
-Total: 3.177600 ms (FindLiveObjects: 0.335500 ms CreateObjectMapping: 0.076000 ms MarkObjects: 1.574300 ms  DeleteObjects: 1.190900 ms)
+Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2068.
+Total: 3.319500 ms (FindLiveObjects: 0.510500 ms CreateObjectMapping: 0.092100 ms MarkObjects: 1.506200 ms  DeleteObjects: 1.209300 ms)
+
+========================================================================
+Received Prepare
+Reloading mono domain
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.001758 seconds.
+Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 39.65 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.042 seconds
+Registering precompiled user dll's ...
+Registered in 0.078480 seconds.
+Platform modules already initialized, skipping
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.43 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.031 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.45 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 66.7 MB.
+System memory in use after: 64.8 MB.
+
+Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2072.
+Total: 3.499500 ms (FindLiveObjects: 0.509400 ms CreateObjectMapping: 0.067900 ms MarkObjects: 1.645000 ms  DeleteObjects: 1.276100 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 640.782560 seconds.
+  path: Assets/Scripts/PieceMove.cs
+  artifactKey: Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/PieceMove.cs using Guid(6b6c16ebcddfb4c4f9485f42c50486b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd8f020fa29665999fe1b11e43c7033d1') in 0.003053 seconds
+  Import took 0.006163 seconds .
+
+========================================================================
+Received Prepare
+Reloading mono domain
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0b2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.001803 seconds.
+Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 39.90 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.136 seconds
+Registering precompiled user dll's ...
+Registered in 0.086264 seconds.
+Platform modules already initialized, skipping
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory doesn't match image C:\Users\MaxBo\OneDrive\Documents\GitHub\WizardChess2\Wizard Chess\Library\PackageCache\com.unity.ext.nunit@1.0.0\net35\unity-custom\nunit.framework.dll
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.52 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.128 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.50 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 112 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 67.0 MB.
+System memory in use after: 65.1 MB.
+
+Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2076.
+Total: 3.078400 ms (FindLiveObjects: 0.336200 ms CreateObjectMapping: 0.078400 ms MarkObjects: 1.459900 ms  DeleteObjects: 1.202500 ms)
 
 AssetImportWorkerClient::OnTransportError - code=2 error=End of file

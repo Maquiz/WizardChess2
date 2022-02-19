@@ -303,10 +303,10 @@ public class PieceMove : MonoBehaviour
     {
         int i = cury;
   
-            while (isCoordsInBounds(i))
+            while (isCoordsInBounds(i + 1))
             {
                 
-                Square curSquare = getSquare(curx, i);
+                Square curSquare = getSquare(curx, i +1);
                 if (curSquare.taken)
                 {
                     if (color != curSquare.piece.color)
@@ -322,9 +322,9 @@ public class PieceMove : MonoBehaviour
             }
 
         i = cury;
-        while (isCoordsInBounds(i)) 
+        while (isCoordsInBounds(i -1)) 
         {
-            Square curSquare = getSquare(curx, i);
+            Square curSquare = getSquare(curx, i -1);
             if (curSquare.taken)
             {
                 if (color != curSquare.piece.color)
@@ -339,9 +339,9 @@ public class PieceMove : MonoBehaviour
         }
 
         i = curx;
-        while (isCoordsInBounds(i))
+        while (isCoordsInBounds(i -1 ))
         {
-            Square curSquare = getSquare(i, cury);
+            Square curSquare = getSquare(i -1 , cury);
             if (curSquare.taken)
             {
                 if (color != curSquare.piece.color)
@@ -356,9 +356,9 @@ public class PieceMove : MonoBehaviour
         }
 
         i = curx;
-        while (isCoordsInBounds(i))//!getSquare(i, cury).taken || 
+        while (isCoordsInBounds(i + 1))//!getSquare(i, cury).taken || 
         {
-            Square curSquare = getSquare(i, cury);
+            Square curSquare = getSquare(i +1, cury);
             if (curSquare.taken)
             {
                 if (color != curSquare.piece.color)
