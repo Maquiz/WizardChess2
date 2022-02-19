@@ -149,11 +149,23 @@ public class PieceMove : MonoBehaviour
 
         moves.Clear();
         if (piece == 6)
-        { //King
+        { 
             createKingMoves();
         }
+        else if (piece == 5)
+        { //Queen
+            createQueenMoves();
+        }
+        else if (piece == 4)
+        { 
+            createBishopMoves();
+        }
+        else if (piece == 3)
+        { 
+            createKnightMoves();
+        }
         else if (piece == 2)
-        { //Rook
+        { 
             createRookMoves();
         }
         else {
@@ -297,6 +309,99 @@ public class PieceMove : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void createQueenMoves() {
+        createRookMoves();
+        createBishopMoves();
+    }
+
+    public void createBishopMoves() {
+        int i = curx;
+        int j = cury;
+
+        Debug.Log("bishop check1: " + i + " " + j);
+        while (isCoordsInBounds(i + 1) && isCoordsInBounds(j+1))
+        {
+
+            Square curSquare = getSquare(i+1, j + 1);
+            if (curSquare.taken)
+            {
+                if (color != curSquare.piece.color)
+                {
+                    moves.Add(curSquare);
+                    break;
+                }
+                break;
+            }
+            moves.Add(curSquare);
+            i++;
+            j++;
+
+        }
+
+        i = curx;
+        j = cury;
+        Debug.Log("bishop check2: " + i + " " + j);
+        while (isCoordsInBounds(i - 1) && isCoordsInBounds(j-1))
+        {
+            Square curSquare = getSquare(i-1, j - 1);
+            if (curSquare.taken)
+            {
+                if (color != curSquare.piece.color)
+                {
+                    moves.Add(curSquare);
+                    break;
+                }
+                break;
+            }
+            moves.Add(curSquare);
+            i--;
+            j--;
+        }
+
+        i = curx;
+        j = cury;
+        Debug.Log("bishop check3: " + i + " " + j);
+        while (isCoordsInBounds(i - 1) && isCoordsInBounds(j+1))
+        {
+            Square curSquare = getSquare(i - 1, j+1);
+            if (curSquare.taken)
+            {
+                if (color != curSquare.piece.color)
+                {
+                    moves.Add(curSquare);
+                    break;
+                }
+                break;
+            }
+            moves.Add(curSquare);
+            i--;
+            j++;
+        }
+
+        i = curx;
+        j = cury;
+        Debug.Log("bishop check4: " + i + " " + j);
+        while (isCoordsInBounds(i + 1) && isCoordsInBounds(j-1))
+        {
+            Square curSquare = getSquare(i + 1, j-1);
+            if (curSquare.taken)
+            {
+                if (color != curSquare.piece.color)
+                {
+                    moves.Add(curSquare);
+                    break;
+                }
+                break;
+            }
+            moves.Add(curSquare);
+            i++;
+            j--;
+        }
+    }
+
+    public void createKnightMoves() { 
     }
 
     public void createRookMoves()
