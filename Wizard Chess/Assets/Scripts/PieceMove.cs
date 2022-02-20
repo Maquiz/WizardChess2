@@ -175,127 +175,11 @@ public class PieceMove : MonoBehaviour
 
     public void createKingMoves()
     {
+        (int x, int y) [] kingSquares = new[] {(0, -1), (0, 1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, 1), (-1, -1)};
         //No Check checking
-        if (isCoordsInBounds(cury - 1))
-        {
-            Debug.Log("King Move");
-            Square curSquareChecker = getSquare(curx, (cury - 1));
-            if (curSquareChecker != null && curSquareChecker.taken)
-            {
-                Debug.Log("King Not Null");
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-            else {
-                moves.Add(curSquareChecker);
-            }
-            
-
-            if (isCoordsInBounds(curx - 1)) {
-                 curSquareChecker = getSquare(curx - 1, cury - 1);
-                if (curSquareChecker != null && curSquareChecker.taken)
-                {
-                    if (color != curSquareChecker.piece.color)
-                    {
-                        moves.Add(curSquareChecker);
-                    }
-                }
-                else
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-
-            if (isCoordsInBounds(curx + 1))
-            {
-                 curSquareChecker = getSquare(curx + 1, cury - 1);
-                if (curSquareChecker != null && curSquareChecker.taken)
-                {
-                    if (color != curSquareChecker.piece.color)
-                    {
-                        moves.Add(curSquareChecker);
-                    }
-                }
-                else
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-
-        }
-
-        if (isCoordsInBounds(cury + 1))
-        {
-            Square curSquareChecker = getSquare(curx, cury + 1);
-            if (curSquareChecker != null && curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-            else
-            {
-                moves.Add(curSquareChecker);
-            }
-
-            if (isCoordsInBounds(curx - 1))
-            {
-                 curSquareChecker = getSquare(curx - 1, cury + 1);
-                if (curSquareChecker != null && curSquareChecker.taken)
-                {
-                    if (color != curSquareChecker.piece.color)
-                    {
-                        moves.Add(curSquareChecker);
-                    }
-                }
-                else
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-
-            if (isCoordsInBounds(curx + 1))
-            {
-                 curSquareChecker = getSquare(curx + 1, cury + 1);
-                if (curSquareChecker != null && curSquareChecker.taken)
-                {
-                    if (color != curSquareChecker.piece.color)
-                    {
-                        moves.Add(curSquareChecker);
-                    }
-                }
-                else
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-        }
-
-        if (isCoordsInBounds(curx))
-        {
-            Square curSquareChecker = getSquare(curx, cury);
-            if (isCoordsInBounds(curx - 1))
-            {
-                curSquareChecker = getSquare(curx - 1, cury);
-                if (curSquareChecker != null && curSquareChecker.taken)
-                {
-                    if (color != curSquareChecker.piece.color)
-                    {
-                        moves.Add(curSquareChecker);
-                    }
-                }
-                else
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-
-            if (isCoordsInBounds(curx + 1))
-            {
-                curSquareChecker = getSquare(curx + 1, cury);
+        for (int index = 0; index< kingSquares.Length; index++) {
+            if (isCoordsInBounds(curx + kingSquares[index].x) && isCoordsInBounds(cury + kingSquares[index].y)) {
+                Square curSquareChecker = getSquare(curx + kingSquares[index].x, cury + kingSquares[index].y);
                 if (curSquareChecker != null && curSquareChecker.taken)
                 {
                     if (color != curSquareChecker.piece.color)
@@ -317,225 +201,14 @@ public class PieceMove : MonoBehaviour
     }
 
     public void createBishopMoves() {
-        int i = curx;
-        int j = cury;
+        (int x, int y)[] bishopSquares = new[] { (1, 1), (-1, -1), (1, -1), (-1, 1) };
 
-        while (isCoordsInBounds(i + 1) && isCoordsInBounds(j+1))
-        {
-
-            Square curSquareChecker = getSquare(i+1, j + 1);
-            if (curSquareChecker.taken)
+        for (int index = 0; index < bishopSquares.Length; index++) {
+            int i = curx;
+            int j = cury;
+            while (isCoordsInBounds(i + bishopSquares[index].x) && isCoordsInBounds(j + bishopSquares[index].y))
             {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                    break;
-                }
-                break;
-            }
-            moves.Add(curSquareChecker);
-            i++;
-            j++;
-
-        }
-
-        i = curx;
-        j = cury;
-        while (isCoordsInBounds(i - 1) && isCoordsInBounds(j-1))
-        {
-            Square curSquareChecker = getSquare(i-1, j - 1);
-            if (curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                    break;
-                }
-                break;
-            }
-            moves.Add(curSquareChecker);
-            i--;
-            j--;
-        }
-
-        i = curx;
-        j = cury;
-        while (isCoordsInBounds(i - 1) && isCoordsInBounds(j+1))
-        {
-            Square curSquareChecker = getSquare(i - 1, j+1);
-            if (curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                    break;
-                }
-                break;
-            }
-            moves.Add(curSquareChecker);
-            i--;
-            j++;
-        }
-
-        i = curx;
-        j = cury;
-        while (isCoordsInBounds(i + 1) && isCoordsInBounds(j-1))
-        {
-            Square curSquareChecker = getSquare(i + 1, j-1);
-            if (curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                    break;
-                }
-                break;
-            }
-            moves.Add(curSquareChecker);
-            i++;
-            j--;
-        }
-    }
-
-    public void createKnightMoves()
-    {
-        if (isCoordsInBounds(curx + 1) && isCoordsInBounds(cury + 2))
-        {
-            Square curSquareChecker = getSquare(curx + 1, cury + 2);
-            if (curSquareChecker != null && curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-            else
-            {
-                moves.Add(curSquareChecker);
-            }
-        }
-
-        if (isCoordsInBounds(curx + 2) && isCoordsInBounds(cury + 1))
-        {
-            Square curSquareChecker = getSquare(curx + 2, cury + 1);
-            if (curSquareChecker != null && curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-            else
-            {
-                moves.Add(curSquareChecker);
-            }
-        }
-
-        if (isCoordsInBounds(curx - 1) && isCoordsInBounds(cury + 2))
-        {
-            Square curSquareChecker = getSquare(curx - 1, cury + 2);
-            if (curSquareChecker != null && curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-            else
-            {
-                moves.Add(curSquareChecker);
-            }
-        }
-
-        if (isCoordsInBounds(curx - 2) && isCoordsInBounds(cury + 1))
-        {
-            Square curSquareChecker = getSquare(curx - 2, cury + 1);
-            if (curSquareChecker != null && curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-            else
-            {
-                moves.Add(curSquareChecker);
-            }
-        }
-
-        if (isCoordsInBounds(curx + 1) && isCoordsInBounds(cury - 2))
-        {
-            Square curSquareChecker = getSquare(curx + 1, cury - 2);
-            if (curSquareChecker != null && curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-            else
-            {
-                moves.Add(curSquareChecker);
-            }
-        }
-
-        if (isCoordsInBounds(curx + 2) && isCoordsInBounds(cury - 1))
-        {
-            Square curSquareChecker = getSquare(curx + 2, cury - 1);
-            if (curSquareChecker != null && curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-            else
-            {
-                moves.Add(curSquareChecker);
-            }
-        }
-        if (isCoordsInBounds(curx - 1) && isCoordsInBounds(cury - 2))
-        {
-            Square curSquareChecker = getSquare(curx - 1, cury - 2);
-            if (curSquareChecker != null && curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-            else
-            {
-                moves.Add(curSquareChecker);
-            }
-        }
-
-        if (isCoordsInBounds(curx - 2) && isCoordsInBounds(cury - 1))
-        {
-            Square curSquareChecker = getSquare(curx - 2, cury - 1);
-            if (curSquareChecker != null && curSquareChecker.taken)
-            {
-                if (color != curSquareChecker.piece.color)
-                {
-                    moves.Add(curSquareChecker);
-                }
-            }
-            else
-            {
-                moves.Add(curSquareChecker);
-            }
-        }
-
-    }
-
-    public void createRookMoves()
-    {
-        int i = cury;
-  
-            while (isCoordsInBounds(i + 1))
-            {
-                
-                Square curSquareChecker = getSquare(curx, i +1);
+                Square curSquareChecker = getSquare(i + bishopSquares[index].x, j + bishopSquares[index].y);
                 if (curSquareChecker.taken)
                 {
                     if (color != curSquareChecker.piece.color)
@@ -546,14 +219,59 @@ public class PieceMove : MonoBehaviour
                     break;
                 }
                 moves.Add(curSquareChecker);
-                i++;
-
+                i += bishopSquares[index].x;
+                j += bishopSquares[index].y;
             }
+        }
+    }
+
+    public void createKnightMoves()
+    {
+        (int x, int y)[] knightSquares = new[] { (1, 2), (2, 1), (-1, 2), (-2, 1), (1, -2), (2, -1), (-1, -2), (-2, -1) };
+        for (int index = 0; index < knightSquares.Length; index++) {
+            if (isCoordsInBounds(curx + knightSquares[index].x) && isCoordsInBounds(cury + knightSquares[index].y))
+            {
+                Square curSquareChecker = getSquare(curx + knightSquares[index].x, cury + knightSquares[index].y);
+                if (curSquareChecker != null && curSquareChecker.taken)
+                {
+                    if (color != curSquareChecker.piece.color)
+                    {
+                        moves.Add(curSquareChecker);
+                    }
+                }
+                else
+                {
+                    moves.Add(curSquareChecker);
+                }
+            }
+        }
+    }
+
+    public void createRookMoves()
+    {
+        int i = cury;
+        while (isCoordsInBounds(i + 1))
+        {
+
+            Square curSquareChecker = getSquare(curx, i + 1);
+            if (curSquareChecker.taken)
+            {
+                if (color != curSquareChecker.piece.color)
+                {
+                    moves.Add(curSquareChecker);
+                    break;
+                }
+                break;
+            }
+            moves.Add(curSquareChecker);
+            i++;
+
+        }
 
         i = cury;
-        while (isCoordsInBounds(i -1)) 
+        while (isCoordsInBounds(i - 1))
         {
-            Square curSquareChecker = getSquare(curx, i -1);
+            Square curSquareChecker = getSquare(curx, i - 1);
             if (curSquareChecker.taken)
             {
                 if (color != curSquareChecker.piece.color)
@@ -568,9 +286,9 @@ public class PieceMove : MonoBehaviour
         }
 
         i = curx;
-        while (isCoordsInBounds(i -1 ))
+        while (isCoordsInBounds(i - 1))
         {
-            Square curSquareChecker = getSquare(i -1 , cury);
+            Square curSquareChecker = getSquare(i - 1, cury);
             if (curSquareChecker.taken)
             {
                 if (color != curSquareChecker.piece.color)
@@ -587,7 +305,7 @@ public class PieceMove : MonoBehaviour
         i = curx;
         while (isCoordsInBounds(i + 1))//!getSquare(i, cury).taken || 
         {
-            Square curSquareChecker = getSquare(i +1, cury);
+            Square curSquareChecker = getSquare(i + 1, cury);
             if (curSquareChecker.taken)
             {
                 if (color != curSquareChecker.piece.color)
@@ -603,14 +321,8 @@ public class PieceMove : MonoBehaviour
     }
 
     public void createPawnMoves() {
-        //if you havent moved can move twice, else can move once forward
-        //check forward direction
-        //can take at a diagonal forward
-        //if firstmove = true
         //black color = 1 moves -y
-
         //white color = 2 moves +y
-
         int direction = color == 2 ? -1 : 1; 
   
             if (isCoordsInBounds(cury + direction))
