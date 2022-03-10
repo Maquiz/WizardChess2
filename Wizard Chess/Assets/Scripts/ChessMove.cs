@@ -39,6 +39,10 @@ public class ChessMove {
 	}
 	//Readd saved data like locations to have a record readd getters and setters
 
+
+	//both squares
+	//piece that was taken and piece that was moved
+
 	//Constructor for ChessMove
 	public ChessMove (PieceMove pm) {
 		piece = pm;
@@ -55,7 +59,7 @@ public class ChessMove {
 		string output = "";
 
 		//regular Move
-		output += piece.printPieceName() + " Moves to " + piece.printCurSquare();
+		output += piece.printPieceName() + " Moves to " + piece.printSquare(piece.curx, piece.cury);
 
 		//Taken Move
 		if (isTaken) {
@@ -63,6 +67,6 @@ public class ChessMove {
 		}
 		//isQueened Move
 		//isCastled Move
-		//Debug.Log (output);
+		Debug.Log (output);
 	}
 }

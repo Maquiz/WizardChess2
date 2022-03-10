@@ -43,7 +43,7 @@ public class GameMaster : MonoBehaviour
     //Logic Vars
     public bool isPieceSelected;
     public PieceMove selectedPiece;
-    public List<ChessMove> moveHistory;
+    public Stack<ChessMove> moveHistory;
 
     //Instantiated objects
     public GameObject blackSquare;
@@ -58,7 +58,7 @@ public class GameMaster : MonoBehaviour
         boardPos = new GameObject[boardSize, boardSize];
         boardSize = 8;
         createBoard(boardSize);
-        moveHistory = new List<ChessMove>();
+        moveHistory = new Stack<ChessMove>();
         lr = this.gameObject.AddComponent<LineRenderer>();
         swapUIIcon(MouseUI.START);
     }
@@ -68,7 +68,6 @@ public class GameMaster : MonoBehaviour
     void Update()
     {
         //All one player how do we turn this into multiplayer?
-
         //Maybe these controls should be in a Player object instead of game master
         //Checking the mouses click down position should only be accessable on a players turn
         RaycastHit hit;
@@ -113,7 +112,6 @@ public class GameMaster : MonoBehaviour
                     }
 
                     //Move to location & sent piece to grave yard ?  graveyard a physical location where all pieces line up in order they die or in order they are placed on board
-
                     //if it is 
                     else if (hit.collider.gameObject.tag == "Board")
                     {
