@@ -2,6 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// Game state for tracking win/draw conditions
+/// </summary>
+public enum GameState
+{
+    Playing,
+    WhiteInCheck,
+    BlackInCheck,
+    WhiteWins,      // Black is checkmated
+    BlackWins,      // White is checkmated
+    Stalemate,
+    Draw
+}
+
 [System.Serializable]
 public class GameMaster : MonoBehaviour
 {
@@ -45,6 +59,11 @@ public class GameMaster : MonoBehaviour
     public PieceMove selectedPiece;
     public Stack<ChessMove> moveHistory;
 
+    // Chess rules state
+    public BoardState boardState;
+    public GameState currentGameState = GameState.Playing;
+    public Square enPassantTarget = null;  // Square that can be captured en passant
+
     //Instantiated objects
     public GameObject blackSquare;
     public GameObject whiteSquare;
@@ -61,12 +80,61 @@ public class GameMaster : MonoBehaviour
         moveHistory = new Stack<ChessMove>();
         lr = this.gameObject.AddComponent<LineRenderer>();
         swapUIIcon(MouseUI.START);
+
+        // Initialize board state manager
+        boardState = new BoardState();
+        currentGameState = GameState.Playing;
+    }
+
+    /// <summary>
+    /// Register a piece with the board state (called by pieces during initialization)
+    /// </summary>
+    public void RegisterPiece(PieceMove piece, int x, int y)
+    {
+        if (boardState != null)
+        {
+            boardState.SetPieceAt(x, y, piece);
+            boardState.RecalculateAttacks();
+        }
+    }
+
+    /// <summary>
+    /// Update board state after a move
+    /// </summary>
+    public void UpdateBoardState(PieceMove piece, int fromX, int fromY, int toX, int toY)
+    {
+        if (boardState != null)
+        {
+            boardState.MovePiece(fromX, fromY, toX, toY);
+            boardState.RecalculateAttacks();
+        }
+    }
+
+    /// <summary>
+    /// Remove a piece from board state (for captures)
+    /// </summary>
+    public void RemovePieceFromBoardState(int x, int y)
+    {
+        if (boardState != null)
+        {
+            boardState.RemovePiece(x, y);
+            boardState.RecalculateAttacks();
+        }
     }
 
 
     //Game LOOP
     void Update()
     {
+        // Don't allow moves if game is over
+        if (currentGameState == GameState.WhiteWins ||
+            currentGameState == GameState.BlackWins ||
+            currentGameState == GameState.Stalemate ||
+            currentGameState == GameState.Draw)
+        {
+            return;
+        }
+
         //All one player how do we turn this into multiplayer?
         //Maybe these controls should be in a Player object instead of game master
         //Checking the mouses click down position should only be accessable on a players turn
@@ -107,6 +175,7 @@ public class GameMaster : MonoBehaviour
                                 selectedPiece.movePiece(p.curx, p.cury, p.curSquare);
                                 currentMove = currentMove == 1 ? 2 : 1;
                                 deSelectPiece();
+                                EvaluateGameState();
                             }
                         }
                     }
@@ -128,6 +197,7 @@ public class GameMaster : MonoBehaviour
                                     selectedPiece.movePiece(s.piece.curx, s.piece.cury, s.piece.curSquare);
                                     currentMove = currentMove == 1 ? 2 : 1;
                                     deSelectPiece();
+                                    EvaluateGameState();
                                 }
                             }
 
@@ -140,6 +210,7 @@ public class GameMaster : MonoBehaviour
                                     selectedPiece.movePiece(s.x, s.y, s);
                                     currentMove = currentMove == 1 ? 2 : 1;
                                     deSelectPiece();
+                                    EvaluateGameState();
                                 }
                             }
                             else
@@ -323,6 +394,87 @@ public class GameMaster : MonoBehaviour
             canMoveUI.setTransformPosition(hiddenIsland);
             cantMoveUI.setTransformPosition(hiddenIsland);
             takeMoveUI.setTransformPosition(hiddenIsland);
+        }
+    }
+
+    // ========== Chess Rules - Check/Checkmate Detection ==========
+
+    /// <summary>
+    /// Evaluate game state after each move to detect check, checkmate, or stalemate.
+    /// </summary>
+    private void EvaluateGameState()
+    {
+        if (boardState == null) return;
+
+        int nextPlayer = currentMove;
+        bool inCheck = boardState.IsKingInCheck(nextPlayer);
+        bool hasLegalMoves = HasAnyLegalMoves(nextPlayer);
+
+        if (inCheck && !hasLegalMoves)
+        {
+            // Checkmate
+            currentGameState = (nextPlayer == ChessConstants.WHITE)
+                ? GameState.BlackWins
+                : GameState.WhiteWins;
+            OnGameOver();
+        }
+        else if (!inCheck && !hasLegalMoves)
+        {
+            // Stalemate
+            currentGameState = GameState.Stalemate;
+            OnGameOver();
+        }
+        else if (inCheck)
+        {
+            currentGameState = (nextPlayer == ChessConstants.WHITE)
+                ? GameState.WhiteInCheck
+                : GameState.BlackInCheck;
+            Debug.Log("CHECK! " + (nextPlayer == ChessConstants.WHITE ? "White" : "Black") + " king is in check.");
+        }
+        else
+        {
+            currentGameState = GameState.Playing;
+        }
+    }
+
+    /// <summary>
+    /// Check if a player has any legal moves available.
+    /// </summary>
+    private bool HasAnyLegalMoves(int color)
+    {
+        if (boardState == null) return true;
+
+        List<PieceMove> pieces = boardState.GetAllPieces(color);
+        foreach (PieceMove piece in pieces)
+        {
+            piece.createPieceMoves(piece.piece);
+            if (piece.moves.Count > 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Handle game over state.
+    /// </summary>
+    private void OnGameOver()
+    {
+        switch (currentGameState)
+        {
+            case GameState.WhiteWins:
+                Debug.Log("CHECKMATE! White wins the game.");
+                break;
+            case GameState.BlackWins:
+                Debug.Log("CHECKMATE! Black wins the game.");
+                break;
+            case GameState.Stalemate:
+                Debug.Log("STALEMATE! The game is a draw.");
+                break;
+            case GameState.Draw:
+                Debug.Log("DRAW! The game is a draw.");
+                break;
         }
     }
 }
