@@ -31,15 +31,14 @@ public class Square : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other) {
 		PieceMove p = other.GetComponent<PieceMove> ();
-		if (p.getIsSet()) {
+		if (!p.getIsSet()) {
+			// Initial piece placement only
 			p.setIntitialPiece(x, y, this.gameObject);
 			p.moves.Clear();
 			p.createPieceMoves(p.piece);
-		} else {
-			p.movePiece(x, y, this);
-			p.moves.Clear();
-			p.createPieceMoves(p.piece);
 		}
+		// Note: Regular moves are handled by GameMaster click handler
+		// Don't duplicate move logic here to avoid state corruption
 
 		/*
 		if (s.taken) {

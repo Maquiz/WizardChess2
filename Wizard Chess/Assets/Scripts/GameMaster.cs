@@ -137,7 +137,7 @@ public class GameMaster : MonoBehaviour
                                 //Move Piece to non occupied spot
                                 if (Input.GetMouseButtonDown(0))
                                 {
-                                    selectedPiece.movePiece(selectedPiece.lastx, selectedPiece.lasty, s);
+                                    selectedPiece.movePiece(s.x, s.y, s);
                                     currentMove = currentMove == 1 ? 2 : 1;
                                     deSelectPiece();
                                 }

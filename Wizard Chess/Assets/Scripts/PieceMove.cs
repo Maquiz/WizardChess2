@@ -76,7 +76,10 @@ public class PieceMove : MonoBehaviour
         setPieceLocation(x, y);
         setLastPieceLocation(x, y);
         curSquare = sq.GetComponent<Square>();
+        curSquare.piece = this;
+        curSquare.taken = true;
         last = sq;
+        isSet = true;
         //createRookMoves();
         //printMovesList();
         ChessMove cm = new ChessMove(this);
@@ -109,6 +112,7 @@ public class PieceMove : MonoBehaviour
             setPieceLocation(x, y);
             //Movement
             square.piece = this;
+            square.taken = true;
             curSquare = square;
             last = square.gameObject;
 
