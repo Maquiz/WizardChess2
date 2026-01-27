@@ -10,6 +10,7 @@ public class Square : MonoBehaviour {
 	public int x, y;
 	public bool showMove;
 	public GameObject showMoveSquare;
+	public SquareEffect activeEffect;
 	
 
 	//This should be a ascii calc so it can have a length of N char 0 - A ...

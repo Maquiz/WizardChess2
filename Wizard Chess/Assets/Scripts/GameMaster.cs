@@ -64,6 +64,12 @@ public class GameMaster : MonoBehaviour
     public GameState currentGameState = GameState.Playing;
     public Square enPassantTarget = null;  // Square that can be captured en passant
 
+    // Wizard chess systems
+    public SquareEffectManager squareEffectManager;
+    public AbilityExecutor abilityExecutor;
+    public int turnNumber = 0;
+    public bool isDraftPhase = false;
+
     //Instantiated objects
     public GameObject blackSquare;
     public GameObject whiteSquare;
@@ -84,6 +90,34 @@ public class GameMaster : MonoBehaviour
         // Initialize board state manager
         boardState = new BoardState();
         currentGameState = GameState.Playing;
+
+        // Initialize wizard chess systems
+        squareEffectManager = this.gameObject.AddComponent<SquareEffectManager>();
+        squareEffectManager.Init(this);
+        abilityExecutor = this.gameObject.AddComponent<AbilityExecutor>();
+        abilityExecutor.Init(this, squareEffectManager);
+
+        // Element setup: use deck system if configured by menu, else default Fire vs Earth
+        if (MatchConfig.useDeckSystem && MatchConfig.draftData != null)
+        {
+            DeckBasedSetup deckSetup = this.gameObject.AddComponent<DeckBasedSetup>();
+            deckSetup.Init(this, MatchConfig.draftData);
+        }
+        else
+        {
+            FireVsEarthSetup setup = this.gameObject.AddComponent<FireVsEarthSetup>();
+            setup.Init(this);
+        }
+
+        // Tooltip UI for mouse-over piece info
+        this.gameObject.AddComponent<PieceTooltipUI>();
+
+        // Ability mode visual indicator
+        this.gameObject.AddComponent<AbilityModeUI>();
+
+        // Check banner and game over UI
+        this.gameObject.AddComponent<CheckBannerUI>();
+        this.gameObject.AddComponent<GameOverUI>();
     }
 
     /// <summary>
@@ -126,7 +160,8 @@ public class GameMaster : MonoBehaviour
     //Game LOOP
     void Update()
     {
-        // Don't allow moves if game is over
+        // Don't allow moves if game is over or in draft phase
+        if (isDraftPhase) return;
         if (currentGameState == GameState.WhiteWins ||
             currentGameState == GameState.BlackWins ||
             currentGameState == GameState.Stalemate ||
@@ -135,11 +170,75 @@ public class GameMaster : MonoBehaviour
             return;
         }
 
-        //All one player how do we turn this into multiplayer?
-        //Maybe these controls should be in a Player object instead of game master
-        //Checking the mouses click down position should only be accessable on a players turn
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        // Handle ability mode
+        if (abilityExecutor != null && abilityExecutor.isInAbilityMode)
+        {
+            // Q or Right-click: cancel ability mode, return to normal move selection
+            if (Input.GetKeyDown(KeyCode.Q) || Input.GetMouseButtonDown(1))
+            {
+                abilityExecutor.ExitAbilityMode();
+                // Return to normal move mode (don't deselect the piece)
+                if (selectedPiece != null)
+                {
+                    selectedPiece.createPieceMoves(selectedPiece.piece);
+                    selectedPiece.showMoves = false;
+                    Debug.Log("[Ability] Cancelled. Back to normal moves.");
+                }
+                return;
+            }
+
+            // LineRenderer: draw from piece to cursor (same as normal mode)
+            setUpLine();
+            lr.SetPosition(1, Camera.main.ScreenToWorldPoint(
+                new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)));
+            lr.alignment = LineAlignment.View;
+
+            // Single raycast per frame for hover icons + click handling
+            if (Physics.Raycast(ray, out hit))
+            {
+                Square s = null;
+                if (hit.collider.gameObject.tag == "Board")
+                    s = hit.collider.gameObject.GetComponent<Square>();
+                else if (hit.collider.gameObject.tag == "Piece")
+                {
+                    PieceMove p = hit.collider.gameObject.GetComponent<PieceMove>();
+                    if (p != null) s = p.curSquare;
+                }
+
+                if (s != null && abilityExecutor.IsValidTarget(s.x, s.y))
+                {
+                    if (s.taken && s.piece != null && s.piece.color != currentMove)
+                        swapUIIcon(MouseUI.TAKEPIECE);
+                    else
+                        swapUIIcon(MouseUI.CANMOVE);
+
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        if (abilityExecutor.TryExecuteOnSquare(s.x, s.y))
+                        {
+                            deSelectPiece();
+                            EndTurn();
+                        }
+                    }
+                }
+                else
+                {
+                    swapUIIcon(MouseUI.CANTMOVE);
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        Debug.Log("[Ability] Invalid target. Click a highlighted square, or press Q / right-click to cancel.");
+                    }
+                }
+            }
+            else
+            {
+                swapUIIcon(MouseUI.CANTMOVE);
+            }
+            return;
+        }
 
         if (isPieceSelected)
         {
@@ -149,42 +248,67 @@ public class GameMaster : MonoBehaviour
                 deSelectPiece();
                 return;
             }
+
+            // Q key: activate ability if piece has one ready
+            if (Input.GetKeyDown(KeyCode.Q) && selectedPiece != null && selectedPiece.elementalPiece != null)
+            {
+                ElementalPiece ep = selectedPiece.elementalPiece;
+                if (ep.active != null && ep.cooldown != null && ep.cooldown.IsReady
+                    && ep.active.CanActivate(selectedPiece, boardState, squareEffectManager))
+                {
+                    selectedPiece.hideMovesHelper();
+                    EnterAbilityMode(selectedPiece);
+                    Debug.Log("[Ability] Entered ability mode for " + selectedPiece.printPieceName());
+                    return;
+                }
+                else if (ep.active != null && ep.cooldown != null && !ep.cooldown.IsReady)
+                {
+                    Debug.Log("[Ability] " + selectedPiece.printPieceName() + " ability on cooldown: " + ep.cooldown.CurrentCooldown + " turns remaining");
+                }
+            }
+
             //Line renderer
             setUpLine();
             lr.SetPosition(1, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)));
             lr.alignment = LineAlignment.View;
-            //PieceMove checkMove(int x,int y, Square square) checkSquare with raycast
-            //Physics.Raycast(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)), new Vector3(0,-1, 0), out hit)
-            //if(Physics.Raycast(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)), new Vector3(0,-1, 0),out hit)){
+
             Transform lastHittedObject = null;
             if (Physics.Raycast(ray, out hit))
             {
                 if (lastHittedObject != hit.collider.transform)
-                {                    
+                {
                     //Selecting a piece
                     if (hit.collider.gameObject.tag == "Piece")
                     {
-
                         PieceMove p = hit.collider.gameObject.GetComponent<PieceMove>();
                         if ((p.color != selectedPiece.color) && selectedPiece.checkMoves(p.curx, p.cury))
                         {
                             swapUIIcon(MouseUI.TAKEPIECE);
                             if (Input.GetMouseButtonDown(0))
                             {
-                                takePiece(p);
-                                selectedPiece.movePiece(p.curx, p.cury, p.curSquare);
-                                currentMove = currentMove == 1 ? 2 : 1;
-                                deSelectPiece();
-                                EvaluateGameState();
+                                if (TryCapture(selectedPiece, p))
+                                {
+                                    selectedPiece.movePiece(p.curx, p.cury, p.curSquare);
+                                    deSelectPiece();
+                                    EndTurn();
+                                }
+                            }
+                        }
+                        // Click own piece while another is selected: switch selection
+                        else if (p.color == selectedPiece.color && Input.GetMouseButtonDown(0))
+                        {
+                            selectedPiece.hideMovesHelper();
+                            deSelectPiece();
+                            bool canSelect = p.elementalPiece == null || !p.elementalPiece.IsStunned();
+                            if (canSelect)
+                            {
+                                selectPiece(p.gameObject.transform, p);
                             }
                         }
                     }
 
-                    //Move to location & sent piece to grave yard ?  graveyard a physical location where all pieces line up in order they die or in order they are placed on board
-                    //if it is 
                     else if (hit.collider.gameObject.tag == "Board")
                     {
-                        //Debug.Log("Check Board");
                         Square s = hit.collider.gameObject.GetComponent<Square>();
                         if (selectedPiece != null)
                         {
@@ -193,24 +317,23 @@ public class GameMaster : MonoBehaviour
                                 swapUIIcon(MouseUI.TAKEPIECE);
                                 if (Input.GetMouseButtonDown(0))
                                 {
-                                    takePiece(s.piece);
-                                    selectedPiece.movePiece(s.piece.curx, s.piece.cury, s.piece.curSquare);
-                                    currentMove = currentMove == 1 ? 2 : 1;
-                                    deSelectPiece();
-                                    EvaluateGameState();
+                                    if (TryCapture(selectedPiece, s.piece))
+                                    {
+                                        selectedPiece.movePiece(s.piece.curx, s.piece.cury, s.piece.curSquare);
+                                        deSelectPiece();
+                                        EndTurn();
+                                    }
                                 }
                             }
 
                             else if (selectedPiece.checkMoves(s.x, s.y))
                             {
                                 swapUIIcon(MouseUI.CANMOVE);
-                                //Move Piece to non occupied spot
                                 if (Input.GetMouseButtonDown(0))
                                 {
                                     selectedPiece.movePiece(s.x, s.y, s);
-                                    currentMove = currentMove == 1 ? 2 : 1;
                                     deSelectPiece();
-                                    EvaluateGameState();
+                                    EndTurn();
                                 }
                             }
                             else
@@ -225,12 +348,100 @@ public class GameMaster : MonoBehaviour
                     }
                     lastHittedObject = hit.collider.transform;
                 }
-                
 
                 else if (lastHittedObject) {
                     lastHittedObject = null;
                 }
+            }
+        }
+    }
 
+    /// <summary>
+    /// End the current turn: swap player, tick effects/cooldowns, evaluate game state.
+    /// </summary>
+    public void EndTurn()
+    {
+        currentMove = currentMove == 1 ? 2 : 1;
+        turnNumber++;
+
+        // Tick square effects
+        if (squareEffectManager != null)
+        {
+            squareEffectManager.TickAllEffects();
+        }
+
+        // Notify all pieces of turn start (cooldowns, status effects, passives)
+        NotifyTurnStart(currentMove);
+
+        EvaluateGameState();
+    }
+
+    /// <summary>
+    /// Notify all pieces that a new turn has started.
+    /// </summary>
+    private void NotifyTurnStart(int turnColor)
+    {
+        if (boardState == null) return;
+
+        List<PieceMove> allPieces = new List<PieceMove>();
+        allPieces.AddRange(boardState.GetAllPieces(ChessConstants.WHITE));
+        allPieces.AddRange(boardState.GetAllPieces(ChessConstants.BLACK));
+
+        foreach (PieceMove piece in allPieces)
+        {
+            if (piece.elementalPiece != null)
+            {
+                piece.elementalPiece.OnTurnStart(turnColor);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Try to capture a piece, running passive hooks. Returns true if capture is allowed.
+    /// </summary>
+    public bool TryCapture(PieceMove attacker, PieceMove defender)
+    {
+        // Check attacker's passive: OnBeforeCapture
+        if (attacker.elementalPiece != null && attacker.elementalPiece.passive != null)
+        {
+            if (!attacker.elementalPiece.passive.OnBeforeCapture(attacker, defender, boardState))
+                return false;
+        }
+
+        // Check defender's passive: OnBeforeCapture (defender's passive can also prevent)
+        if (defender.elementalPiece != null && defender.elementalPiece.passive != null)
+        {
+            if (!defender.elementalPiece.passive.OnBeforeCapture(attacker, defender, boardState))
+                return false;
+        }
+
+        // Execute capture
+        takePiece(defender);
+
+        // After capture hooks
+        if (attacker.elementalPiece != null && attacker.elementalPiece.passive != null)
+        {
+            attacker.elementalPiece.passive.OnAfterCapture(attacker, defender, boardState);
+        }
+        if (defender.elementalPiece != null && defender.elementalPiece.passive != null)
+        {
+            defender.elementalPiece.passive.OnPieceCaptured(defender, attacker, boardState);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Enter ability mode for the selected piece.
+    /// </summary>
+    public void EnterAbilityMode(PieceMove piece)
+    {
+        if (abilityExecutor != null && piece != null)
+        {
+            if (abilityExecutor.EnterAbilityMode(piece))
+            {
+                selectedPiece = piece;
+                isPieceSelected = true;
             }
         }
     }
@@ -255,6 +466,19 @@ public class GameMaster : MonoBehaviour
         selectedPiece = piece;
         selectedPiece.createPieceMoves(selectedPiece.piece);
         selectedPiece.printMovesList();
+
+        // Log element/ability info
+        if (piece.elementalPiece != null)
+        {
+            ElementalPiece ep = piece.elementalPiece;
+            string elemName = ep.elementId == ChessConstants.ELEMENT_FIRE ? "Fire"
+                            : ep.elementId == ChessConstants.ELEMENT_EARTH ? "Earth"
+                            : ep.elementId == ChessConstants.ELEMENT_LIGHTNING ? "Lightning" : "None";
+            string cdInfo = ep.cooldown != null
+                ? (ep.cooldown.IsReady ? "READY" : ep.cooldown.CurrentCooldown + " turns")
+                : "N/A";
+            Debug.Log("[" + elemName + "] " + piece.printPieceName() + " | Ability CD: " + cdInfo + " | Press Q to activate");
+        }
     }
 
     public void takePiece(PieceMove p)
@@ -461,6 +685,13 @@ public class GameMaster : MonoBehaviour
     /// </summary>
     private void OnGameOver()
     {
+        // Force exit ability mode if active
+        if (abilityExecutor != null && abilityExecutor.isInAbilityMode)
+        {
+            abilityExecutor.ExitAbilityMode();
+        }
+        deSelectPiece();
+
         switch (currentGameState)
         {
             case GameState.WhiteWins:

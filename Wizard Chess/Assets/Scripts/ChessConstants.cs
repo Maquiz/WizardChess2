@@ -40,4 +40,46 @@ public static class ChessConstants
     };
 
     // Queen uses both Rook and Bishop directions
+
+    // Elements
+    public const int ELEMENT_NONE = 0;
+    public const int ELEMENT_FIRE = 1;
+    public const int ELEMENT_EARTH = 2;
+    public const int ELEMENT_LIGHTNING = 3;
+
+    // Piece value for capture-prevention checks (Earth Pawn passive)
+    public static int PieceValue(int pieceType)
+    {
+        switch (pieceType)
+        {
+            case PAWN: return 1;
+            case KNIGHT: return 3;
+            case BISHOP: return 3;
+            case ROOK: return 5;
+            case QUEEN: return 9;
+            case KING: return 100;
+            default: return 0;
+        }
+    }
+}
+
+/// <summary>
+/// Types of effects that can be placed on squares.
+/// </summary>
+public enum SquareEffectType
+{
+    None,
+    Fire,
+    StoneWall,
+    LightningField
+}
+
+/// <summary>
+/// Status effects that can be applied to pieces.
+/// </summary>
+public enum StatusEffectType
+{
+    None,
+    Stunned,
+    Singed
 }

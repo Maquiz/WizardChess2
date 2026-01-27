@@ -37,22 +37,38 @@ public class ChessMove {
 		get { return isCastled; }
 		set { isCastled = value; }
 	}
-	//Readd saved data like locations to have a record readd getters and setters
 
+	// Ability use tracking
+	private bool isAbilityUse;
+	public bool IsAbilityUse {
+		get { return isAbilityUse; }
+	}
+	private string usedAbilityName;
+	private int targetX, targetY;
 
-	//both squares
-	//piece that was taken and piece that was moved
-
-	//Constructor for ChessMove
+	//Constructor for ChessMove (regular move)
 	public ChessMove (PieceMove pm) {
 		piece = pm;
 		isTaken = false;
+		isAbilityUse = false;
 	}
 
+	//Constructor for ChessMove (capture move)
 	public ChessMove (PieceMove pm, PieceMove tp) {
 		piece = pm;
 		takenPiece = tp;
 		isTaken = true;
+		isAbilityUse = false;
+	}
+
+	//Constructor for ChessMove (ability use)
+	public ChessMove (PieceMove pm, string abilityName, int tX, int tY) {
+		piece = pm;
+		usedAbilityName = abilityName;
+		targetX = tX;
+		targetY = tY;
+		isAbilityUse = true;
+		isTaken = false;
 	}
 
 	public void printMove() {

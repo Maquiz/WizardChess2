@@ -33,6 +33,7 @@ public class PieceMove : MonoBehaviour
     public Square curSquare;
     public GameObject Board;
     public GameMaster gm;
+    public ElementalPiece elementalPiece;
 
     private Vector3 hiddenIsland = new Vector3(-1000f, -1000f, -1000f);
 
@@ -52,7 +53,7 @@ public class PieceMove : MonoBehaviour
         last = new GameObject();
         curx = cury = lastx = lasty = 0;
         isSet = false;
-        curSquare = new Square();
+        curSquare = null;
         Board = GameObject.FindGameObjectWithTag("Board");
         gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameMaster>();
         pieceMeshFilter = this.gameObject.GetComponent<MeshFilter>();
@@ -66,9 +67,15 @@ public class PieceMove : MonoBehaviour
     {
         //Check if you are taking or piece if the player color = piece color
         if (!gm.isPieceSelected && gm.currentMove == color)
-        {            
-            gm.selectPiece(this.gameObject.transform, this);
+        {
+            // Stunned pieces cannot move (but can still use active abilities)
+            if (elementalPiece != null && elementalPiece.IsStunned())
+            {
+                Debug.Log(printPieceName() + " is stunned and cannot move!");
+                return;
+            }
 
+            gm.selectPiece(this.gameObject.transform, this);
         }
     }
 
@@ -144,6 +151,12 @@ public class PieceMove : MonoBehaviour
             executeCastle(x > fromX);
         }
 
+        // Elemental passive: after move hook
+        if (elementalPiece != null && elementalPiece.passive != null)
+        {
+            elementalPiece.passive.OnAfterMove(this, fromX, fromY, x, y, gm.boardState);
+        }
+
         ChessMove cm = new ChessMove(this);
         gm.moveHistory.Push(cm);
         gm.moveHistory.Peek().printMove();
@@ -195,8 +208,72 @@ public class PieceMove : MonoBehaviour
             createPawnMoves();
         }
 
+        // Elemental passive: modify generated moves
+        if (elementalPiece != null && elementalPiece.passive != null)
+        {
+            moves = elementalPiece.passive.ModifyMoveGeneration(moves, this, gm.boardState);
+        }
+
+        // Filter moves blocked by square effects (fire, stone walls, etc.)
+        if (gm.squareEffectManager != null)
+        {
+            List<Square> unblocked = new List<Square>();
+            foreach (Square move in moves)
+            {
+                if (!gm.squareEffectManager.IsSquareBlocked(move.x, move.y, this))
+                {
+                    unblocked.Add(move);
+                }
+            }
+            moves = unblocked;
+        }
+
+        // Filter captures blocked by defender's (or attacker's) passive abilities
+        FilterProtectedCaptures();
+
         // Filter out moves that would leave king in check
         filterIllegalMoves();
+    }
+
+    /// <summary>
+    /// Remove captures that are blocked by the attacker's or defender's passive abilities.
+    /// Non-capture moves pass through unchanged. Called before filterIllegalMoves().
+    /// </summary>
+    private void FilterProtectedCaptures()
+    {
+        if (gm.boardState == null) return;
+
+        List<Square> allowed = new List<Square>();
+        foreach (Square move in moves)
+        {
+            if (move.taken && move.piece != null && move.piece.color != color)
+            {
+                PieceMove defender = move.piece;
+                bool captureAllowed = true;
+
+                // Check attacker's passive
+                if (elementalPiece != null && elementalPiece.passive != null)
+                {
+                    if (!elementalPiece.passive.OnBeforeCapture(this, defender, gm.boardState))
+                        captureAllowed = false;
+                }
+
+                // Check defender's passive
+                if (captureAllowed && defender.elementalPiece != null && defender.elementalPiece.passive != null)
+                {
+                    if (!defender.elementalPiece.passive.OnBeforeCapture(this, defender, gm.boardState))
+                        captureAllowed = false;
+                }
+
+                if (captureAllowed)
+                    allowed.Add(move);
+            }
+            else
+            {
+                allowed.Add(move);
+            }
+        }
+        moves = allowed;
     }
 
     /// <summary>

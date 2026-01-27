@@ -137,6 +137,14 @@ public class BoardState
         PieceMove king = kingColor == ChessConstants.WHITE ? whiteKing : blackKing;
         if (king == null) return false;
 
+        // Bedrock Throne: Earth King on starting square is immune to check
+        if (king.elementalPiece != null
+            && king.elementalPiece.passive is EarthKingPassive
+            && EarthKingPassive.IsOnStartingSquare(king))
+        {
+            return false;
+        }
+
         int opponentColor = kingColor == ChessConstants.WHITE ? ChessConstants.BLACK : ChessConstants.WHITE;
         return IsSquareAttackedBy(king.curx, king.cury, opponentColor);
     }
@@ -221,6 +229,16 @@ public class BoardState
         clone.blackPieces = new List<PieceMove>(blackPieces);
 
         return clone;
+    }
+
+    /// <summary>
+    /// Check if a square is blocked by a square effect (delegates to SquareEffectManager).
+    /// This is a convenience method; the actual logic lives in SquareEffectManager.
+    /// </summary>
+    public bool IsSquareBlockedByEffect(int x, int y, PieceMove piece, SquareEffectManager sem)
+    {
+        if (sem == null) return false;
+        return sem.IsSquareBlocked(x, y, piece);
     }
 
     // ========== Private Helper Methods ==========
