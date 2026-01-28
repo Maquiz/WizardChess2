@@ -65,6 +65,10 @@ public class PieceMove : MonoBehaviour
 
     void OnMouseDown()
     {
+        // Block piece selection when pause menu is open
+        if (gm.inGameMenuUI != null && gm.inGameMenuUI.IsMenuOpen)
+            return;
+
         //Check if you are taking or piece if the player color = piece color
         if (!gm.isPieceSelected && gm.currentMove == color)
         {

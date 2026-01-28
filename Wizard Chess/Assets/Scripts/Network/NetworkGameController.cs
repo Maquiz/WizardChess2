@@ -103,7 +103,45 @@ public class NetworkGameController : MonoBehaviourPunCallbacks
         Debug.Log("[Network] Sent ability: piece(" + pieceX + "," + pieceY + ") -> target(" + targetX + "," + targetY + ") via ViewID " + pv.ViewID);
     }
 
+    // ========== Resign / Draw ==========
+
+    public void SendResign()
+    {
+        if (pv == null || pv.ViewID == 0) return;
+        pv.RPC("RPC_ReceiveResign", RpcTarget.Others);
+    }
+
+    public void SendDrawOffer()
+    {
+        if (pv == null || pv.ViewID == 0) return;
+        pv.RPC("RPC_ReceiveDrawOffer", RpcTarget.Others);
+    }
+
+    public void SendDrawResponse(bool accepted)
+    {
+        if (pv == null || pv.ViewID == 0) return;
+        pv.RPC("RPC_ReceiveDrawResponse", RpcTarget.Others, accepted);
+    }
+
     // ========== RPCs ==========
+
+    [PunRPC]
+    private void RPC_ReceiveResign()
+    {
+        if (gm.inGameMenuUI != null) gm.inGameMenuUI.OnOpponentResigned();
+    }
+
+    [PunRPC]
+    private void RPC_ReceiveDrawOffer()
+    {
+        if (gm.inGameMenuUI != null) gm.inGameMenuUI.ShowDrawOffer();
+    }
+
+    [PunRPC]
+    private void RPC_ReceiveDrawResponse(bool accepted)
+    {
+        if (gm.inGameMenuUI != null) gm.inGameMenuUI.OnDrawResponseReceived(accepted);
+    }
 
     [PunRPC]
     private void RPC_ReceiveMove(int fromX, int fromY, int toX, int toY)

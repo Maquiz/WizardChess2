@@ -23,6 +23,7 @@ public class MainMenuUI : MonoBehaviour
     private GameObject aiMatchPanelObj;
     private OnlineMatchPanel onlineMatchPanel;
     private GameObject onlineMatchPanelObj;
+    private SettingsUI settingsUI;
 
     // Shared data
     private DeckSaveData deckData;
@@ -37,6 +38,7 @@ public class MainMenuUI : MonoBehaviour
         CreatePieceExaminePanel();
         CreateAIMatchPanel();
         CreateOnlineMatchPanel();
+        CreateSettingsUI();
 
         ShowTitlePanel();
     }
@@ -74,6 +76,7 @@ public class MainMenuUI : MonoBehaviour
         pieceExaminePanel.gameObject.SetActive(false);
         if (aiMatchPanelObj != null) aiMatchPanelObj.SetActive(false);
         if (onlineMatchPanelObj != null) onlineMatchPanelObj.SetActive(false);
+        if (settingsUI != null) settingsUI.Hide();
     }
 
     public void ShowDeckSelectPanel()
@@ -165,6 +168,17 @@ public class MainMenuUI : MonoBehaviour
         ShowTitlePanel();
     }
 
+    public void ShowSettings()
+    {
+        titlePanel.SetActive(false);
+        if (settingsUI != null) settingsUI.Show();
+    }
+
+    public void ReturnFromSettings()
+    {
+        ShowTitlePanel();
+    }
+
     public DeckSaveData GetDeckData()
     {
         return deckData;
@@ -203,31 +217,35 @@ public class MainMenuUI : MonoBehaviour
             new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.65f), new Vector2(400, 40));
 
         // Buttons
-        float buttonY = 0.48f;
-        float buttonStep = -0.1f;
+        float buttonY = 0.52f;
+        float buttonStep = -0.07f;
 
         CreateButton(titlePanel.transform, "PlayButton", "Play Match",
-            new Vector2(0.5f, buttonY), new Vector2(280, 50),
+            new Vector2(0.5f, buttonY), new Vector2(280, 42),
             new Color(0.2f, 0.5f, 0.2f), () => ShowDeckSelectPanel());
 
         CreateButton(titlePanel.transform, "AIButton", "Play vs AI",
-            new Vector2(0.5f, buttonY + buttonStep), new Vector2(280, 50),
+            new Vector2(0.5f, buttonY + buttonStep), new Vector2(280, 42),
             new Color(0.5f, 0.2f, 0.5f), () => ShowAIMatchPanel());
 
         CreateButton(titlePanel.transform, "OnlineButton", "Play Online",
-            new Vector2(0.5f, buttonY + buttonStep * 2), new Vector2(280, 50),
+            new Vector2(0.5f, buttonY + buttonStep * 2), new Vector2(280, 42),
             new Color(0.15f, 0.4f, 0.6f), () => ShowOnlineMatchPanel());
 
         CreateButton(titlePanel.transform, "ManageDecksButton", "Manage Decks",
-            new Vector2(0.5f, buttonY + buttonStep * 3), new Vector2(280, 50),
+            new Vector2(0.5f, buttonY + buttonStep * 3), new Vector2(280, 42),
             new Color(0.3f, 0.3f, 0.6f), () => ShowDeckEditorPanel(0));
 
         CreateButton(titlePanel.transform, "ExamineButton", "Examine Pieces",
-            new Vector2(0.5f, buttonY + buttonStep * 4), new Vector2(280, 50),
+            new Vector2(0.5f, buttonY + buttonStep * 4), new Vector2(280, 42),
             new Color(0.5f, 0.35f, 0.15f), () => ShowPieceExaminePanel());
 
+        CreateButton(titlePanel.transform, "SettingsButton", "Settings",
+            new Vector2(0.5f, buttonY + buttonStep * 5), new Vector2(280, 42),
+            new Color(0.4f, 0.4f, 0.45f), () => ShowSettings());
+
         CreateButton(titlePanel.transform, "QuitButton", "Quit",
-            new Vector2(0.5f, buttonY + buttonStep * 5), new Vector2(280, 50),
+            new Vector2(0.5f, buttonY + buttonStep * 6), new Vector2(280, 42),
             new Color(0.5f, 0.15f, 0.15f), () =>
             {
 #if UNITY_EDITOR
@@ -321,6 +339,12 @@ public class MainMenuUI : MonoBehaviour
 
         onlineMatchPanel = onlineMatchPanelObj.AddComponent<OnlineMatchPanel>();
         onlineMatchPanel.Init(this);
+    }
+
+    private void CreateSettingsUI()
+    {
+        settingsUI = gameObject.AddComponent<SettingsUI>();
+        settingsUI.Init(canvas, ReturnFromSettings);
     }
 
     // ========== UI Helpers ==========

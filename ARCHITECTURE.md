@@ -133,7 +133,7 @@ MainMenu Scene                           Board Scene
 └──────────────────┘                    └──────────────────┘
 ```
 
-- **MainMenu scene** (`Assets/Scenes/MainMenu.unity`): Title screen with 6 panels (Title, DeckSelect, DeckEditor, PieceExamine, AIMatch, OnlineMatch). Managed by `MainMenuUI`.
+- **MainMenu scene** (`Assets/Scenes/MainMenu.unity`): Title screen with 6 panels (Title, DeckSelect, DeckEditor, PieceExamine, AIMatch, OnlineMatch) plus a Settings overlay. Managed by `MainMenuUI`.
 - **Board scene** (`Assets/Scenes/Board.unity`): Chess gameplay. `GameMaster.Start()` checks `MatchConfig` to decide setup mode.
 - **Cross-scene data**: `MatchConfig` static class holds `DraftData`, `useDeckSystem`, AI settings (`isAIMatch`, `aiDifficulty`, `aiColor`), and online settings (`isOnlineMatch`, `localPlayerColor`, `roomCode`) between scene loads.
 - **Photon persistence**: `PhotonConnectionManager` singleton survives scene loads via `DontDestroyOnLoad`. Connection is maintained from menu through gameplay.
@@ -246,6 +246,7 @@ EndTurn():
 | `turnNumber` | `int` | **[NEW]** Current turn counter |
 | `isDraftPhase` | `bool` | **[NEW]** Blocks gameplay during draft |
 | `networkController` | `NetworkGameController` | **[NEW]** Online multiplayer controller (null if offline) |
+| `inGameMenuUI` | `InGameMenuUI` | **[NEW]** In-game pause menu (resign, draw, exit) |
 | `isSetupComplete` | `bool` | **[NEW]** Set by DeckBasedSetup/FireVsEarthSetup when elements applied; gates input and RPC processing |
 
 #### Public Methods
@@ -714,7 +715,7 @@ Unchanged from original architecture. See previous documentation.
 #### MainMenuUI
 **File:** `Scripts/Menu/MainMenuUI.cs`
 **Inherits:** `MonoBehaviour`
-**Role:** Root controller for MainMenu scene. Creates Canvas + EventSystem at runtime. Manages 6 panels: Title, DeckSelect, DeckEditor, PieceExamine, AIMatch, OnlineMatch. Provides show/hide navigation and static UI helper methods.
+**Role:** Root controller for MainMenu scene. Creates Canvas + EventSystem at runtime. Manages 6 panels: Title, DeckSelect, DeckEditor, PieceExamine, AIMatch, OnlineMatch, plus a SettingsUI overlay. Title panel has 7 buttons (Play Match, Play vs AI, Play Online, Manage Decks, Examine Pieces, Settings, Quit). Provides show/hide navigation and static UI helper methods.
 
 #### DeckSelectPanel
 **File:** `Scripts/Menu/DeckSelectPanel.cs`
@@ -929,10 +930,16 @@ Architecture: Single PhotonView on GameMaster, master-client authority, RPC-base
 | `IsRemotePlayerTurn` | `() → bool` | True when it's the remote player's turn |
 | `SendMove` | `(int fromX, int fromY, int toX, int toY)` | RPC move to opponent |
 | `SendAbility` | `(int pieceX, int pieceY, int targetX, int targetY)` | RPC ability to opponent |
+| `SendResign` | `()` | **[NEW]** RPC resign notification to opponent |
+| `SendDrawOffer` | `()` | **[NEW]** RPC draw offer to opponent |
+| `SendDrawResponse` | `(bool accepted)` | **[NEW]** RPC draw accept/decline to opponent |
 
 **RPCs:**
 - `RPC_ReceiveMove(fromX, fromY, toX, toY)` → waits for `isSetupComplete`, then executes remote move via coroutine (triggers passive hooks)
 - `RPC_ReceiveAbility(pieceX, pieceY, targetX, targetY)` → waits for `isSetupComplete`, then executes ability directly (bypasses validation, trusts sender)
+- `RPC_ReceiveResign()` → **[NEW]** calls `InGameMenuUI.OnOpponentResigned()`
+- `RPC_ReceiveDrawOffer()` → **[NEW]** calls `InGameMenuUI.ShowDrawOffer()`
+- `RPC_ReceiveDrawResponse(bool)` → **[NEW]** calls `InGameMenuUI.OnDrawResponseReceived()`
 
 **Data Flow:**
 ```
@@ -971,6 +978,39 @@ OnlineMatchPanel → PhotonConnectionManager.JoinRandomRoom/CreateRoom/JoinRoom
 |--------|-------------|
 | `OnRematchClicked()` | Reloads Board scene (offline) or returns to menu (online) |
 | `OnMainMenuClicked()` | Disconnects Photon, clears MatchConfig, loads MainMenu scene |
+
+#### InGameMenuUI
+**File:** `Scripts/Wizard/UI/InGameMenuUI.cs`
+**Inherits:** `MonoBehaviour`
+**Role:** In-game pause menu accessible via Escape key or bottom-right button. Provides Resign (with confirmation), Offer a Draw (network-synced in online mode, immediate in local/AI), Settings (opens SettingsUI overlay), Exit to Main Menu (disconnects Photon, clears MatchConfig), and Resume. Blocks board input while open via `IsMenuOpen` property checked by `GameMaster.Update()` and `PieceMove.OnMouseDown()`. Attached to the GameMaster object.
+
+| Property/Field | Type | Description |
+|----------------|------|-------------|
+| `IsMenuOpen` | `bool` | Whether the pause menu overlay is visible (blocks input) |
+
+| Method | Description |
+|--------|-------------|
+| `OpenMenu()` | Show pause menu, exit ability mode if active, deselect piece |
+| `CloseMenu()` | Hide pause menu and confirm dialog |
+| `ShowDrawOffer()` | Show draw offer popup to receiving player (called by RPC) |
+| `OnDrawResponseReceived(bool)` | Handle opponent's draw response (called by RPC) |
+| `OnOpponentResigned()` | Set game state to local win, close popups (called by RPC) |
+
+---
+
+#### SettingsUI
+**File:** `Scripts/Wizard/UI/SettingsUI.cs`
+**Inherits:** `MonoBehaviour`
+**Role:** Reusable settings panel with resolution selector (left/right arrow cycling through `Screen.resolutions`) and fullscreen/windowed toggle. Created at runtime as a fullscreen overlay. Used by both `MainMenuUI` (title screen Settings button) and `InGameMenuUI` (pause menu Settings button). Applies changes immediately via `Screen.SetResolution()` and `Screen.fullScreenMode`.
+
+| Method | Description |
+|--------|-------------|
+| `Init(Canvas, Action)` | Create UI on canvas, register close callback |
+| `Show()` | Refresh state and show overlay |
+| `Hide()` | Hide overlay |
+| `IsVisible` | Whether the settings overlay is currently active |
+
+---
 
 #### GameLogUI
 **File:** `Scripts/Wizard/UI/GameLogUI.cs`
@@ -1187,6 +1227,20 @@ CheckBannerUI ──► Canvas                 [NEW] (runtime UI creation)
 GameOverUI ─────► GameMaster             [NEW] (game state: game over detection)
 GameOverUI ─────► Canvas                 [NEW] (runtime UI creation)
 GameOverUI ─────► SceneManager           [NEW] (scene reload for New Game)
+
+InGameMenuUI ───► GameMaster             [NEW] (game state, input blocking)
+InGameMenuUI ───► NetworkGameController  [NEW] (resign/draw RPCs)
+InGameMenuUI ───► PhotonConnectionManager [NEW] (disconnect on exit)
+InGameMenuUI ───► MatchConfig            [NEW] (clear on exit)
+InGameMenuUI ───► Canvas                 [NEW] (runtime UI creation)
+InGameMenuUI ───► SceneManager           [NEW] (load MainMenu on exit)
+InGameMenuUI ───► GameLogUI              [NEW] (log resign/draw events)
+InGameMenuUI ───► SettingsUI             [NEW] (settings panel)
+
+SettingsUI ─────► Canvas                 [NEW] (runtime UI creation)
+SettingsUI ─────► Screen                 [NEW] (resolution/fullscreen control)
+
+MainMenuUI ──────► SettingsUI            [NEW] (settings panel)
 
 GameLogUI ──────► GameMaster             [NEW] (turn number, game state)
 GameLogUI ──────► Canvas                 [NEW] (runtime UI creation)
@@ -1453,6 +1507,8 @@ Scripts/
         ├── CheckBannerUI.cs            Check state red banner
         ├── GameLogUI.cs                Scrollable in-game move/event log
         ├── GameOverUI.cs               Game over overlay + scene reset
+        ├── InGameMenuUI.cs             In-game pause menu (resign, draw, settings, exit)
+        ├── SettingsUI.cs               Resolution and display mode settings panel
         ├── PieceTooltipUI.cs           Mouse-over piece info tooltip
         ├── ElementParticleUI.cs        Element-colored particle effects on pieces
         ├── SquareEffectUI.cs           Square effect visuals

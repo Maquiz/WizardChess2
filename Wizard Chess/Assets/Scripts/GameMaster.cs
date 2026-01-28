@@ -74,6 +74,10 @@ public class GameMaster : MonoBehaviour
     [HideInInspector]
     public NetworkGameController networkController;
 
+    // In-game pause menu
+    [HideInInspector]
+    public InGameMenuUI inGameMenuUI;
+
     /// <summary>
     /// Set by DeckBasedSetup/FireVsEarthSetup when elements are applied.
     /// Blocks input and RPC processing until the board is fully initialized.
@@ -138,6 +142,9 @@ public class GameMaster : MonoBehaviour
         this.gameObject.AddComponent<CheckBannerUI>();
         this.gameObject.AddComponent<GameOverUI>();
 
+        // In-game pause menu
+        inGameMenuUI = this.gameObject.AddComponent<InGameMenuUI>();
+
         // Game log panel
         GameLogUI logUI = this.gameObject.AddComponent<GameLogUI>();
         logUI.Init(this);
@@ -193,6 +200,13 @@ public class GameMaster : MonoBehaviour
         // Don't allow moves if game is over, in draft phase, or setup isn't complete
         if (isDraftPhase) return;
         if (!isSetupComplete) return;
+
+        // Block input while pause menu is open
+        if (inGameMenuUI != null && inGameMenuUI.IsMenuOpen)
+        {
+            return;
+        }
+
         if (currentGameState == GameState.WhiteWins ||
             currentGameState == GameState.BlackWins ||
             currentGameState == GameState.Stalemate ||
