@@ -18,7 +18,10 @@
       "mcp__unityMCP__get_test_job",
       "Bash(cd:*)",
       "mcp__unityMCP__batch_execute",
-      "mcp__unityMCP__debug_request_context"
+      "mcp__unityMCP__debug_request_context",
+      "WebSearch",
+      "WebFetch(domain:doc.photonengine.com)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

@@ -30,6 +30,21 @@ public static class MatchConfig
     public static int aiColor = ChessConstants.BLACK;
 
     /// <summary>
+    /// Whether this match is an online multiplayer match.
+    /// </summary>
+    public static bool isOnlineMatch = false;
+
+    /// <summary>
+    /// Local player's color in online mode (WHITE or BLACK).
+    /// </summary>
+    public static int localPlayerColor = ChessConstants.WHITE;
+
+    /// <summary>
+    /// Room code for private online matches (null for random matchmaking).
+    /// </summary>
+    public static string roomCode = null;
+
+    /// <summary>
     /// Reset to defaults (used when returning to menu or starting fresh).
     /// </summary>
     public static void Clear()
@@ -39,5 +54,8 @@ public static class MatchConfig
         isAIMatch = false;
         aiDifficulty = 1;
         aiColor = ChessConstants.BLACK;
+        isOnlineMatch = false;
+        localPlayerColor = ChessConstants.WHITE;
+        roomCode = null;
     }
 }

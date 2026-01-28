@@ -32,6 +32,7 @@ public class DeckBasedSetup : MonoBehaviour
                 AttachElementIndicatorUI();
                 AttachElementParticleUI();
                 applied = true;
+                gm.isSetupComplete = true;
                 Debug.Log("[WizardChess] Deck-based setup complete!");
                 Debug.Log("[WizardChess] Press Q with a piece selected to use its active ability.");
             }

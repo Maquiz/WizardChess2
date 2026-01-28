@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Root menu controller for the MainMenu scene.
-/// Manages 5 panels: Title, DeckSelect, DeckEditor, PieceExamine, AIMatch.
+/// Manages 6 panels: Title, DeckSelect, DeckEditor, PieceExamine, AIMatch, OnlineMatch.
 /// Creates Canvas + EventSystem at runtime.
 /// </summary>
 public class MainMenuUI : MonoBehaviour
@@ -21,6 +21,8 @@ public class MainMenuUI : MonoBehaviour
     private PieceExaminePanel pieceExaminePanel;
     private AIMatchPanel aiMatchPanel;
     private GameObject aiMatchPanelObj;
+    private OnlineMatchPanel onlineMatchPanel;
+    private GameObject onlineMatchPanelObj;
 
     // Shared data
     private DeckSaveData deckData;
@@ -34,6 +36,7 @@ public class MainMenuUI : MonoBehaviour
         CreateDeckEditorPanel();
         CreatePieceExaminePanel();
         CreateAIMatchPanel();
+        CreateOnlineMatchPanel();
 
         ShowTitlePanel();
     }
@@ -70,6 +73,7 @@ public class MainMenuUI : MonoBehaviour
         deckEditorPanel.gameObject.SetActive(false);
         pieceExaminePanel.gameObject.SetActive(false);
         if (aiMatchPanelObj != null) aiMatchPanelObj.SetActive(false);
+        if (onlineMatchPanelObj != null) onlineMatchPanelObj.SetActive(false);
     }
 
     public void ShowDeckSelectPanel()
@@ -145,6 +149,22 @@ public class MainMenuUI : MonoBehaviour
         ShowTitlePanel();
     }
 
+    public void ShowOnlineMatchPanel()
+    {
+        titlePanel.SetActive(false);
+        deckSelectPanel.gameObject.SetActive(false);
+        deckEditorPanel.gameObject.SetActive(false);
+        pieceExaminePanel.gameObject.SetActive(false);
+        if (aiMatchPanelObj != null) aiMatchPanelObj.SetActive(false);
+        onlineMatchPanelObj.SetActive(true);
+        onlineMatchPanel.Open(deckData);
+    }
+
+    public void ReturnFromOnlineMatch()
+    {
+        ShowTitlePanel();
+    }
+
     public DeckSaveData GetDeckData()
     {
         return deckData;
@@ -194,16 +214,20 @@ public class MainMenuUI : MonoBehaviour
             new Vector2(0.5f, buttonY + buttonStep), new Vector2(280, 50),
             new Color(0.5f, 0.2f, 0.5f), () => ShowAIMatchPanel());
 
-        CreateButton(titlePanel.transform, "ManageDecksButton", "Manage Decks",
+        CreateButton(titlePanel.transform, "OnlineButton", "Play Online",
             new Vector2(0.5f, buttonY + buttonStep * 2), new Vector2(280, 50),
+            new Color(0.15f, 0.4f, 0.6f), () => ShowOnlineMatchPanel());
+
+        CreateButton(titlePanel.transform, "ManageDecksButton", "Manage Decks",
+            new Vector2(0.5f, buttonY + buttonStep * 3), new Vector2(280, 50),
             new Color(0.3f, 0.3f, 0.6f), () => ShowDeckEditorPanel(0));
 
         CreateButton(titlePanel.transform, "ExamineButton", "Examine Pieces",
-            new Vector2(0.5f, buttonY + buttonStep * 3), new Vector2(280, 50),
+            new Vector2(0.5f, buttonY + buttonStep * 4), new Vector2(280, 50),
             new Color(0.5f, 0.35f, 0.15f), () => ShowPieceExaminePanel());
 
         CreateButton(titlePanel.transform, "QuitButton", "Quit",
-            new Vector2(0.5f, buttonY + buttonStep * 4), new Vector2(280, 50),
+            new Vector2(0.5f, buttonY + buttonStep * 5), new Vector2(280, 50),
             new Color(0.5f, 0.15f, 0.15f), () =>
             {
 #if UNITY_EDITOR
@@ -280,6 +304,23 @@ public class MainMenuUI : MonoBehaviour
 
         aiMatchPanel = aiMatchPanelObj.AddComponent<AIMatchPanel>();
         aiMatchPanel.Init(this);
+    }
+
+    private void CreateOnlineMatchPanel()
+    {
+        onlineMatchPanelObj = new GameObject("OnlineMatchPanel");
+        onlineMatchPanelObj.transform.SetParent(canvas.transform, false);
+
+        RectTransform rt = onlineMatchPanelObj.AddComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+
+        onlineMatchPanelObj.AddComponent<Image>().color = new Color(0.08f, 0.06f, 0.14f, 1f);
+
+        onlineMatchPanel = onlineMatchPanelObj.AddComponent<OnlineMatchPanel>();
+        onlineMatchPanel.Init(this);
     }
 
     // ========== UI Helpers ==========

@@ -15,6 +15,7 @@ public class CameraMove : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (MatchConfig.isOnlineMatch) return;
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
             player1Move();
         } else if (Input.GetKeyDown(KeyCode.Alpha2)) {

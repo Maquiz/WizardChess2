@@ -33,6 +33,7 @@ public class FireVsEarthSetup : MonoBehaviour
                 AttachElementIndicatorUI();
                 AttachElementParticleUI();
                 applied = true;
+                gm.isSetupComplete = true;
                 Debug.Log("[WizardChess] Fire vs Earth setup complete! White=Fire, Black=Earth");
                 Debug.Log("[WizardChess] Press Q with a piece selected to use its active ability.");
             }

@@ -91,6 +91,13 @@
   │  AIEvaluation (static)      │
   │  AIMatchPanel (Menu UI)     │
   └─────────────────────────────┘
+
+  ┌─────────────────────────────────────┐
+  │       Online Multiplayer            │
+  │  PhotonConnectionManager (singleton)│
+  │  NetworkGameController (RPC sync)   │
+  │  OnlineMatchPanel (Menu UI)         │
+  └─────────────────────────────────────┘
 ```
 
 ---
@@ -103,25 +110,33 @@ MainMenu Scene                           Board Scene
 │ Title Screen     │                    │ GameMaster.Start()│
 │   Play →         │                    │   MatchConfig set?│
 │   Play vs AI → ──┤                    │   YES → DeckBased │
-│   Manage Decks → │                    │          Setup    │
-│   Examine Pieces→│                    │   NO  → FireVs   │
-│   Quit           │                    │          EarthSetup│
-│                  │  LoadScene("Board")│                  │
-│ Deck Select:     │───────────────────>│   isAIMatch?     │
-│   P1 picks deck  │                    │   YES → AddComp  │
-│   P2 picks deck  │<───────────────────│        <ChessAI> │
-│   Start Match    │  LoadScene("Menu") │   NO  → 2-player │
-│                  │                    │                  │
-│ AI Match Panel:  │  LoadScene("Board")│ Game Over UI:    │
-│   Pick difficulty│───────────────────>│   Rematch / Menu │
-│   Pick deck      │                    │                  │
+│   Play Online → ─┤                    │          Setup    │
+│   Manage Decks → │                    │   NO  → FireVs   │
+│   Examine Pieces→│                    │          EarthSetup│
+│   Quit           │                    │                  │
+│                  │  LoadScene("Board")│   isOnlineMatch? │
+│ Deck Select:     │───────────────────>│   YES → AddComp  │
+│   P1 picks deck  │                    │   <NetworkGame   │
+│   P2 picks deck  │<───────────────────│    Controller>   │
+│   Start Match    │  LoadScene("Menu") │                  │
+│                  │                    │   isAIMatch?     │
+│ AI Match Panel:  │  LoadScene("Board")│   YES → AddComp  │
+│   Pick difficulty│───────────────────>│        <ChessAI> │
+│   Pick deck      │                    │   NO  → 2-player │
 │   Start Match    │                    │                  │
+│                  │                    │ Game Over UI:    │
+│ Online Match:    │  PhotonNetwork     │   Rematch / Menu │
+│   Select deck    │  .LoadLevel("Board")│  Online: Menu   │
+│   Find/Create/   │───────────────────>│  only (no rematch│
+│   Join Room      │                    │  same opponent)  │
+│   Wait for opp.  │                    │                  │
 └──────────────────┘                    └──────────────────┘
 ```
 
-- **MainMenu scene** (`Assets/Scenes/MainMenu.unity`): Title screen with 5 panels (Title, DeckSelect, DeckEditor, PieceExamine, AIMatch). Managed by `MainMenuUI`.
+- **MainMenu scene** (`Assets/Scenes/MainMenu.unity`): Title screen with 6 panels (Title, DeckSelect, DeckEditor, PieceExamine, AIMatch, OnlineMatch). Managed by `MainMenuUI`.
 - **Board scene** (`Assets/Scenes/Board.unity`): Chess gameplay. `GameMaster.Start()` checks `MatchConfig` to decide setup mode.
-- **Cross-scene data**: `MatchConfig` static class holds `DraftData`, `useDeckSystem`, and AI settings (`isAIMatch`, `aiDifficulty`, `aiColor`) between scene loads.
+- **Cross-scene data**: `MatchConfig` static class holds `DraftData`, `useDeckSystem`, AI settings (`isAIMatch`, `aiDifficulty`, `aiColor`), and online settings (`isOnlineMatch`, `localPlayerColor`, `roomCode`) between scene loads.
+- **Photon persistence**: `PhotonConnectionManager` singleton survives scene loads via `DontDestroyOnLoad`. Connection is maintained from menu through gameplay.
 
 ---
 
@@ -230,6 +245,8 @@ EndTurn():
 | `abilityExecutor` | `AbilityExecutor` | **[NEW]** Handles ability targeting mode |
 | `turnNumber` | `int` | **[NEW]** Current turn counter |
 | `isDraftPhase` | `bool` | **[NEW]** Blocks gameplay during draft |
+| `networkController` | `NetworkGameController` | **[NEW]** Online multiplayer controller (null if offline) |
+| `isSetupComplete` | `bool` | **[NEW]** Set by DeckBasedSetup/FireVsEarthSetup when elements applied; gates input and RPC processing |
 
 #### Public Methods
 | Method | Signature | Description |
@@ -407,7 +424,7 @@ EndTurn():
 ### CameraMove
 **File:** `Scripts/CameraMove.cs`
 **Inherits:** `MonoBehaviour`
-**Role:** Keyboard-driven camera control with DOTween transitions. Keys: 1 (White), 2 (Black), 3 (Top-down).
+**Role:** Keyboard-driven camera control with DOTween transitions. Keys: 1 (White), 2 (Black), 3 (Top-down). Camera switching is disabled in online mode (`MatchConfig.isOnlineMatch`).
 
 ---
 
@@ -657,10 +674,13 @@ Unchanged from original architecture. See previous documentation.
 | `isAIMatch` | `bool` | **[NEW]** Whether this match is against the AI |
 | `aiDifficulty` | `int` | **[NEW]** AI difficulty: 0=Easy, 1=Medium, 2=Hard |
 | `aiColor` | `int` | **[NEW]** AI player color (default: BLACK) |
+| `isOnlineMatch` | `bool` | **[NEW]** Whether this is an online multiplayer match |
+| `localPlayerColor` | `int` | **[NEW]** Local player's color in online mode (WHITE or BLACK) |
+| `roomCode` | `string` | **[NEW]** Room code for private online matches (null for random) |
 
 | Method | Description |
 |--------|-------------|
-| `Clear()` | Reset to defaults (including AI fields) |
+| `Clear()` | Reset to defaults (including AI and online fields) |
 
 #### DeckSlot
 **File:** `Scripts/Menu/DeckSlot.cs`
@@ -694,7 +714,7 @@ Unchanged from original architecture. See previous documentation.
 #### MainMenuUI
 **File:** `Scripts/Menu/MainMenuUI.cs`
 **Inherits:** `MonoBehaviour`
-**Role:** Root controller for MainMenu scene. Creates Canvas + EventSystem at runtime. Manages 5 panels: Title, DeckSelect, DeckEditor, PieceExamine, AIMatch. Provides show/hide navigation and static UI helper methods.
+**Role:** Root controller for MainMenu scene. Creates Canvas + EventSystem at runtime. Manages 6 panels: Title, DeckSelect, DeckEditor, PieceExamine, AIMatch, OnlineMatch. Provides show/hide navigation and static UI helper methods.
 
 #### DeckSelectPanel
 **File:** `Scripts/Menu/DeckSelectPanel.cs`
@@ -863,15 +883,94 @@ MainMenuUI → AIMatchPanel.Open() → Player selects difficulty + deck
 
 ---
 
+### Online Multiplayer System
+
+Architecture: Single PhotonView on GameMaster, master-client authority, RPC-based move sync (4 integers per move). Uses Photon PUN 2.
+
+#### PhotonConnectionManager
+**File:** `Scripts/Network/PhotonConnectionManager.cs`
+**Inherits:** `MonoBehaviourPunCallbacks`
+**Role:** DontDestroyOnLoad singleton managing Photon connection lifecycle. Handles connect, disconnect, room creation/joining, and random matchmaking. Survives scene loads.
+
+| Property/Field | Type | Description |
+|----------------|------|-------------|
+| `Instance` | `static PhotonConnectionManager` | Singleton accessor |
+| `State` | `ConnectionState` | Disconnected/Connecting/ConnectedToMaster/JoiningRoom/InRoom/Error |
+| `LastError` | `string` | Last error message |
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `ConnectToPhoton` | `()` | Connect using PhotonServerSettings |
+| `CreateRoom` | `(string code)` | Create private room (IsVisible=false), MaxPlayers=2 |
+| `JoinRoom` | `(string code)` | Join room by name |
+| `JoinRandomRoom` | `()` | Random matchmaking; auto-creates on fail |
+| `Disconnect` | `()` | Clean disconnect |
+
+| Event | Signature | Description |
+|-------|-----------|-------------|
+| `OnConnectedToMasterEvent` | `Action` | Connected to master server |
+| `OnJoinedRoomEvent` | `Action<string>` | Joined a room (room name) |
+| `OnOpponentJoinedEvent` | `Action` | Second player entered room |
+| `OnConnectionErrorEvent` | `Action<string>` | Connection error |
+| `OnOpponentLeftEvent` | `Action` | Opponent left room |
+
+#### NetworkGameController
+**File:** `Scripts/Network/NetworkGameController.cs`
+**Inherits:** `MonoBehaviourPunCallbacks` (requires PhotonView)
+**Role:** In-game move synchronization via RPCs. Handles color assignment (master=White), deck reconstruction from Photon player properties, camera setup, and disconnect handling. Attached to GameMaster at runtime. Uses fixed ViewID (901) for deterministic RPC routing on both clients. RPC coroutines wait for `gm.isSetupComplete` before processing to prevent race conditions with element setup.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `LocalColor` | `int` | Local player's assigned color |
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `Init` | `(GameMaster)` | Assign color, set camera, rebuild draft data |
+| `IsRemotePlayerTurn` | `() → bool` | True when it's the remote player's turn |
+| `SendMove` | `(int fromX, int fromY, int toX, int toY)` | RPC move to opponent |
+| `SendAbility` | `(int pieceX, int pieceY, int targetX, int targetY)` | RPC ability to opponent |
+
+**RPCs:**
+- `RPC_ReceiveMove(fromX, fromY, toX, toY)` → waits for `isSetupComplete`, then executes remote move via coroutine (triggers passive hooks)
+- `RPC_ReceiveAbility(pieceX, pieceY, targetX, targetY)` → waits for `isSetupComplete`, then executes ability directly (bypasses validation, trusts sender)
+
+**Data Flow:**
+```
+OnlineMatchPanel → PhotonConnectionManager.JoinRandomRoom/CreateRoom/JoinRoom
+→ Both players join room → deck stored as Photon custom property
+→ Master calls PhotonNetwork.LoadLevel("Board")
+→ GameMaster.Start() → AddComponent<NetworkGameController>().Init()
+   → Assigns colors (master=White)
+   → Rebuilds DraftData from both players' custom properties
+   → Sets camera to local player's perspective
+→ DeckBasedSetup/FireVsEarthSetup sets gm.isSetupComplete = true
+→ Local move → GameMaster.Update() (blocked until isSetupComplete) → networkController.SendMove() → RPC to opponent
+→ Remote move → RPC_ReceiveMove() → WaitUntil(isSetupComplete) → ExecuteRemoteMove (passive hooks fire)
+→ Remote ability → RPC_ReceiveAbility() → WaitUntil(isSetupComplete) → Execute directly (skip validation)
+→ Disconnect → OnPlayerLeftRoom() → opponent wins
+```
+
+#### OnlineMatchPanel
+**File:** `Scripts/Menu/OnlineMatchPanel.cs`
+**Inherits:** `MonoBehaviour`
+**Role:** Menu panel for online matchmaking. Deck selection from 9 slots, then Find Match (random), Create Room (private code), or Join Room (by code). Shows waiting overlay with room code and cancel button. When 2 players join, master starts the game via `PhotonNetwork.LoadLevel`.
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `Init` | `(MainMenuUI)` | Store menu reference |
+| `Open` | `(DeckSaveData)` | Reset state, ensure PhotonConnectionManager, connect, build UI |
+
+---
+
 #### GameOverUI
 **File:** `Scripts/Wizard/UI/GameOverUI.cs`
 **Inherits:** `MonoBehaviour`
-**Role:** Displays a fullscreen dark overlay with result panel when the game ends (checkmate, stalemate, draw). Shows result text ("CHECKMATE!" / "STALEMATE!" / "DRAW!"), detail text ("White wins the game" etc.), and two buttons: "Rematch" (reloads Board scene keeping MatchConfig) and "Main Menu" (clears MatchConfig, loads MainMenu scene). Watches `GameMaster.currentGameState` for terminal states. Attached to the GameMaster object.
+**Role:** Displays a fullscreen dark overlay with result panel when the game ends (checkmate, stalemate, draw). Shows result text ("CHECKMATE!" / "STALEMATE!" / "DRAW!"), detail text ("White wins the game" etc.), and two buttons: "Rematch" (reloads Board scene keeping MatchConfig) and "Main Menu" (clears MatchConfig, loads MainMenu scene). Online matches redirect Rematch to Main Menu. Main Menu always disconnects from Photon. Watches `GameMaster.currentGameState` for terminal states. Attached to the GameMaster object.
 
 | Method | Description |
 |--------|-------------|
-| `OnRematchClicked()` | Reloads Board scene with same MatchConfig |
-| `OnMainMenuClicked()` | Clears MatchConfig, loads MainMenu scene |
+| `OnRematchClicked()` | Reloads Board scene (offline) or returns to menu (online) |
+| `OnMainMenuClicked()` | Disconnects Photon, clears MatchConfig, loads MainMenu scene |
 
 #### GameLogUI
 **File:** `Scripts/Wizard/UI/GameLogUI.cs`
@@ -1118,6 +1217,19 @@ AIMatchPanel ────► MatchConfig            [NEW] (sets AI match config)
 AIMatchPanel ────► DraftData              [NEW] (builds player + AI draft)
 AIMatchPanel ────► SceneManager           [NEW] (loads Board scene)
 MainMenuUI ──────► AIMatchPanel           [NEW] (panel management)
+MainMenuUI ──────► OnlineMatchPanel      [NEW] (panel management)
+OnlineMatchPanel ► PhotonConnectionManager [NEW] (connection lifecycle)
+OnlineMatchPanel ► MatchConfig            [NEW] (sets online match config)
+OnlineMatchPanel ► PhotonNetwork          [NEW] (scene load, custom properties)
+NetworkGameController ► GameMaster        [NEW] (game state, move execution)
+NetworkGameController ► BoardState        [NEW] (piece lookup for remote moves)
+NetworkGameController ► PhotonView        [NEW] (RPC communication)
+NetworkGameController ► GameLogUI         [NEW] (logging remote moves)
+NetworkGameController ► CameraMove        [NEW] (set initial camera perspective)
+PhotonConnectionManager ► PhotonNetwork   [NEW] (Photon PUN 2 API)
+GameMaster ──────► NetworkGameController  [NEW] (online move sync, turn blocking)
+GameOverUI ──────► PhotonConnectionManager [NEW] (disconnect on menu return)
+CameraMove ──────► MatchConfig            [NEW] (blocks switching in online mode)
 DeckSelectPanel ─► MatchConfig            [NEW] (sets cross-scene data)
 DeckSelectPanel ─► SceneManager           [NEW] (loads Board scene)
 DeckEditorPanel ─► DeckPersistence        [NEW] (saves deck data)
@@ -1171,7 +1283,7 @@ BoardState ──────► ChessConstants          (directions, constants)
 WizardChess.Tests.EditMode.asmdef
   └── references: WizardChess, UnityEngine.TestRunner, UnityEditor.TestRunner
        └── WizardChess.asmdef (Assets/Scripts/)
-            └── references: DOTween.Modules
+            └── references: DOTween.Modules, PhotonUnityNetworking, PhotonRealtime
 ```
 
 - `WizardChess.asmdef` puts all game scripts into a named assembly so the test assembly can reference them.
@@ -1274,14 +1386,18 @@ Scripts/
 ├── AI/
 │   ├── ChessAI.cs                AI opponent controller (3 difficulty levels)
 │   └── AIEvaluation.cs           Static evaluation: material, positional, ability scoring
+├── Network/
+│   ├── PhotonConnectionManager.cs DontDestroyOnLoad Photon connection singleton
+│   └── NetworkGameController.cs   In-game RPC move/ability sync, color assignment
 ├── Menu/
 │   ├── DeckSlot.cs               Single deck definition
 │   ├── DeckSaveData.cs           All 9 deck slots container
 │   ├── DeckPersistence.cs        JSON save/load utility
-│   ├── MatchConfig.cs            Cross-scene static data bridge (modified — AI fields)
+│   ├── MatchConfig.cs            Cross-scene static data bridge (modified — AI + online fields)
 │   ├── PieceIndexHelper.cs       Piece index → type/label/icon mapping
-│   ├── MainMenuUI.cs             Root menu controller (modified — AI match button)
+│   ├── MainMenuUI.cs             Root menu controller (modified — AI + online match buttons)
 │   ├── AIMatchPanel.cs           AI match setup panel (difficulty + deck selection)
+│   ├── OnlineMatchPanel.cs       Online match setup panel (matchmaking + deck selection)
 │   ├── DeckSelectPanel.cs        Pre-game deck picking
 │   ├── DeckEditorPanel.cs        Deck editor (element assignment)
 │   └── PieceExaminePanel.cs      Ability reference + effects glossary browser

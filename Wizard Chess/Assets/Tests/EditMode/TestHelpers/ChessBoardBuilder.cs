@@ -51,6 +51,7 @@ public class ChessBoardBuilder
         GM.boardState = new BoardState();
         GM.currentMove = ChessConstants.WHITE;
         GM.currentGameState = GameState.Playing;
+        GM.isSetupComplete = true;
 
         // LineRenderer (needed by deSelectPiece)
         GM.lr = gmObject.AddComponent<LineRenderer>();

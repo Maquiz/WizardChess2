@@ -199,12 +199,22 @@ public class GameOverUI : MonoBehaviour
 
     private void OnRematchClicked()
     {
+        if (MatchConfig.isOnlineMatch)
+        {
+            // Online: can't simply reload — return to menu to re-matchmake
+            OnMainMenuClicked();
+            return;
+        }
         // Reload the Board scene with same MatchConfig (keeps deck selections)
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void OnMainMenuClicked()
     {
+        if (PhotonConnectionManager.Instance != null)
+        {
+            PhotonConnectionManager.Instance.Disconnect();
+        }
         MatchConfig.Clear();
         SceneManager.LoadScene("MainMenu");
     }

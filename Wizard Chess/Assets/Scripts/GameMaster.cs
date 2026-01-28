@@ -70,6 +70,17 @@ public class GameMaster : MonoBehaviour
     public int turnNumber = 0;
     public bool isDraftPhase = false;
 
+    // Online multiplayer
+    [HideInInspector]
+    public NetworkGameController networkController;
+
+    /// <summary>
+    /// Set by DeckBasedSetup/FireVsEarthSetup when elements are applied.
+    /// Blocks input and RPC processing until the board is fully initialized.
+    /// </summary>
+    [HideInInspector]
+    public bool isSetupComplete = false;
+
     //Instantiated objects
     public GameObject blackSquare;
     public GameObject whiteSquare;
@@ -97,6 +108,13 @@ public class GameMaster : MonoBehaviour
         squareEffectManager.Init(this);
         abilityExecutor = this.gameObject.AddComponent<AbilityExecutor>();
         abilityExecutor.Init(this, squareEffectManager);
+
+        // Online multiplayer (must come before deck setup — rebuilds MatchConfig.draftData from Photon properties)
+        if (MatchConfig.isOnlineMatch)
+        {
+            networkController = this.gameObject.AddComponent<NetworkGameController>();
+            networkController.Init(this);
+        }
 
         // Element setup: use deck system if configured by menu, else default Fire vs Earth
         if (MatchConfig.useDeckSystem && MatchConfig.draftData != null)
@@ -172,8 +190,9 @@ public class GameMaster : MonoBehaviour
     //Game LOOP
     void Update()
     {
-        // Don't allow moves if game is over or in draft phase
+        // Don't allow moves if game is over, in draft phase, or setup isn't complete
         if (isDraftPhase) return;
+        if (!isSetupComplete) return;
         if (currentGameState == GameState.WhiteWins ||
             currentGameState == GameState.BlackWins ||
             currentGameState == GameState.Stalemate ||
@@ -185,6 +204,12 @@ public class GameMaster : MonoBehaviour
         // Block human input during AI turn
         ChessAI ai = GetComponent<ChessAI>();
         if (ai != null && ai.IsAITurn())
+        {
+            return;
+        }
+
+        // Block human input during remote player's turn (online multiplayer)
+        if (networkController != null && networkController.IsRemotePlayerTurn())
         {
             return;
         }
@@ -236,8 +261,13 @@ public class GameMaster : MonoBehaviour
 
                     if (Input.GetMouseButtonDown(0))
                     {
+                        // Capture position before Execute() — some abilities move the piece
+                        int abilityPieceX = selectedPiece.curx;
+                        int abilityPieceY = selectedPiece.cury;
                         if (abilityExecutor.TryExecuteOnSquare(s.x, s.y))
                         {
+                            if (networkController != null)
+                                networkController.SendAbility(abilityPieceX, abilityPieceY, s.x, s.y);
                             GameLogUI.LogAbility(turnNumber, currentMove, selectedPiece, s.x, s.y);
                             deSelectPiece();
                             EndTurn();
@@ -308,8 +338,11 @@ public class GameMaster : MonoBehaviour
                             {
                                 if (TryCapture(selectedPiece, p))
                                 {
+                                    int fromX = selectedPiece.curx, fromY = selectedPiece.cury;
                                     GameLogUI.LogCapture(turnNumber, currentMove, selectedPiece, p, p.curx, p.cury);
                                     selectedPiece.movePiece(p.curx, p.cury, p.curSquare);
+                                    if (networkController != null)
+                                        networkController.SendMove(fromX, fromY, p.curx, p.cury);
                                     deSelectPiece();
                                     EndTurn();
                                 }
@@ -340,8 +373,11 @@ public class GameMaster : MonoBehaviour
                                 {
                                     if (TryCapture(selectedPiece, s.piece))
                                     {
+                                        int fromX = selectedPiece.curx, fromY = selectedPiece.cury;
                                         GameLogUI.LogCapture(turnNumber, currentMove, selectedPiece, s.piece, s.x, s.y);
                                         selectedPiece.movePiece(s.piece.curx, s.piece.cury, s.piece.curSquare);
+                                        if (networkController != null)
+                                            networkController.SendMove(fromX, fromY, s.piece.curx, s.piece.cury);
                                         deSelectPiece();
                                         EndTurn();
                                     }
@@ -353,8 +389,11 @@ public class GameMaster : MonoBehaviour
                                 swapUIIcon(MouseUI.CANMOVE);
                                 if (Input.GetMouseButtonDown(0))
                                 {
+                                    int fromX = selectedPiece.curx, fromY = selectedPiece.cury;
                                     GameLogUI.LogPieceMove(turnNumber, currentMove, selectedPiece, s.x, s.y);
                                     selectedPiece.movePiece(s.x, s.y, s);
+                                    if (networkController != null)
+                                        networkController.SendMove(fromX, fromY, s.x, s.y);
                                     deSelectPiece();
                                     EndTurn();
                                 }
