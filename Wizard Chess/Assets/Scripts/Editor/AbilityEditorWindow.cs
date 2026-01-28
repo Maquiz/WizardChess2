@@ -190,10 +190,12 @@ public class AbilityEditorWindow : EditorWindow
         GUILayout.Space(4);
 
         // Passive section
-        string passiveName = AbilityInfo.GetPassiveName(elementId, pieceType);
-        string passiveDesc = AbilityInfo.GetPassiveDescription(elementId, pieceType);
-        EditorGUILayout.LabelField("PASSIVE: " + passiveName, EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox(passiveDesc, MessageType.None);
+        string defaultPassiveName = GetHardcodedPassiveName(elementId, pieceType);
+        string defaultPassiveDesc = GetHardcodedPassiveDescription(elementId, pieceType);
+
+        EditorGUILayout.LabelField("PASSIVE", EditorStyles.boldLabel);
+        DrawTextOverrideField("Name", GetTextPropertyPath(elementId, pieceType, "passiveName"), defaultPassiveName);
+        DrawTextOverrideArea("Description", GetTextPropertyPath(elementId, pieceType, "passiveDescription"), defaultPassiveDesc);
         GUILayout.Space(2);
         DrawPassiveParams(elementId, pieceType);
 
@@ -202,17 +204,16 @@ public class AbilityEditorWindow : EditorWindow
         GUILayout.Space(4);
 
         // Active section with cooldown
-        string activeName = AbilityInfo.GetActiveName(elementId, pieceType);
-        string activeDesc = AbilityInfo.GetActiveDescription(elementId, pieceType);
+        string defaultActiveName = GetHardcodedActiveName(elementId, pieceType);
+        string defaultActiveDesc = GetHardcodedActiveDescription(elementId, pieceType);
 
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("ACTIVE: " + activeName, EditorStyles.boldLabel);
-        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.LabelField("ACTIVE", EditorStyles.boldLabel);
+        DrawTextOverrideField("Name", GetTextPropertyPath(elementId, pieceType, "activeName"), defaultActiveName);
 
         // Cooldown field
         DrawCooldownField(pieceType);
 
-        EditorGUILayout.HelpBox(activeDesc, MessageType.None);
+        DrawTextOverrideArea("Description", GetTextPropertyPath(elementId, pieceType, "activeDescription"), defaultActiveDesc);
         GUILayout.Space(2);
         DrawActiveParams(elementId, pieceType);
 
@@ -368,5 +369,264 @@ public class AbilityEditorWindow : EditorWindow
     private void DrawHorizontalLine()
     {
         GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
+    }
+
+    // ========== Text Override Helpers ==========
+
+    private string GetTextPropertyPath(int elementId, int pieceType, string field)
+    {
+        string element = GetElementFieldName(elementId);
+        string pieceText = GetPieceTextFieldName(pieceType);
+        if (element == null || pieceText == null) return null;
+        return element + "." + pieceText + "." + field;
+    }
+
+    private string GetPieceTextFieldName(int pieceType)
+    {
+        switch (pieceType)
+        {
+            case ChessConstants.PAWN: return "pawnText";
+            case ChessConstants.ROOK: return "rookText";
+            case ChessConstants.KNIGHT: return "knightText";
+            case ChessConstants.BISHOP: return "bishopText";
+            case ChessConstants.QUEEN: return "queenText";
+            case ChessConstants.KING: return "kingText";
+            default: return null;
+        }
+    }
+
+    private void DrawTextOverrideField(string label, string propertyPath, string defaultValue)
+    {
+        if (propertyPath == null)
+        {
+            EditorGUILayout.LabelField(label, defaultValue);
+            return;
+        }
+
+        SerializedProperty prop = serializedConfig.FindProperty(propertyPath);
+        if (prop == null)
+        {
+            EditorGUILayout.LabelField(label, defaultValue);
+            return;
+        }
+
+        EditorGUILayout.BeginHorizontal();
+        string current = prop.stringValue;
+        string placeholder = string.IsNullOrEmpty(current) ? defaultValue : current;
+        string newValue = EditorGUILayout.TextField(label, placeholder);
+        // Only write if user actually changed the text
+        if (newValue != placeholder)
+            prop.stringValue = newValue;
+        else if (!string.IsNullOrEmpty(current) && newValue == current)
+            prop.stringValue = current; // keep existing override
+
+        if (!string.IsNullOrEmpty(prop.stringValue) && GUILayout.Button("Reset", GUILayout.Width(50)))
+        {
+            prop.stringValue = "";
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawTextOverrideArea(string label, string propertyPath, string defaultValue)
+    {
+        if (propertyPath == null)
+        {
+            EditorGUILayout.HelpBox(defaultValue, MessageType.None);
+            return;
+        }
+
+        SerializedProperty prop = serializedConfig.FindProperty(propertyPath);
+        if (prop == null)
+        {
+            EditorGUILayout.HelpBox(defaultValue, MessageType.None);
+            return;
+        }
+
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.BeginVertical();
+        EditorGUILayout.LabelField(label, EditorStyles.miniLabel);
+        string current = prop.stringValue;
+        string displayValue = string.IsNullOrEmpty(current) ? defaultValue : current;
+        string newValue = EditorGUILayout.TextArea(displayValue, GUILayout.MinHeight(36));
+        if (newValue != displayValue)
+            prop.stringValue = newValue;
+        else if (!string.IsNullOrEmpty(current) && newValue == current)
+            prop.stringValue = current;
+        EditorGUILayout.EndVertical();
+
+        if (!string.IsNullOrEmpty(prop.stringValue))
+        {
+            if (GUILayout.Button("Reset", GUILayout.Width(50), GUILayout.Height(36)))
+            {
+                prop.stringValue = "";
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    // ========== Hardcoded Defaults (bypass config overrides) ==========
+
+    private static string GetHardcodedPassiveName(int elementId, int pieceType)
+    {
+        if (elementId == ChessConstants.ELEMENT_FIRE)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Scorched Earth";
+                case ChessConstants.ROOK: return "Trail Blazer";
+                case ChessConstants.KNIGHT: return "Splash Damage";
+                case ChessConstants.BISHOP: return "Burning Path";
+                case ChessConstants.QUEEN: return "Royal Inferno";
+                case ChessConstants.KING: return "Ember Aura";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_EARTH)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Shield Wall";
+                case ChessConstants.ROOK: return "Fortified";
+                case ChessConstants.KNIGHT: return "Tremor Hop";
+                case ChessConstants.BISHOP: return "Earthen Shield";
+                case ChessConstants.QUEEN: return "Tectonic Presence";
+                case ChessConstants.KING: return "Bedrock Throne";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_LIGHTNING)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Energized";
+                case ChessConstants.ROOK: return "Overcharge";
+                case ChessConstants.KNIGHT: return "Double Jump";
+                case ChessConstants.BISHOP: return "Voltage Burst";
+                case ChessConstants.QUEEN: return "Swiftness";
+                case ChessConstants.KING: return "Reactive Blink";
+            }
+        }
+        return "None";
+    }
+
+    private static string GetHardcodedPassiveDescription(int elementId, int pieceType)
+    {
+        if (elementId == ChessConstants.ELEMENT_FIRE)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "When captured, leaves Fire on its square for 2 turns.";
+                case ChessConstants.ROOK: return "After moving, departure square becomes Fire for 1 turn.";
+                case ChessConstants.KNIGHT: return "When capturing, adjacent enemies become Singed.";
+                case ChessConstants.BISHOP: return "After moving, first traversed square becomes Fire for 1 turn.";
+                case ChessConstants.QUEEN: return "Immune to Fire Squares.";
+                case ChessConstants.KING: return "4 orthogonal squares are always Fire while King is there.";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_EARTH)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Cannot be captured by higher-value pieces if a friendly piece is adjacent.";
+                case ChessConstants.ROOK: return "Cannot be captured while on its starting square.";
+                case ChessConstants.KNIGHT: return "After moving, one adjacent enemy is Stunned for 1 turn.";
+                case ChessConstants.BISHOP: return "When captured, the capturing piece is Stunned for 1 turn.";
+                case ChessConstants.QUEEN: return "All friendly Stone Walls have +1 HP.";
+                case ChessConstants.KING: return "Cannot be checked while on starting square.";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_LIGHTNING)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Can always move 2 squares forward if both empty.";
+                case ChessConstants.ROOK: return "Can pass through one friendly piece during its move.";
+                case ChessConstants.KNIGHT: return "After moving, may move 1 extra square in a cardinal direction.";
+                case ChessConstants.BISHOP: return "After moving 3+ squares, adjacent enemies become Singed.";
+                case ChessConstants.QUEEN: return "Can also move like a Knight (no capture in L-shape).";
+                case ChessConstants.KING: return "Once per game, when checked, blink to a safe square within 2.";
+            }
+        }
+        return "";
+    }
+
+    private static string GetHardcodedActiveName(int elementId, int pieceType)
+    {
+        if (elementId == ChessConstants.ELEMENT_FIRE)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Flame Rush";
+                case ChessConstants.ROOK: return "Inferno Line";
+                case ChessConstants.KNIGHT: return "Eruption";
+                case ChessConstants.BISHOP: return "Flame Cross";
+                case ChessConstants.QUEEN: return "Meteor Strike";
+                case ChessConstants.KING: return "Backdraft";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_EARTH)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Barricade";
+                case ChessConstants.ROOK: return "Rampart";
+                case ChessConstants.KNIGHT: return "Earthquake";
+                case ChessConstants.BISHOP: return "Petrify";
+                case ChessConstants.QUEEN: return "Continental Divide";
+                case ChessConstants.KING: return "Sanctuary";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_LIGHTNING)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Chain Strike";
+                case ChessConstants.ROOK: return "Thunder Strike";
+                case ChessConstants.KNIGHT: return "Lightning Rod";
+                case ChessConstants.BISHOP: return "Arc Flash";
+                case ChessConstants.QUEEN: return "Tempest";
+                case ChessConstants.KING: return "Static Field";
+            }
+        }
+        return "Ability";
+    }
+
+    private static string GetHardcodedActiveDescription(int elementId, int pieceType)
+    {
+        if (elementId == ChessConstants.ELEMENT_FIRE)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Move forward 1-3, create Fire on passed squares.";
+                case ChessConstants.ROOK: return "Fire line in a direction (4 sq). First enemy captured.";
+                case ChessConstants.KNIGHT: return "Create Fire on all 8 adjacent squares for 2 turns.";
+                case ChessConstants.BISHOP: return "Create Fire in + pattern (2 sq each) for 2 turns.";
+                case ChessConstants.QUEEN: return "3x3 Fire zone on target. Captures first enemy in zone.";
+                case ChessConstants.KING: return "All Fire Squares capture adjacent enemies, then remove all Fire.";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_EARTH)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Create Stone Wall in front of pawn for 3 turns.";
+                case ChessConstants.ROOK: return "Create up to 3 Stone Walls in one direction.";
+                case ChessConstants.KNIGHT: return "Stun all enemies within 2 squares for 1 turn.";
+                case ChessConstants.BISHOP: return "Turn enemy piece into Stone Wall for 2 turns.";
+                case ChessConstants.QUEEN: return "Line of Stone Walls (up to 5) in any direction.";
+                case ChessConstants.KING: return "Adjacent squares become Stone Walls for 2 turns.";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_LIGHTNING)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Move forward, chain-capture up to 3 diagonal enemies.";
+                case ChessConstants.ROOK: return "Teleport to any legal square, ignoring blockers.";
+                case ChessConstants.KNIGHT: return "Teleport within 5 sq. Stun enemies adj to both spots.";
+                case ChessConstants.BISHOP: return "Swap positions with any friendly piece.";
+                case ChessConstants.QUEEN: return "Push enemies within 3 sq away. Off-board = captured.";
+                case ChessConstants.KING: return "For 2 turns, enemies moving adjacent are Stunned.";
+            }
+        }
+        return "";
     }
 }

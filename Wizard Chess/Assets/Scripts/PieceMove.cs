@@ -132,6 +132,26 @@ public class PieceMove : MonoBehaviour
         // Update centralized board state
         gm.UpdateBoardState(this, fromX, fromY, x, y);
 
+        // Handle en passant capture: remove the captured pawn
+        if (piece == ChessConstants.PAWN && fromX != x
+            && gm.enPassantTarget != null
+            && gm.enPassantTarget.x == x && gm.enPassantTarget.y == y)
+        {
+            PieceMove epCaptured = gm.boardState.GetPieceAt(x, fromY);
+            if (epCaptured != null && epCaptured.color != color
+                && epCaptured.piece == ChessConstants.PAWN)
+            {
+                gm.RemovePieceFromBoardState(x, fromY);
+                Square epSquare = gm.boardRows[fromY].transform.GetChild(x).GetComponent<Square>();
+                if (epSquare != null)
+                {
+                    epSquare.taken = false;
+                    epSquare.piece = null;
+                }
+                epCaptured.pieceTaken();
+            }
+        }
+
         // Handle en passant: set target if pawn moved 2 squares
         if (piece == ChessConstants.PAWN && System.Math.Abs(y - fromY) == 2)
         {
@@ -800,12 +820,82 @@ public class PieceMove : MonoBehaviour
     }
 
     /// <summary>
-    /// Promote pawn to a new piece type.
+    /// Promote pawn to a new piece type. Updates logic, visuals, board state, and elemental abilities.
     /// </summary>
     public void PromoteTo(int newPieceType)
     {
         piece = newPieceType;
-        // Note: Visual update would require mesh swap - for now just update the logic
+
+        // Log promotion to game log
+        GameLogUI.Log("<color=#44FF44>  → Promoted to " + GameLogUI.ShortPieceName(newPieceType) + "!</color>");
+
+        // Visual mesh swap
+        SwapMesh(newPieceType);
+
+        // BoardState attack maps now see the new piece type
+        if (gm != null && gm.boardState != null)
+            gm.boardState.RecalculateAttacks();
+
+        // Re-initialize elemental abilities for the new piece type
+        if (elementalPiece != null && elementalPiece.elementId != ChessConstants.ELEMENT_NONE)
+        {
+            int elementId = elementalPiece.elementId;
+            var newPassive = AbilityFactory.CreatePassive(elementId, newPieceType);
+            var newActive = AbilityFactory.CreateActive(elementId, newPieceType);
+            int newCooldown = AbilityFactory.GetCooldown(elementId, newPieceType);
+            elementalPiece.Init(elementId, newPassive, newActive, newCooldown);
+        }
+
         createPieceMoves(piece);
+    }
+
+    /// <summary>
+    /// Swap the visual mesh and material to match a new piece type using prefabs from Resources/PromotionPrefabs.
+    /// </summary>
+    private void SwapMesh(int newPieceType)
+    {
+        string prefabPath = GetPromotionPrefabPath(newPieceType, color);
+        if (prefabPath == null) return;
+        GameObject prefab = Resources.Load<GameObject>(prefabPath);
+        if (prefab == null) return;
+
+        MeshFilter prefabMF = prefab.GetComponent<MeshFilter>();
+        if (prefabMF != null && prefabMF.sharedMesh != null)
+        {
+            if (pieceMeshFilter == null) pieceMeshFilter = GetComponent<MeshFilter>();
+            if (pieceMeshFilter == null) return;
+            pieceMeshFilter.sharedMesh = prefabMF.sharedMesh;
+            if (pieceMeshCollider != null)
+                pieceMeshCollider.sharedMesh = prefabMF.sharedMesh;
+        }
+
+        // Swap material to match the new piece type's appearance
+        MeshRenderer prefabMR = prefab.GetComponent<MeshRenderer>();
+        if (prefabMR != null && prefabMR.sharedMaterial != null)
+        {
+            if (pieceMeshRenderer == null) pieceMeshRenderer = GetComponent<MeshRenderer>();
+            if (pieceMeshRenderer != null)
+            {
+                pieceMeshRenderer.material = prefabMR.sharedMaterial;
+
+                // Re-apply element tint on the new material
+                var indicatorUI = GetComponent<ElementIndicatorUI>();
+                if (indicatorUI != null)
+                    indicatorUI.ReapplyTint();
+            }
+        }
+    }
+
+    private static string GetPromotionPrefabPath(int pieceType, int pieceColor)
+    {
+        string suffix = pieceColor == ChessConstants.BLACK ? "Dark" : "Light";
+        switch (pieceType)
+        {
+            case ChessConstants.QUEEN: return "PromotionPrefabs/Queen" + suffix;
+            case ChessConstants.ROOK: return "PromotionPrefabs/Rook" + suffix;
+            case ChessConstants.BISHOP: return "PromotionPrefabs/Bishop" + suffix;
+            case ChessConstants.KNIGHT: return "PromotionPrefabs/Knight" + suffix;
+            default: return null;
+        }
     }
 }

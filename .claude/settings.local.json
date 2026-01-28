@@ -12,7 +12,13 @@
       "mcp__unityMCP__manage_scriptable_object",
       "Bash(dir:*)",
       "mcp__unityMCP__execute_menu_item",
-      "Bash(ls -1 \"D:\\\\GitHub\\\\WizardChess2\\\\Wizard Chess\\\\Assets\\\\OUTLINED Icons Pack Vol1\\\\PNG\\\\128\"\" | grep -i \"chess \")"
+      "Bash(ls -1 \"D:\\\\GitHub\\\\WizardChess2\\\\Wizard Chess\\\\Assets\\\\OUTLINED Icons Pack Vol1\\\\PNG\\\\128\"\" | grep -i \"chess \")",
+      "Bash(python:*)",
+      "mcp__unityMCP__run_tests",
+      "mcp__unityMCP__get_test_job",
+      "Bash(cd:*)",
+      "mcp__unityMCP__batch_execute",
+      "mcp__unityMCP__debug_request_context"
     ]
   }
 }

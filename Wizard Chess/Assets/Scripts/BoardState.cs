@@ -184,27 +184,48 @@ public class BoardState
         board[fromX, fromY] = null;
         board[toX, toY] = piece;
 
-        // Temporarily update piece position for attack calculation
         int savedX = piece.curx;
         int savedY = piece.cury;
         piece.curx = toX;
         piece.cury = toY;
 
-        // Recalculate attacks
-        RecalculateAttacks();
+        // Bug 1 fix: temporarily remove captured piece from piece lists
+        if (capturedPiece != null)
+            RemovePieceFromLists(capturedPiece);
 
-        // Check if own king is in check
+        // Bug 3 fix: simulate en passant pawn removal
+        PieceMove enPassantCaptured = null;
+        if (piece.piece == ChessConstants.PAWN && capturedPiece == null && fromX != toX)
+        {
+            enPassantCaptured = board[toX, fromY];
+            if (enPassantCaptured != null)
+            {
+                board[toX, fromY] = null;
+                RemovePieceFromLists(enPassantCaptured);
+            }
+        }
+
+        RecalculateAttacks();
         bool inCheck = IsKingInCheck(piece.color);
 
-        // Restore state
+        // Restore en passant captured piece
+        if (enPassantCaptured != null)
+        {
+            board[toX, fromY] = enPassantCaptured;
+            AddPieceToLists(enPassantCaptured);
+        }
+
+        // Restore captured piece
+        if (capturedPiece != null)
+            AddPieceToLists(capturedPiece);
+
+        // Restore board
         board[fromX, fromY] = piece;
         board[toX, toY] = capturedPiece;
         piece.curx = savedX;
         piece.cury = savedY;
 
-        // Recalculate attacks again with restored state
         RecalculateAttacks();
-
         return inCheck;
     }
 

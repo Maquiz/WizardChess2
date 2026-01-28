@@ -90,6 +90,7 @@ public class GameMaster : MonoBehaviour
         // Initialize board state manager
         boardState = new BoardState();
         currentGameState = GameState.Playing;
+        currentMove = ChessConstants.WHITE; // Ensure White always goes first (overrides Inspector)
 
         // Initialize wizard chess systems
         squareEffectManager = this.gameObject.AddComponent<SquareEffectManager>();
@@ -118,6 +119,17 @@ public class GameMaster : MonoBehaviour
         // Check banner and game over UI
         this.gameObject.AddComponent<CheckBannerUI>();
         this.gameObject.AddComponent<GameOverUI>();
+
+        // Game log panel
+        GameLogUI logUI = this.gameObject.AddComponent<GameLogUI>();
+        logUI.Init(this);
+
+        // AI opponent
+        if (MatchConfig.isAIMatch)
+        {
+            ChessAI ai = this.gameObject.AddComponent<ChessAI>();
+            ai.Init(this, MatchConfig.aiDifficulty, MatchConfig.aiColor);
+        }
     }
 
     /// <summary>
@@ -166,6 +178,13 @@ public class GameMaster : MonoBehaviour
             currentGameState == GameState.BlackWins ||
             currentGameState == GameState.Stalemate ||
             currentGameState == GameState.Draw)
+        {
+            return;
+        }
+
+        // Block human input during AI turn
+        ChessAI ai = GetComponent<ChessAI>();
+        if (ai != null && ai.IsAITurn())
         {
             return;
         }
@@ -219,6 +238,7 @@ public class GameMaster : MonoBehaviour
                     {
                         if (abilityExecutor.TryExecuteOnSquare(s.x, s.y))
                         {
+                            GameLogUI.LogAbility(turnNumber, currentMove, selectedPiece, s.x, s.y);
                             deSelectPiece();
                             EndTurn();
                         }
@@ -288,6 +308,7 @@ public class GameMaster : MonoBehaviour
                             {
                                 if (TryCapture(selectedPiece, p))
                                 {
+                                    GameLogUI.LogCapture(turnNumber, currentMove, selectedPiece, p, p.curx, p.cury);
                                     selectedPiece.movePiece(p.curx, p.cury, p.curSquare);
                                     deSelectPiece();
                                     EndTurn();
@@ -319,6 +340,7 @@ public class GameMaster : MonoBehaviour
                                 {
                                     if (TryCapture(selectedPiece, s.piece))
                                     {
+                                        GameLogUI.LogCapture(turnNumber, currentMove, selectedPiece, s.piece, s.x, s.y);
                                         selectedPiece.movePiece(s.piece.curx, s.piece.cury, s.piece.curSquare);
                                         deSelectPiece();
                                         EndTurn();
@@ -331,6 +353,7 @@ public class GameMaster : MonoBehaviour
                                 swapUIIcon(MouseUI.CANMOVE);
                                 if (Input.GetMouseButtonDown(0))
                                 {
+                                    GameLogUI.LogPieceMove(turnNumber, currentMove, selectedPiece, s.x, s.y);
                                     selectedPiece.movePiece(s.x, s.y, s);
                                     deSelectPiece();
                                     EndTurn();
@@ -447,7 +470,7 @@ public class GameMaster : MonoBehaviour
     }
 
     //Game Piece Control
-    void deSelectPiece()
+    public void deSelectPiece()
     {
         //only works for 2 colors
         selectedPiece = null;
@@ -640,12 +663,15 @@ public class GameMaster : MonoBehaviour
             currentGameState = (nextPlayer == ChessConstants.WHITE)
                 ? GameState.BlackWins
                 : GameState.WhiteWins;
+            string winner = (nextPlayer == ChessConstants.WHITE) ? "Black" : "White";
+            GameLogUI.LogEvent("<color=#FF4444>CHECKMATE! " + winner + " wins.</color>");
             OnGameOver();
         }
         else if (!inCheck && !hasLegalMoves)
         {
             // Stalemate
             currentGameState = GameState.Stalemate;
+            GameLogUI.LogEvent("<color=#FFAA44>STALEMATE — Draw.</color>");
             OnGameOver();
         }
         else if (inCheck)
@@ -653,7 +679,9 @@ public class GameMaster : MonoBehaviour
             currentGameState = (nextPlayer == ChessConstants.WHITE)
                 ? GameState.WhiteInCheck
                 : GameState.BlackInCheck;
-            Debug.Log("CHECK! " + (nextPlayer == ChessConstants.WHITE ? "White" : "Black") + " king is in check.");
+            string checkedSide = (nextPlayer == ChessConstants.WHITE) ? "White" : "Black";
+            GameLogUI.LogEvent("<color=#FF6666>CHECK! " + checkedSide + " king is in check.</color>");
+            Debug.Log("CHECK! " + checkedSide + " king is in check.");
         }
         else
         {

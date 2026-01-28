@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Root menu controller for the MainMenu scene.
-/// Manages 4 panels: Title, DeckSelect, DeckEditor, PieceExamine.
+/// Manages 5 panels: Title, DeckSelect, DeckEditor, PieceExamine, AIMatch.
 /// Creates Canvas + EventSystem at runtime.
 /// </summary>
 public class MainMenuUI : MonoBehaviour
@@ -19,6 +19,8 @@ public class MainMenuUI : MonoBehaviour
     private DeckSelectPanel deckSelectPanel;
     private DeckEditorPanel deckEditorPanel;
     private PieceExaminePanel pieceExaminePanel;
+    private AIMatchPanel aiMatchPanel;
+    private GameObject aiMatchPanelObj;
 
     // Shared data
     private DeckSaveData deckData;
@@ -31,6 +33,7 @@ public class MainMenuUI : MonoBehaviour
         CreateDeckSelectPanel();
         CreateDeckEditorPanel();
         CreatePieceExaminePanel();
+        CreateAIMatchPanel();
 
         ShowTitlePanel();
     }
@@ -66,6 +69,7 @@ public class MainMenuUI : MonoBehaviour
         deckSelectPanel.gameObject.SetActive(false);
         deckEditorPanel.gameObject.SetActive(false);
         pieceExaminePanel.gameObject.SetActive(false);
+        if (aiMatchPanelObj != null) aiMatchPanelObj.SetActive(false);
     }
 
     public void ShowDeckSelectPanel()
@@ -126,6 +130,21 @@ public class MainMenuUI : MonoBehaviour
         ShowTitlePanel();
     }
 
+    public void ShowAIMatchPanel()
+    {
+        titlePanel.SetActive(false);
+        deckSelectPanel.gameObject.SetActive(false);
+        deckEditorPanel.gameObject.SetActive(false);
+        pieceExaminePanel.gameObject.SetActive(false);
+        aiMatchPanelObj.SetActive(true);
+        aiMatchPanel.Open(deckData);
+    }
+
+    public void ReturnFromAIMatch()
+    {
+        ShowTitlePanel();
+    }
+
     public DeckSaveData GetDeckData()
     {
         return deckData;
@@ -171,16 +190,20 @@ public class MainMenuUI : MonoBehaviour
             new Vector2(0.5f, buttonY), new Vector2(280, 50),
             new Color(0.2f, 0.5f, 0.2f), () => ShowDeckSelectPanel());
 
-        CreateButton(titlePanel.transform, "ManageDecksButton", "Manage Decks",
+        CreateButton(titlePanel.transform, "AIButton", "Play vs AI",
             new Vector2(0.5f, buttonY + buttonStep), new Vector2(280, 50),
+            new Color(0.5f, 0.2f, 0.5f), () => ShowAIMatchPanel());
+
+        CreateButton(titlePanel.transform, "ManageDecksButton", "Manage Decks",
+            new Vector2(0.5f, buttonY + buttonStep * 2), new Vector2(280, 50),
             new Color(0.3f, 0.3f, 0.6f), () => ShowDeckEditorPanel(0));
 
         CreateButton(titlePanel.transform, "ExamineButton", "Examine Pieces",
-            new Vector2(0.5f, buttonY + buttonStep * 2), new Vector2(280, 50),
+            new Vector2(0.5f, buttonY + buttonStep * 3), new Vector2(280, 50),
             new Color(0.5f, 0.35f, 0.15f), () => ShowPieceExaminePanel());
 
         CreateButton(titlePanel.transform, "QuitButton", "Quit",
-            new Vector2(0.5f, buttonY + buttonStep * 3), new Vector2(280, 50),
+            new Vector2(0.5f, buttonY + buttonStep * 4), new Vector2(280, 50),
             new Color(0.5f, 0.15f, 0.15f), () =>
             {
 #if UNITY_EDITOR
@@ -240,6 +263,23 @@ public class MainMenuUI : MonoBehaviour
 
         pieceExaminePanel = panelObj.AddComponent<PieceExaminePanel>();
         pieceExaminePanel.Init(this);
+    }
+
+    private void CreateAIMatchPanel()
+    {
+        aiMatchPanelObj = new GameObject("AIMatchPanel");
+        aiMatchPanelObj.transform.SetParent(canvas.transform, false);
+
+        RectTransform rt = aiMatchPanelObj.AddComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+
+        aiMatchPanelObj.AddComponent<Image>().color = new Color(0.08f, 0.06f, 0.14f, 1f);
+
+        aiMatchPanel = aiMatchPanelObj.AddComponent<AIMatchPanel>();
+        aiMatchPanel.Init(this);
     }
 
     // ========== UI Helpers ==========

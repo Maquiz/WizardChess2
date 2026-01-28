@@ -18,14 +18,50 @@ public class AbilityUI : MonoBehaviour
     private GameMaster gm;
     private PieceMove currentPiece;
 
+    // Pre-loaded piece icon sprites (index 0 unused, 1-6 = PAWN..KING)
+    private Sprite[] pieceSprites;
+
     void Start()
     {
         gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameMaster>();
+
+        LoadPieceSprites();
 
         if (abilityButton != null)
             abilityButton.onClick.AddListener(OnAbilityClicked);
 
         HideAbility();
+    }
+
+    private void LoadPieceSprites()
+    {
+        pieceSprites = new Sprite[7];
+        for (int i = ChessConstants.PAWN; i <= ChessConstants.KING; i++)
+        {
+            pieceSprites[i] = Resources.Load<Sprite>(PieceIndexHelper.GetIconResourcePath(i));
+        }
+    }
+
+    /// <summary>
+    /// Ensure abilityIcon Image exists. Creates one as a child of abilityPanel if not assigned via Inspector.
+    /// </summary>
+    private void EnsureAbilityIcon()
+    {
+        if (abilityIcon != null) return;
+        if (abilityPanel == null) return;
+
+        GameObject iconObj = new GameObject("PieceIcon");
+        iconObj.transform.SetParent(abilityPanel.transform, false);
+
+        RectTransform rt = iconObj.AddComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0f, 0.5f);
+        rt.anchorMax = new Vector2(0f, 0.5f);
+        rt.pivot = new Vector2(0f, 0.5f);
+        rt.anchoredPosition = new Vector2(8f, 0f);
+        rt.sizeDelta = new Vector2(40f, 40f);
+
+        abilityIcon = iconObj.AddComponent<Image>();
+        abilityIcon.preserveAspect = true;
     }
 
     void Update()
@@ -89,6 +125,18 @@ public class AbilityUI : MonoBehaviour
         {
             abilityNameText.text = GetAbilityName(ep.elementId, piece.piece);
         }
+
+        // Update piece icon
+        EnsureAbilityIcon();
+        if (abilityIcon != null && pieceSprites != null)
+        {
+            int pt = piece.piece;
+            if (pt >= ChessConstants.PAWN && pt <= ChessConstants.KING)
+            {
+                abilityIcon.sprite = pieceSprites[pt];
+                abilityIcon.color = GetElementColor(ep.elementId);
+            }
+        }
     }
 
     public void HideAbility()
@@ -145,5 +193,16 @@ public class AbilityUI : MonoBehaviour
             }
         }
         return "Ability";
+    }
+
+    private Color GetElementColor(int elementId)
+    {
+        switch (elementId)
+        {
+            case ChessConstants.ELEMENT_FIRE: return new Color(1f, 0.5f, 0.2f);
+            case ChessConstants.ELEMENT_EARTH: return new Color(0.8f, 0.7f, 0.3f);
+            case ChessConstants.ELEMENT_LIGHTNING: return new Color(0.5f, 0.8f, 1f);
+            default: return Color.white;
+        }
     }
 }

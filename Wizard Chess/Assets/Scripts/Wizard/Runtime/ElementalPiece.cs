@@ -113,8 +113,9 @@ public class ElementalPiece : MonoBehaviour
     // ========== Turn Hooks ==========
 
     /// <summary>
-    /// Called at the start of each turn. Ticks cooldowns and status effects
-    /// for pieces owned by the current player.
+    /// Called at the start of each turn. Cooldowns tick on the piece owner's turn.
+    /// Status effects tick on the opponent's turn so that effects like Stun
+    /// actually block the affected piece for a full turn before expiring.
     /// </summary>
     public void OnTurnStart(int currentTurnColor)
     {
@@ -123,6 +124,10 @@ public class ElementalPiece : MonoBehaviour
         if (pieceMove.color == currentTurnColor)
         {
             cooldown?.Tick();
+        }
+
+        if (pieceMove.color != currentTurnColor)
+        {
             TickStatusEffects();
         }
 

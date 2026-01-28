@@ -12,7 +12,23 @@ public class LightningKingPassive : IPassiveAbility
 
     public bool OnBeforeCapture(PieceMove attacker, PieceMove defender, BoardState bs) => true;
     public void OnAfterCapture(PieceMove attacker, PieceMove defender, BoardState bs) { }
-    public void OnAfterMove(PieceMove piece, int fromX, int fromY, int toX, int toY, BoardState bs) { }
+
+    public void OnAfterMove(PieceMove piece, int fromX, int fromY, int toX, int toY, BoardState bs)
+    {
+        // Detect if king used the blink (moved more than 1 square in any direction).
+        // Can't castle while in check, and blink only activates in check, so any >1 move is a blink.
+        if (piece.piece != ChessConstants.KING) return;
+        if (piece.elementalPiece == null || piece.elementalPiece.hasUsedReactiveBlink) return;
+
+        int dx = System.Math.Abs(toX - fromX);
+        int dy = System.Math.Abs(toY - fromY);
+        if (dx > 1 || dy > 1)
+        {
+            piece.elementalPiece.hasUsedReactiveBlink = true;
+            UnityEngine.Debug.Log("[Lightning] " + piece.printPieceName() + " used Reactive Blink! (once per game)");
+        }
+    }
+
     public void OnPieceCaptured(PieceMove capturedPiece, PieceMove capturer, BoardState bs) { }
     public void OnTurnStart(int currentTurnColor) { }
 
@@ -20,6 +36,9 @@ public class LightningKingPassive : IPassiveAbility
     {
         if (piece.piece != ChessConstants.KING) return moves;
         if (piece.elementalPiece == null || piece.elementalPiece.hasUsedReactiveBlink) return moves;
+
+        // Reactive Blink only activates when the king is in check
+        if (!bs.IsKingInCheck(piece.color)) return moves;
 
         int opponentColor = piece.color == ChessConstants.WHITE ? ChessConstants.BLACK : ChessConstants.WHITE;
         for (int dx = -_params.blinkRange; dx <= _params.blinkRange; dx++)

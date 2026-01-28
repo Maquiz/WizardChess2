@@ -15,11 +15,29 @@ public static class MatchConfig
     public static bool useDeckSystem = false;
 
     /// <summary>
+    /// Whether this match is against the AI opponent.
+    /// </summary>
+    public static bool isAIMatch = false;
+
+    /// <summary>
+    /// AI difficulty level: 0=Easy, 1=Medium, 2=Hard.
+    /// </summary>
+    public static int aiDifficulty = 1;
+
+    /// <summary>
+    /// AI player color (default: Black).
+    /// </summary>
+    public static int aiColor = ChessConstants.BLACK;
+
+    /// <summary>
     /// Reset to defaults (used when returning to menu or starting fresh).
     /// </summary>
     public static void Clear()
     {
         draftData = null;
         useDeckSystem = false;
+        isAIMatch = false;
+        aiDifficulty = 1;
+        aiColor = ChessConstants.BLACK;
     }
 }

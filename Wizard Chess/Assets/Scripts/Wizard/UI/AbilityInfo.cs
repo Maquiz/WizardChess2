@@ -16,6 +16,14 @@ public static class AbilityInfo
 
     public static string GetPassiveName(int elementId, int pieceType)
     {
+        var cfg = AbilityBalanceConfig.Instance;
+        if (cfg != null)
+        {
+            var t = cfg.GetTextOverride(elementId, pieceType);
+            if (t != null && !string.IsNullOrEmpty(t.passiveName))
+                return t.passiveName;
+        }
+
         if (elementId == ChessConstants.ELEMENT_FIRE)
         {
             switch (pieceType)
@@ -57,6 +65,14 @@ public static class AbilityInfo
 
     public static string GetPassiveDescription(int elementId, int pieceType)
     {
+        var cfg = AbilityBalanceConfig.Instance;
+        if (cfg != null)
+        {
+            var t = cfg.GetTextOverride(elementId, pieceType);
+            if (t != null && !string.IsNullOrEmpty(t.passiveDescription))
+                return t.passiveDescription;
+        }
+
         if (elementId == ChessConstants.ELEMENT_FIRE)
         {
             switch (pieceType)
@@ -98,6 +114,14 @@ public static class AbilityInfo
 
     public static string GetActiveName(int elementId, int pieceType)
     {
+        var cfg = AbilityBalanceConfig.Instance;
+        if (cfg != null)
+        {
+            var t = cfg.GetTextOverride(elementId, pieceType);
+            if (t != null && !string.IsNullOrEmpty(t.activeName))
+                return t.activeName;
+        }
+
         if (elementId == ChessConstants.ELEMENT_FIRE)
         {
             switch (pieceType)
@@ -139,6 +163,14 @@ public static class AbilityInfo
 
     public static string GetActiveDescription(int elementId, int pieceType)
     {
+        var cfg = AbilityBalanceConfig.Instance;
+        if (cfg != null)
+        {
+            var t = cfg.GetTextOverride(elementId, pieceType);
+            if (t != null && !string.IsNullOrEmpty(t.activeDescription))
+                return t.activeDescription;
+        }
+
         if (elementId == ChessConstants.ELEMENT_FIRE)
         {
             switch (pieceType)

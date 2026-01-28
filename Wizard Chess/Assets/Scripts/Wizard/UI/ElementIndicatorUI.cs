@@ -34,6 +34,19 @@ public class ElementIndicatorUI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Re-apply the element tint after a material swap (e.g. pawn promotion).
+    /// </summary>
+    public void ReapplyTint()
+    {
+        if (pieceMove == null || pieceRenderer == null) return;
+        if (pieceMove.elementalPiece == null) return;
+
+        originalColor = pieceRenderer.material.color;
+        Color tint = GetElementColor(pieceMove.elementalPiece.elementId);
+        pieceRenderer.material.color = Color.Lerp(originalColor, tint, 0.25f);
+    }
+
     private Color GetElementColor(int elementId)
     {
         switch (elementId)

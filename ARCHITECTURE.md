@@ -1,6 +1,6 @@
 # ARCHITECTURE.md — WizardChess2 Class Reference
 
-> **Last updated:** 2026-01-26
+> **Last updated:** 2026-01-27
 >
 > This document is the source of truth for class responsibilities, public APIs, and system data flow.
 > Update this file whenever classes are added/removed or public interfaces change.
@@ -34,7 +34,8 @@
 5. [Enums](#enums)
 6. [Dependencies Between Classes](#dependencies-between-classes)
 7. [Prefabs & Tags](#prefabs--tags)
-8. [File Map](#file-map)
+8. [Test System](#test-system)
+9. [File Map](#file-map)
 
 ---
 
@@ -48,7 +49,7 @@
 │  Owns: BoardState, moveHistory, enPassantTarget              │
 │  Owns: SquareEffectManager, AbilityExecutor                  │
 │  Manages: piece selection, move execution, ability mode,     │
-│           draft phase, game end, tooltip UI                  │
+│           draft phase, game end, tooltip UI, AI opponent     │
 └─────┬──────────┬──────────────┬──────────────┬──────────────┘
       │          │              │              │
       ▼          ▼              ▼              ▼
@@ -83,6 +84,13 @@
   │  DraftData                  │
   │  AbilityFactory             │
   └─────────────────────────────┘
+
+  ┌─────────────────────────────┐
+  │       AI Opponent           │
+  │  ChessAI (MonoBehaviour)    │
+  │  AIEvaluation (static)      │
+  │  AIMatchPanel (Menu UI)     │
+  └─────────────────────────────┘
 ```
 
 ---
@@ -94,20 +102,26 @@ MainMenu Scene                           Board Scene
 ┌──────────────────┐                    ┌──────────────────┐
 │ Title Screen     │                    │ GameMaster.Start()│
 │   Play →         │                    │   MatchConfig set?│
-│   Manage Decks → │                    │   YES → DeckBased │
-│   Examine Pieces→│                    │          Setup    │
-│   Quit           │                    │   NO  → FireVs   │
-│                  │  LoadScene("Board")│          EarthSetup│
-│ Deck Select:     │───────────────────>│                  │
-│   P1 picks deck  │                    │ Game Over UI:    │
-│   P2 picks deck  │<───────────────────│   Rematch / Menu │
-│   Start Match    │  LoadScene("Menu") │                  │
+│   Play vs AI → ──┤                    │   YES → DeckBased │
+│   Manage Decks → │                    │          Setup    │
+│   Examine Pieces→│                    │   NO  → FireVs   │
+│   Quit           │                    │          EarthSetup│
+│                  │  LoadScene("Board")│                  │
+│ Deck Select:     │───────────────────>│   isAIMatch?     │
+│   P1 picks deck  │                    │   YES → AddComp  │
+│   P2 picks deck  │<───────────────────│        <ChessAI> │
+│   Start Match    │  LoadScene("Menu") │   NO  → 2-player │
+│                  │                    │                  │
+│ AI Match Panel:  │  LoadScene("Board")│ Game Over UI:    │
+│   Pick difficulty│───────────────────>│   Rematch / Menu │
+│   Pick deck      │                    │                  │
+│   Start Match    │                    │                  │
 └──────────────────┘                    └──────────────────┘
 ```
 
-- **MainMenu scene** (`Assets/Scenes/MainMenu.unity`): Title screen with 4 panels (Title, DeckSelect, DeckEditor, PieceExamine). Managed by `MainMenuUI`.
+- **MainMenu scene** (`Assets/Scenes/MainMenu.unity`): Title screen with 5 panels (Title, DeckSelect, DeckEditor, PieceExamine, AIMatch). Managed by `MainMenuUI`.
 - **Board scene** (`Assets/Scenes/Board.unity`): Chess gameplay. `GameMaster.Start()` checks `MatchConfig` to decide setup mode.
-- **Cross-scene data**: `MatchConfig` static class holds `DraftData` and `useDeckSystem` flag between scene loads.
+- **Cross-scene data**: `MatchConfig` static class holds `DraftData`, `useDeckSystem`, and AI settings (`isAIMatch`, `aiDifficulty`, `aiColor`) between scene loads.
 
 ---
 
@@ -148,7 +162,7 @@ EndTurn():
   1. currentMove toggles 1↔2
   2. turnNumber++
   3. SquareEffectManager.TickAllEffects() — decrement/remove expired
-  4. NotifyTurnStart() — tick cooldowns, status effects for all pieces
+  4. NotifyTurnStart() — tick cooldowns (own color), status effects (opponent color)
   5. EvaluateGameState() — Check / Checkmate / Stalemate
 ```
 
@@ -170,6 +184,7 @@ EndTurn():
 ```
 1. GameMaster.Start()        → Creates board squares, initializes BoardState
                              → Creates SquareEffectManager, AbilityExecutor
+                             → Creates GameLogUI (scrollable move/event log)
 2. Pieces fall onto squares  → Square.OnTriggerEnter()
 3. PieceMove.setIntitialPiece() → Registers with BoardState, generates initial moves
 ```
@@ -182,7 +197,7 @@ EndTurn():
 **File:** `Scripts/GameMaster.cs`
 **Inherits:** `MonoBehaviour`
 **Tag:** `"GM"`
-**Role:** Central orchestrator — handles input, game loop, turn management, UI, draft phase, ability mode, and game state evaluation.
+**Role:** Central orchestrator — handles input, game loop, turn management, UI, draft phase, ability mode, game state evaluation, and AI opponent integration.
 
 #### Public Fields
 | Field | Type | Description |
@@ -228,10 +243,10 @@ EndTurn():
 | `EnterAbilityMode` | `(PieceMove piece)` | **[NEW]** Enter ability targeting mode |
 | `TryCapture` | `(PieceMove attacker, PieceMove defender) → bool` | **[NEW]** Capture with passive hooks (returns false if blocked) |
 
-#### Private Methods
+#### Private/Public Utility Methods
 | Method | Description |
 |--------|-------------|
-| `deSelectPiece()` | Clear selection state and hide UI |
+| `deSelectPiece()` | **[CHANGED: now public]** Clear selection state and hide UI |
 | `createBoard(int size)` | Instantiate 8x8 checkerboard of squares |
 | `EvaluateGameState()` | Check/checkmate/stalemate detection after each move |
 | `HasAnyLegalMoves(int color)` | Whether a player has any legal moves |
@@ -304,6 +319,13 @@ EndTurn():
 4. [NEW] FilterProtectedCaptures() — remove captures blocked by passive abilities
 5. filterIllegalMoves() — remove moves that leave king in check
 ```
+
+#### Promotion Methods
+| Method | Description |
+|--------|-------------|
+| `PromoteTo(int)` | Promote pawn: update piece type, swap mesh+material, recalculate attacks, re-init elemental abilities |
+| `SwapMesh(int)` | Load promotion prefab from `Resources/PromotionPrefabs/` and swap mesh, collider, material, and re-apply element tint |
+| `GetPromotionPrefabPath(int, int)` | Static map: (piece type, color) → Resources path (`PromotionPrefabs/QueenDark`, `PromotionPrefabs/QueenLight`, etc.) |
 
 ---
 
@@ -389,7 +411,22 @@ EndTurn():
 
 ---
 
-### PieceUI, BoardUI, OutofBounds, PieceCheck
+### PieceUI
+**File:** `Scripts/PieceUI.cs`
+**Role:** Canvas overlay that follows a 3D piece and displays its icon as a UI Image. Auto-detects piece type changes (e.g. pawn promotion) and swaps the icon sprite.
+
+| Field / Method | Description |
+|----------------|-------------|
+| `target` | Transform of the 3D piece this UI follows |
+| `isPieceUI` | Whether this instance tracks a piece (vs selection indicator) |
+| `color` | `'W'` or `'B'` — the piece color |
+| `spriteLookup` | Static dictionary mapping `"{color}_{pieceType}"` → `Sprite`, built at startup from all PieceUI instances |
+| `Start()` | Caches Image, PieceMove; registers sprite in shared lookup |
+| `Update()` | Follows target position; detects piece type changes and swaps Image sprite |
+
+**Promotion icon swap:** At startup, each PieceUI registers its Image sprite keyed by `(color, pieceType)`. When `PieceMove.piece` changes (promotion), PieceUI detects the mismatch and looks up the new sprite from the dictionary.
+
+### BoardUI, OutofBounds, PieceCheck
 Unchanged from original architecture. See previous documentation.
 
 ---
@@ -449,11 +486,16 @@ Unchanged from original architecture. See previous documentation.
 
 **Singleton:** `AbilityBalanceConfig.Instance` — loads from `Resources/AbilityBalanceConfig` asset. Returns null if no asset exists (all abilities fall back to hardcoded defaults).
 
-**Structure:** Each element container (e.g., `FireAbilityParams`) holds 12 `[System.Serializable]` param classes (passive + active for each of 6 piece types). Each param class has `[Tooltip]` annotations and default values matching the original hardcoded values.
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `GetTextOverride` | `(int elementId, int pieceType) → AbilityTextOverride` | Get text override for element+piece, or null |
+
+**Structure:** Each element container (e.g., `FireAbilityParams`) holds 12 `[System.Serializable]` param classes (passive + active for each of 6 piece types), plus 6 `AbilityTextOverride` fields (one per piece type) for editable ability names/descriptions. Each param class has `[Tooltip]` annotations and default values matching the original hardcoded values.
 
 **Supporting classes** (all in same file):
 - `CooldownConfig` — cooldowns per piece type with `Get(int pieceType)` accessor
-- `FireAbilityParams`, `EarthAbilityParams`, `LightningAbilityParams` — element containers
+- `FireAbilityParams`, `EarthAbilityParams`, `LightningAbilityParams` — element containers with `GetTextOverride(int pieceType)` accessor
+- `AbilityTextOverride` — serializable text overrides (passiveName, passiveDescription, activeName, activeDescription)
 - 36 param classes (e.g., `FirePawnPassiveParams`, `EarthKnightActiveParams`, `LtQueenPassiveParams`)
 
 ---
@@ -484,7 +526,7 @@ Unchanged from original architecture. See previous documentation.
 | `IsSinged() → bool` | Convenience check |
 | `AddImmunity(SquareEffectType)` | Grant effect immunity |
 | `IsImmuneToEffect(SquareEffectType) → bool` | Check immunity |
-| `OnTurnStart(int)` | Tick cooldowns and status effects |
+| `OnTurnStart(int)` | Tick cooldowns (own turn) and status effects (opponent turn) |
 
 #### CooldownTracker
 **File:** `Scripts/Wizard/Runtime/CooldownTracker.cs`
@@ -612,10 +654,13 @@ Unchanged from original architecture. See previous documentation.
 |-------|------|-------------|
 | `draftData` | `DraftData` | Element selections for both players |
 | `useDeckSystem` | `bool` | Whether to use DeckBasedSetup (false = FireVsEarthSetup) |
+| `isAIMatch` | `bool` | **[NEW]** Whether this match is against the AI |
+| `aiDifficulty` | `int` | **[NEW]** AI difficulty: 0=Easy, 1=Medium, 2=Hard |
+| `aiColor` | `int` | **[NEW]** AI player color (default: BLACK) |
 
 | Method | Description |
 |--------|-------------|
-| `Clear()` | Reset to defaults |
+| `Clear()` | Reset to defaults (including AI fields) |
 
 #### DeckSlot
 **File:** `Scripts/Menu/DeckSlot.cs`
@@ -649,7 +694,7 @@ Unchanged from original architecture. See previous documentation.
 #### MainMenuUI
 **File:** `Scripts/Menu/MainMenuUI.cs`
 **Inherits:** `MonoBehaviour`
-**Role:** Root controller for MainMenu scene. Creates Canvas + EventSystem at runtime. Manages 4 panels: Title, DeckSelect, DeckEditor, PieceExamine. Provides show/hide navigation and static UI helper methods.
+**Role:** Root controller for MainMenu scene. Creates Canvas + EventSystem at runtime. Manages 5 panels: Title, DeckSelect, DeckEditor, PieceExamine, AIMatch. Provides show/hide navigation and static UI helper methods.
 
 #### DeckSelectPanel
 **File:** `Scripts/Menu/DeckSelectPanel.cs`
@@ -698,7 +743,7 @@ Unchanged from original architecture. See previous documentation.
 #### AbilityUI
 **File:** `Scripts/Wizard/UI/AbilityUI.cs`
 **Inherits:** `MonoBehaviour`
-**Role:** In-game ability button display. Shows ability name, cooldown, and triggers ability mode.
+**Role:** In-game ability button display. Shows ability name, cooldown, piece icon (tinted by element), and triggers ability mode. Pre-loads all 6 piece icon sprites from `Resources/ChessIcons/` at startup via `PieceIndexHelper.GetIconResourcePath()`. Updates the icon sprite in `ShowAbilityForPiece()` based on `piece.piece`, so the icon automatically reflects promotion. Creates the icon Image at runtime if not assigned via Inspector.
 
 #### SquareEffectUI
 **File:** `Scripts/Wizard/UI/SquareEffectUI.cs`
@@ -708,12 +753,12 @@ Unchanged from original architecture. See previous documentation.
 #### ElementIndicatorUI
 **File:** `Scripts/Wizard/UI/ElementIndicatorUI.cs`
 **Inherits:** `MonoBehaviour`
-**Role:** Tints piece material based on assigned element.
+**Role:** Tints piece material based on assigned element. Provides `ReapplyTint()` for re-tinting after material swap (e.g. pawn promotion).
 
 #### AbilityInfo
 **File:** `Scripts/Wizard/UI/AbilityInfo.cs`
 **Inherits:** Static class
-**Role:** Lookup tables for ability names and descriptions. Maps (elementId, pieceType) to passive name, passive description, active name, active description, and element display name. Also provides square effect names/descriptions/colors (`GetSquareEffectName`, `GetSquareEffectDescription`, `GetSquareEffectColor`) and status effect names/descriptions/colors (`GetStatusEffectName`, `GetStatusEffectDescription`, `GetStatusEffectColor`). Used by `PieceTooltipUI`, `PieceExaminePanel`, and other UI components.
+**Role:** Lookup tables for ability names and descriptions. Maps (elementId, pieceType) to passive name, passive description, active name, active description, and element display name. All four text getter methods check `AbilityBalanceConfig.Instance` text overrides first, falling back to hardcoded defaults if no override is set. Also provides square effect names/descriptions/colors (`GetSquareEffectName`, `GetSquareEffectDescription`, `GetSquareEffectColor`) and status effect names/descriptions/colors (`GetStatusEffectName`, `GetStatusEffectDescription`, `GetStatusEffectColor`). Used by `PieceTooltipUI`, `PieceExaminePanel`, and other UI components.
 
 | Method | Description |
 |--------|-------------|
@@ -726,7 +771,7 @@ Unchanged from original architecture. See previous documentation.
 #### PieceTooltipUI
 **File:** `Scripts/Wizard/UI/PieceTooltipUI.cs`
 **Inherits:** `MonoBehaviour`
-**Role:** Mouse-over tooltip showing piece info, element, passive/active abilities, cooldown status, status effects with descriptions, and current square effect info. Attached to GameMaster object. Creates its own UI panel at runtime as a child of the scene Canvas. Uses raycasting to detect hovered pieces. Status effects (Stunned, Singed) and square effects (Fire, Stone Wall, Lightning Field) show full descriptions from `AbilityInfo`.
+**Role:** Mouse-over tooltip showing piece icon, piece info, element, passive/active abilities, cooldown status, status effects with descriptions, and current square effect info. Attached to GameMaster object. Creates its own UI panel at runtime as a child of the scene Canvas. Pre-loads all 6 piece icon sprites from `Resources/ChessIcons/` at startup. Uses raycasting to detect hovered pieces. Caches by both piece reference and piece type so the tooltip rebuilds after promotion. Status effects (Stunned, Singed) and square effects (Fire, Stone Wall, Lightning Field) show full descriptions from `AbilityInfo`.
 
 | Method | Description |
 |--------|-------------|
@@ -752,6 +797,72 @@ Unchanged from original architecture. See previous documentation.
 **Inherits:** `MonoBehaviour`
 **Role:** Displays a red banner below the ability mode banner when the current player's king is in check. Shows "CHECK! [White/Black] king is in check!" text. Watches `GameMaster.currentGameState` for WhiteInCheck/BlackInCheck states. Attached to the GameMaster object. Positioned at `anchoredPosition = (0, -65)` to avoid overlap with AbilityModeUI.
 
+---
+
+### AI Opponent System
+
+#### ChessAI
+**File:** `Scripts/AI/ChessAI.cs`
+**Inherits:** `MonoBehaviour`
+**Role:** Main AI controller. Detects when it's the AI's turn, collects candidate moves and abilities, scores them by difficulty level, and executes the best one. Added to GameMaster object at runtime when `MatchConfig.isAIMatch` is true.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `difficulty` | `int` | 0=Easy, 1=Medium, 2=Hard |
+| `aiColor` | `int` | AI player color (default: BLACK) |
+| `isThinking` | `bool` | Prevents multiple coroutines |
+| `thinkDelay` | `float` | Seconds before executing (Easy:1.0, Medium:0.8, Hard:0.6) |
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `Init` | `(GameMaster, int difficulty, int color)` | Initialize AI with references and settings |
+| `IsAITurn` | `() → bool` | Returns true if it's the AI's turn (used by GameMaster to block input) |
+
+**Difficulty Levels:**
+- **Easy (0):** Capture-only scoring + heavy randomness (0-200). Safety filter penalizes hanging pieces. Picks random from top 5 candidates. Does not use abilities.
+- **Medium (1):** Full positional evaluation (material + PST + center + check + development) + slight randomness (0-20). Best scoring candidate. Uses abilities with -30 penalty.
+- **Hard (2):** Full evaluation + hanging piece analysis (recapture awareness) + minimal randomness (0-5). Best scoring candidate. Uses abilities aggressively.
+
+**Turn Flow:**
+1. `Update()` detects `gm.currentMove == aiColor`
+2. `ThinkAndMove()` coroutine: wait delay → collect moves → collect abilities (Medium+) → pick best → execute
+3. `ExecuteMove()`: regenerate moves, try capture, move piece, end turn
+4. `ExecuteAbility()`: enter ability mode, execute on target, end turn (fallback to normal move on failure)
+
+#### AIEvaluation
+**File:** `Scripts/AI/AIEvaluation.cs`
+**Inherits:** Static class
+**Role:** Static utility for board evaluation. Provides piece values, piece-square tables, move scoring, and ability scoring. All methods are stateless.
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `GetPieceValue` | `(int pieceType) → int` | Material value in centipawns (P=100, N=320, B=330, R=500, Q=900, K=10000) |
+| `GetPositionalBonus` | `(int pieceType, int x, int y, int color) → float` | Piece-square table lookup; flips y for White |
+| `ScoreMove` | `(PieceMove, Square, BoardState, SquareEffectManager, int turnNumber) → float` | Full move scoring: capture + MVV-LVA + singed + positional + center + check + development |
+| `ScoreMoveWithHangingAnalysis` | `(PieceMove, Square, BoardState, SquareEffectManager, int turnNumber) → float` | Extends ScoreMove with trade analysis and hanging piece penalties |
+| `ScoreAbilityUse` | `(PieceMove, Square, BoardState, SquareEffectManager) → float` | Heuristic ability scoring: direct target value + AoE proximity bonus |
+
+#### AIMatchPanel
+**File:** `Scripts/Menu/AIMatchPanel.cs`
+**Inherits:** `MonoBehaviour`
+**Role:** Menu panel for AI match setup. Player selects difficulty (Easy/Medium/Hard) and their deck from 9 slots. AI gets a random element deck. Sets `MatchConfig` and loads Board scene.
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `Init` | `(MainMenuUI)` | Store menu reference |
+| `Open` | `(DeckSaveData)` | Reset state, build UI |
+
+**Data Flow:**
+```
+MainMenuUI → AIMatchPanel.Open() → Player selects difficulty + deck
+→ OnStartMatch() → MatchConfig (isAIMatch=true, aiDifficulty, aiColor, useDeckSystem=true, draftData)
+→ SceneManager.LoadScene("Board")
+→ GameMaster.Start() → AddComponent<ChessAI>().Init()
+→ ChessAI.Update() detects AI turn → ThinkAndMove()
+```
+
+---
+
 #### GameOverUI
 **File:** `Scripts/Wizard/UI/GameOverUI.cs`
 **Inherits:** `MonoBehaviour`
@@ -761,6 +872,23 @@ Unchanged from original architecture. See previous documentation.
 |--------|-------------|
 | `OnRematchClicked()` | Reloads Board scene with same MatchConfig |
 | `OnMainMenuClicked()` | Clears MatchConfig, loads MainMenu scene |
+
+#### GameLogUI
+**File:** `Scripts/Wizard/UI/GameLogUI.cs`
+**Inherits:** `MonoBehaviour`
+**Role:** Scrollable in-game log panel on the right side of the screen. Displays moves, captures, abilities, check/checkmate/stalemate events as they happen. Uses a singleton pattern with static `Log()` methods so any class can add entries. Auto-scrolls to the latest entry. Attached to the GameMaster object at startup.
+
+| Method | Description |
+|--------|-------------|
+| `Init(GameMaster)` | Store reference, create UI, set singleton instance |
+| `static Log(string)` | Add a plain text entry to the log |
+| `static LogMove(int turn, int color, string msg)` | Add a turn-numbered entry (e.g. "1. Knight E4") |
+| `static LogPieceMove(int turn, int color, PieceMove, int toX, int toY)` | Log a piece moving to a square |
+| `static LogCapture(int turn, int color, PieceMove attacker, PieceMove victim, int toX, int toY)` | Log a capture (e.g. "1. Knight x Pawn E4") |
+| `static LogAbility(int turn, int color, PieceMove, int toX, int toY)` | Log an ability use |
+| `static LogEvent(string)` | Log a game event with no turn prefix (check, checkmate, etc.) |
+| `static ShortPieceName(int pieceType)` | Returns "Pawn", "Rook", etc. |
+| `static SquareName(int x, int y)` | Returns "A1", "E4", etc. |
 
 ---
 
@@ -773,10 +901,10 @@ Unchanged from original architecture. See previous documentation.
 
 **Layout:**
 - Left panel: Save button, 3 color-coded element tabs (Fire=red-orange, Earth=brown-gold, Lightning=blue), 6 piece type buttons
-- Right panel: Passive ability (name, description, editable params), Active ability (name, cooldown, description, editable params)
+- Right panel: Passive ability (editable name, editable description, editable params), Active ability (editable name, cooldown, editable description, editable params)
+- Text fields show hardcoded defaults when config override is empty; "Reset" button clears override back to default
 - Uses `SerializedObject`/`SerializedProperty` for proper undo and dirty support
 - Auto-creates `AbilityBalanceConfig` asset in `Resources/` if none found
-- Reads ability names and descriptions from `AbilityInfo`
 
 | Method | Description |
 |--------|-------------|
@@ -899,11 +1027,15 @@ GameMaster ──────► LineRenderer            (move preview line)
 GameMaster ──────► SquareEffectManager     [NEW] (manages square effects)
 GameMaster ──────► AbilityExecutor         [NEW] (ability targeting mode)
 
+PieceUI ─────────► PieceMove               (detects piece type changes for icon swap)
+
 PieceMove ───────► GameMaster              (gm reference for state access)
 PieceMove ───────► BoardState              (via gm.boardState for legality checks)
 PieceMove ───────► Square                  (move targets, current position)
 PieceMove ───────► DOTween                 (animation)
 PieceMove ───────► ElementalPiece          [NEW] (optional elemental component)
+PieceMove ───────► AbilityFactory          [NEW] (re-create abilities on promotion)
+PieceMove ───────► Resources.Load          [NEW] (promotion mesh prefabs)
 
 ElementalPiece ──► IPassiveAbility         [NEW] (passive ability interface)
 ElementalPiece ──► IActiveAbility          [NEW] (active ability interface)
@@ -934,12 +1066,17 @@ AbilityEditorWindow ► AbilityInfo          [NEW] (ability names/descriptions)
 
 PieceTooltipUI ──► GameMaster             [NEW] (selected piece, game state)
 PieceTooltipUI ──► AbilityInfo            [NEW] (ability names/descriptions)
+PieceTooltipUI ──► PieceIndexHelper       [NEW] (piece icon resource paths)
 PieceTooltipUI ──► Canvas                 [NEW] (runtime UI creation)
+
+AbilityUI ───────► GameMaster             [NEW] (selected piece, ability mode)
+AbilityUI ───────► PieceIndexHelper       [NEW] (piece icon resource paths)
 
 ElementParticleUI ► PieceMove             [NEW] (element info via elementalPiece)
 ElementParticleUI ► ParticleSystem        [NEW] (runtime particle creation)
 
 AbilityInfo ─────► ChessConstants         [NEW] (element/piece type constants)
+AbilityInfo ─────► AbilityBalanceConfig   [NEW] (text overrides for ability names/descriptions)
 
 AbilityModeUI ───► GameMaster             [NEW] (ability mode state)
 AbilityModeUI ───► AbilityInfo            [NEW] (ability names)
@@ -951,6 +1088,10 @@ CheckBannerUI ──► Canvas                 [NEW] (runtime UI creation)
 GameOverUI ─────► GameMaster             [NEW] (game state: game over detection)
 GameOverUI ─────► Canvas                 [NEW] (runtime UI creation)
 GameOverUI ─────► SceneManager           [NEW] (scene reload for New Game)
+
+GameLogUI ──────► GameMaster             [NEW] (turn number, game state)
+GameLogUI ──────► Canvas                 [NEW] (runtime UI creation)
+GameLogUI ──────► ChessConstants         [NEW] (piece type names)
 
 FireVsEarthSetup ► ElementParticleUI      [NEW] (attaches to pieces)
 FireVsEarthSetup ► AbilityBalanceConfig   [NEW] (reads stoneWallBonusHP)
@@ -965,6 +1106,18 @@ MainMenuUI ──────► DeckSelectPanel        [NEW] (panel management)
 MainMenuUI ──────► DeckEditorPanel        [NEW] (panel management)
 MainMenuUI ──────► PieceExaminePanel      [NEW] (panel management)
 MainMenuUI ──────► DeckPersistence        [NEW] (load/save decks)
+ChessAI ─────────► GameMaster             [NEW] (game state, move execution)
+ChessAI ─────────► AIEvaluation           [NEW] (move scoring)
+ChessAI ─────────► BoardState             [NEW] (piece queries, attack maps)
+ChessAI ─────────► AbilityExecutor        [NEW] (ability execution)
+ChessAI ─────────► GameLogUI              [NEW] (move/ability logging)
+AIEvaluation ────► BoardState             [NEW] (position queries, attack maps)
+AIEvaluation ────► ChessConstants         [NEW] (piece types, element IDs)
+AIMatchPanel ────► MainMenuUI             [NEW] (navigation)
+AIMatchPanel ────► MatchConfig            [NEW] (sets AI match config)
+AIMatchPanel ────► DraftData              [NEW] (builds player + AI draft)
+AIMatchPanel ────► SceneManager           [NEW] (loads Board scene)
+MainMenuUI ──────► AIMatchPanel           [NEW] (panel management)
 DeckSelectPanel ─► MatchConfig            [NEW] (sets cross-scene data)
 DeckSelectPanel ─► SceneManager           [NEW] (loads Board scene)
 DeckEditorPanel ─► DeckPersistence        [NEW] (saves deck data)
@@ -1006,10 +1159,107 @@ BoardState ──────► ChessConstants          (directions, constants)
 
 ---
 
+## Test System
+
+### Overview
+
+373 EditMode unit tests covering core chess rules, board state consistency, wizard systems, and all 36 elemental abilities. Tests use the Unity Test Framework (NUnit) and run entirely in the Editor without loading scenes.
+
+### Assembly Definition Chain
+
+```
+WizardChess.Tests.EditMode.asmdef
+  └── references: WizardChess, UnityEngine.TestRunner, UnityEditor.TestRunner
+       └── WizardChess.asmdef (Assets/Scripts/)
+            └── references: DOTween.Modules
+```
+
+- `WizardChess.asmdef` puts all game scripts into a named assembly so the test assembly can reference them.
+- The test asmdef uses `overrideReferences: true` with `nunit.framework.dll` precompiled reference.
+- `defineConstraints: ["UNITY_INCLUDE_TESTS"]` ensures test code only compiles when the test framework is active.
+
+### Test Helpers
+
+#### ChessBoardBuilder
+**File:** `Tests/EditMode/TestHelpers/ChessBoardBuilder.cs`
+**Role:** Constructs a minimal Unity hierarchy for testing without loading a scene.
+
+Creates:
+- GameMaster GameObject with `BoardState`, `SquareEffectManager`, `AbilityExecutor`
+- 8 row GameObjects (`boardRows[0..7]`)
+- 64 Square children (8 per row) with correct `x`, `y` coordinates
+- LineRenderer and PieceUI stubs (needed by `deSelectPiece`)
+
+| Method | Description |
+|--------|-------------|
+| `Build()` | Create the full board hierarchy |
+| `PlacePiece(type, color, x, y) → PieceMove` | Place a standard piece |
+| `PlaceElementalPiece(type, color, x, y, element) → PieceMove` | Place a piece with elemental abilities |
+| `GetSquare(x, y) → Square` | Get square reference |
+| `GenerateMoves(piece) → List<Square>` | Generate and filter legal moves |
+| `Cleanup()` | `DestroyImmediate` all GameObjects (call in `[TearDown]`) |
+
+**Properties:** `BoardState`, `SEM` (SquareEffectManager), `GM` (GameMaster)
+
+#### TestExtensions
+**File:** `Tests/EditMode/TestHelpers/TestExtensions.cs`
+**Role:** Static assert helpers for move validation.
+
+| Method | Description |
+|--------|-------------|
+| `AssertContainsMove(moves, x, y, msg)` | Assert move list includes coordinate |
+| `AssertDoesNotContainMove(moves, x, y, msg)` | Assert move list excludes coordinate |
+| `AssertMoveCount(moves, expected, msg)` | Assert exact move count |
+
+### Test Categories
+
+#### Core Chess (12 files, ~145 tests)
+| File | Coverage |
+|------|----------|
+| `BoardStateTests.cs` | Piece placement, removal, attack maps, check detection |
+| `BoardStateSyncTests.cs` | PieceMove↔BoardState position agreement after moves/captures |
+| `PawnMoveTests.cs` | Forward moves, captures, double move, blocking |
+| `RookMoveTests.cs` | Sliding moves, blocking, capture inclusion |
+| `KnightMoveTests.cs` | L-shape moves, corner cases, jump over pieces |
+| `BishopMoveTests.cs` | Diagonal moves, blocking, capture |
+| `QueenMoveTests.cs` | Combined rook+bishop moves |
+| `KingMoveTests.cs` | Adjacent moves, cannot move into check |
+| `CastlingTests.cs` | Kingside/queenside, conditions preventing castling |
+| `EnPassantTests.cs` | En passant capture and target management |
+| `CheckDetectionTests.cs` | Check by each piece type, checkmate, stalemate, capture/block/pin resolution |
+| `EnPassantCheckTests.cs` | En passant + check interactions (illegal ep, ep resolving check, ep execution) |
+
+#### Wizard Systems (4 files, ~45 tests)
+| File | Coverage |
+|------|----------|
+| `CooldownTrackerTests.cs` | Cooldown start, tick, reset, ready state |
+| `StatusEffectTests.cs` | Stunned/Singed application, tick, expiry |
+| `SquareEffectTests.cs` | Fire/StoneWall/LightningField creation, HP, blocking |
+| `ElementalPieceTests.cs` | Status effects, immunities, turn start behavior |
+
+#### Ability Tests (18 files, ~180 tests)
+One file per element-piece combination, testing both passive and active abilities:
+
+| Element | Files |
+|---------|-------|
+| Fire | `FirePawnTests`, `FireRookTests`, `FireKnightTests`, `FireBishopTests`, `FireQueenTests`, `FireKingTests` |
+| Earth | `EarthPawnTests`, `EarthRookTests`, `EarthKnightTests`, `EarthBishopTests`, `EarthQueenTests`, `EarthKingTests` |
+| Lightning | `LightningPawnTests`, `LightningRookTests`, `LightningKnightTests`, `LightningBishopTests`, `LightningQueenTests`, `LightningKingTests` |
+
+### Test Conventions
+
+- Every test file uses `ChessBoardBuilder` in `[SetUp]` and calls `Cleanup()` in `[TearDown]`.
+- Both kings must be placed for move generation (check detection requires king references).
+- `LogAssert.Expect(LogType.Error, ...)` is used where `SquareEffect.RemoveEffect()` calls `Destroy()` in edit mode (which logs an error but still functions).
+- Tests avoid hardcoding `AbilityBalanceConfig` parameter values since the ScriptableObject asset loads via `Resources.Load` in tests.
+
+---
+
 ## File Map
 
 ```
 Scripts/
+├── WizardChess.asmdef         Assembly definition for game scripts
 ├── GameMaster.cs              Core orchestrator (modified — conditional DeckBasedSetup)
 ├── BoardState.cs              Board state manager (modified)
 ├── PieceMove.cs               Per-piece logic (modified)
@@ -1021,13 +1271,17 @@ Scripts/
 ├── BoardUI.cs                 World-to-2D utility
 ├── OutofBounds.cs             Board boundary detection
 ├── PieceCheck.cs              Piece collision handling
+├── AI/
+│   ├── ChessAI.cs                AI opponent controller (3 difficulty levels)
+│   └── AIEvaluation.cs           Static evaluation: material, positional, ability scoring
 ├── Menu/
 │   ├── DeckSlot.cs               Single deck definition
 │   ├── DeckSaveData.cs           All 9 deck slots container
 │   ├── DeckPersistence.cs        JSON save/load utility
-│   ├── MatchConfig.cs            Cross-scene static data bridge
+│   ├── MatchConfig.cs            Cross-scene static data bridge (modified — AI fields)
 │   ├── PieceIndexHelper.cs       Piece index → type/label/icon mapping
-│   ├── MainMenuUI.cs             Root menu controller
+│   ├── MainMenuUI.cs             Root menu controller (modified — AI match button)
+│   ├── AIMatchPanel.cs           AI match setup panel (difficulty + deck selection)
 │   ├── DeckSelectPanel.cs        Pre-game deck picking
 │   ├── DeckEditorPanel.cs        Deck editor (element assignment)
 │   └── PieceExaminePanel.cs      Ability reference + effects glossary browser
@@ -1081,6 +1335,7 @@ Scripts/
         ├── AbilityInfo.cs              Static ability/effect name/description lookups
         ├── AbilityModeUI.cs            Ability mode banner indicator
         ├── CheckBannerUI.cs            Check state red banner
+        ├── GameLogUI.cs                Scrollable in-game move/event log
         ├── GameOverUI.cs               Game over overlay + scene reset
         ├── PieceTooltipUI.cs           Mouse-over piece info tooltip
         ├── ElementParticleUI.cs        Element-colored particle effects on pieces
@@ -1088,11 +1343,67 @@ Scripts/
         └── ElementIndicatorUI.cs       Piece element tinting
 
 Resources/
-└── ChessIcons/                       Chess piece icon sprites for DeckEditorPanel
-    ├── pawn.png
-    ├── rook.png
-    ├── knight.png
-    ├── bishop.png
-    ├── queen.png
-    └── king.png
+├── ChessIcons/                       Chess piece icon sprites for DeckEditorPanel
+│   ├── pawn.png
+│   ├── rook.png
+│   ├── knight.png
+│   ├── bishop.png
+│   ├── queen.png
+│   └── king.png
+└── PromotionPrefabs/                 Prefabs for pawn promotion (mesh + material swap)
+    ├── QueenDark.prefab
+    ├── QueenLight.prefab
+    ├── RookDark.prefab
+    ├── RookLight.prefab
+    ├── BishopDark.prefab
+    ├── BishopLight.prefab
+    ├── KnightDark.prefab
+    └── KnightLight.prefab
+
+Tests/
+└── EditMode/
+    ├── WizardChess.Tests.EditMode.asmdef   Test assembly definition
+    ├── TestHelpers/
+    │   ├── ChessBoardBuilder.cs            Board hierarchy builder for tests
+    │   └── TestExtensions.cs               Assert helpers for move validation
+    ├── Core/
+    │   ├── BoardStateTests.cs              Board state CRUD and attack maps
+    │   ├── BoardStateSyncTests.cs          Position desync detection
+    │   ├── PawnMoveTests.cs                Pawn move generation
+    │   ├── RookMoveTests.cs                Rook move generation
+    │   ├── KnightMoveTests.cs              Knight move generation
+    │   ├── BishopMoveTests.cs              Bishop move generation
+    │   ├── QueenMoveTests.cs               Queen move generation
+    │   ├── KingMoveTests.cs                King move generation
+    │   ├── CastlingTests.cs                Castling rules
+    │   ├── EnPassantTests.cs               En passant rules
+    │   ├── EnPassantCheckTests.cs         En passant + check interactions
+    │   └── CheckDetectionTests.cs          Check, checkmate, stalemate, pins
+    ├── Wizard/
+    │   ├── CooldownTrackerTests.cs         Cooldown state machine
+    │   ├── StatusEffectTests.cs            Status effect lifecycle
+    │   ├── SquareEffectTests.cs            Square effect creation and behavior
+    │   └── ElementalPieceTests.cs          Elemental piece component
+    └── Abilities/
+        ├── Fire/
+        │   ├── FirePawnTests.cs            Scorched Earth + Flame Rush
+        │   ├── FireRookTests.cs            Trail Blazer + Inferno Line
+        │   ├── FireKnightTests.cs          Splash Damage + Eruption
+        │   ├── FireBishopTests.cs          Burning Path + Flame Cross
+        │   ├── FireQueenTests.cs           Royal Inferno + Meteor Strike
+        │   └── FireKingTests.cs            Ember Aura + Backdraft
+        ├── Earth/
+        │   ├── EarthPawnTests.cs           Shield Wall + Barricade
+        │   ├── EarthRookTests.cs           Fortified + Rampart
+        │   ├── EarthKnightTests.cs         Tremor Hop + Earthquake
+        │   ├── EarthBishopTests.cs         Earthen Shield + Petrify
+        │   ├── EarthQueenTests.cs          Tectonic Presence + Continental Divide
+        │   └── EarthKingTests.cs           Bedrock Throne + Sanctuary
+        └── Lightning/
+            ├── LightningPawnTests.cs       Energized + Chain Strike
+            ├── LightningRookTests.cs       Overcharge + Thunder Strike
+            ├── LightningKnightTests.cs     Double Jump + Lightning Rod
+            ├── LightningBishopTests.cs     Voltage Burst + Arc Flash
+            ├── LightningQueenTests.cs      Swiftness + Tempest
+            └── LightningKingTests.cs       Reactive Blink + Static Field
 ```

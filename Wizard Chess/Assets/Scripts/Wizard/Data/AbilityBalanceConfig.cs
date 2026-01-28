@@ -23,6 +23,20 @@ public class AbilityBalanceConfig : ScriptableObject
         }
     }
 
+    /// <summary>
+    /// Get the text override for a given element and piece type, or null if none exists.
+    /// </summary>
+    public AbilityTextOverride GetTextOverride(int elementId, int pieceType)
+    {
+        switch (elementId)
+        {
+            case ChessConstants.ELEMENT_FIRE: return fire.GetTextOverride(pieceType);
+            case ChessConstants.ELEMENT_EARTH: return earth.GetTextOverride(pieceType);
+            case ChessConstants.ELEMENT_LIGHTNING: return lightning.GetTextOverride(pieceType);
+            default: return null;
+        }
+    }
+
     [Header("Cooldowns (turns)")]
     public CooldownConfig cooldowns = new CooldownConfig();
 
@@ -78,18 +92,38 @@ public class CooldownConfig
 [System.Serializable]
 public class FireAbilityParams
 {
+    public AbilityTextOverride pawnText = new AbilityTextOverride();
     public FirePawnPassiveParams pawnPassive = new FirePawnPassiveParams();
     public FirePawnActiveParams pawnActive = new FirePawnActiveParams();
+    public AbilityTextOverride rookText = new AbilityTextOverride();
     public FireRookPassiveParams rookPassive = new FireRookPassiveParams();
     public FireRookActiveParams rookActive = new FireRookActiveParams();
+    public AbilityTextOverride knightText = new AbilityTextOverride();
     public FireKnightPassiveParams knightPassive = new FireKnightPassiveParams();
     public FireKnightActiveParams knightActive = new FireKnightActiveParams();
+    public AbilityTextOverride bishopText = new AbilityTextOverride();
     public FireBishopPassiveParams bishopPassive = new FireBishopPassiveParams();
     public FireBishopActiveParams bishopActive = new FireBishopActiveParams();
+    public AbilityTextOverride queenText = new AbilityTextOverride();
     public FireQueenPassiveParams queenPassive = new FireQueenPassiveParams();
     public FireQueenActiveParams queenActive = new FireQueenActiveParams();
+    public AbilityTextOverride kingText = new AbilityTextOverride();
     public FireKingPassiveParams kingPassive = new FireKingPassiveParams();
     public FireKingActiveParams kingActive = new FireKingActiveParams();
+
+    public AbilityTextOverride GetTextOverride(int pieceType)
+    {
+        switch (pieceType)
+        {
+            case ChessConstants.PAWN: return pawnText;
+            case ChessConstants.ROOK: return rookText;
+            case ChessConstants.KNIGHT: return knightText;
+            case ChessConstants.BISHOP: return bishopText;
+            case ChessConstants.QUEEN: return queenText;
+            case ChessConstants.KING: return kingText;
+            default: return null;
+        }
+    }
 }
 
 [System.Serializable]
@@ -196,18 +230,38 @@ public class FireKingActiveParams
 [System.Serializable]
 public class EarthAbilityParams
 {
+    public AbilityTextOverride pawnText = new AbilityTextOverride();
     public EarthPawnPassiveParams pawnPassive = new EarthPawnPassiveParams();
     public EarthPawnActiveParams pawnActive = new EarthPawnActiveParams();
+    public AbilityTextOverride rookText = new AbilityTextOverride();
     public EarthRookPassiveParams rookPassive = new EarthRookPassiveParams();
     public EarthRookActiveParams rookActive = new EarthRookActiveParams();
+    public AbilityTextOverride knightText = new AbilityTextOverride();
     public EarthKnightPassiveParams knightPassive = new EarthKnightPassiveParams();
     public EarthKnightActiveParams knightActive = new EarthKnightActiveParams();
+    public AbilityTextOverride bishopText = new AbilityTextOverride();
     public EarthBishopPassiveParams bishopPassive = new EarthBishopPassiveParams();
     public EarthBishopActiveParams bishopActive = new EarthBishopActiveParams();
+    public AbilityTextOverride queenText = new AbilityTextOverride();
     public EarthQueenPassiveParams queenPassive = new EarthQueenPassiveParams();
     public EarthQueenActiveParams queenActive = new EarthQueenActiveParams();
+    public AbilityTextOverride kingText = new AbilityTextOverride();
     public EarthKingPassiveParams kingPassive = new EarthKingPassiveParams();
     public EarthKingActiveParams kingActive = new EarthKingActiveParams();
+
+    public AbilityTextOverride GetTextOverride(int pieceType)
+    {
+        switch (pieceType)
+        {
+            case ChessConstants.PAWN: return pawnText;
+            case ChessConstants.ROOK: return rookText;
+            case ChessConstants.KNIGHT: return knightText;
+            case ChessConstants.BISHOP: return bishopText;
+            case ChessConstants.QUEEN: return queenText;
+            case ChessConstants.KING: return kingText;
+            default: return null;
+        }
+    }
 }
 
 [System.Serializable]
@@ -322,18 +376,38 @@ public class EarthKingActiveParams
 [System.Serializable]
 public class LightningAbilityParams
 {
+    public AbilityTextOverride pawnText = new AbilityTextOverride();
     public LtPawnPassiveParams pawnPassive = new LtPawnPassiveParams();
     public LtPawnActiveParams pawnActive = new LtPawnActiveParams();
+    public AbilityTextOverride rookText = new AbilityTextOverride();
     public LtRookPassiveParams rookPassive = new LtRookPassiveParams();
     public LtRookActiveParams rookActive = new LtRookActiveParams();
+    public AbilityTextOverride knightText = new AbilityTextOverride();
     public LtKnightPassiveParams knightPassive = new LtKnightPassiveParams();
     public LtKnightActiveParams knightActive = new LtKnightActiveParams();
+    public AbilityTextOverride bishopText = new AbilityTextOverride();
     public LtBishopPassiveParams bishopPassive = new LtBishopPassiveParams();
     public LtBishopActiveParams bishopActive = new LtBishopActiveParams();
+    public AbilityTextOverride queenText = new AbilityTextOverride();
     public LtQueenPassiveParams queenPassive = new LtQueenPassiveParams();
     public LtQueenActiveParams queenActive = new LtQueenActiveParams();
+    public AbilityTextOverride kingText = new AbilityTextOverride();
     public LtKingPassiveParams kingPassive = new LtKingPassiveParams();
     public LtKingActiveParams kingActive = new LtKingActiveParams();
+
+    public AbilityTextOverride GetTextOverride(int pieceType)
+    {
+        switch (pieceType)
+        {
+            case ChessConstants.PAWN: return pawnText;
+            case ChessConstants.ROOK: return rookText;
+            case ChessConstants.KNIGHT: return knightText;
+            case ChessConstants.BISHOP: return bishopText;
+            case ChessConstants.QUEEN: return queenText;
+            case ChessConstants.KING: return kingText;
+            default: return null;
+        }
+    }
 }
 
 [System.Serializable]
@@ -420,4 +494,17 @@ public class LtKingActiveParams
 {
     [Tooltip("Duration of lightning field on adjacent squares (turns)")]
     public int fieldDuration = 2;
+}
+
+// ============================================================
+// Ability Text Overrides
+// ============================================================
+
+[System.Serializable]
+public class AbilityTextOverride
+{
+    public string passiveName = "";
+    [TextArea(2, 4)] public string passiveDescription = "";
+    public string activeName = "";
+    [TextArea(2, 4)] public string activeDescription = "";
 }

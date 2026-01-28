@@ -10,17 +10,32 @@ public class PieceTooltipUI : MonoBehaviour
     private GameMaster gm;
     private GameObject tooltipPanel;
     private Text tooltipText;
+    private Image pieceIcon;
     private Canvas canvas;
     private PieceMove lastHoveredPiece;
+    private int lastPieceType = -1;
     private RectTransform tooltipRect;
+
+    // Pre-loaded piece icon sprites (index 0 unused, 1-6 = PAWN..KING)
+    private Sprite[] pieceSprites;
 
     void Start()
     {
         gm = GetComponent<GameMaster>();
         canvas = FindFirstObjectByType<Canvas>();
+        LoadPieceSprites();
         if (canvas != null)
         {
             CreateTooltipUI();
+        }
+    }
+
+    private void LoadPieceSprites()
+    {
+        pieceSprites = new Sprite[7];
+        for (int i = ChessConstants.PAWN; i <= ChessConstants.KING; i++)
+        {
+            pieceSprites[i] = Resources.Load<Sprite>(PieceIndexHelper.GetIconResourcePath(i));
         }
     }
 
@@ -50,14 +65,28 @@ public class PieceTooltipUI : MonoBehaviour
         Image borderImg = borderObj.AddComponent<Image>();
         borderImg.color = new Color(0.4f, 0.4f, 0.5f, 0.8f);
 
-        // Text content
+        // Piece icon
+        GameObject iconObj = new GameObject("PieceIcon");
+        iconObj.transform.SetParent(tooltipPanel.transform, false);
+
+        RectTransform iconRt = iconObj.AddComponent<RectTransform>();
+        iconRt.anchorMin = new Vector2(0, 1);
+        iconRt.anchorMax = new Vector2(0, 1);
+        iconRt.pivot = new Vector2(0, 1);
+        iconRt.anchoredPosition = new Vector2(10, -8);
+        iconRt.sizeDelta = new Vector2(32, 32);
+
+        pieceIcon = iconObj.AddComponent<Image>();
+        pieceIcon.preserveAspect = true;
+
+        // Text content (offset right to make room for icon)
         GameObject textObj = new GameObject("TooltipText");
         textObj.transform.SetParent(tooltipPanel.transform, false);
 
         RectTransform textRt = textObj.AddComponent<RectTransform>();
         textRt.anchorMin = Vector2.zero;
         textRt.anchorMax = Vector2.one;
-        textRt.offsetMin = new Vector2(10, 8);
+        textRt.offsetMin = new Vector2(48, 8);
         textRt.offsetMax = new Vector2(-10, -8);
 
         tooltipText = textObj.AddComponent<Text>();
@@ -101,8 +130,27 @@ public class PieceTooltipUI : MonoBehaviour
 
     private void ShowTooltip(PieceMove pm)
     {
-        if (lastHoveredPiece == pm && tooltipPanel.activeSelf) return;
+        if (lastHoveredPiece == pm && lastPieceType == pm.piece && tooltipPanel.activeSelf) return;
         lastHoveredPiece = pm;
+        lastPieceType = pm.piece;
+
+        // Update piece icon
+        if (pieceIcon != null && pieceSprites != null)
+        {
+            int pt = pm.piece;
+            if (pt >= ChessConstants.PAWN && pt <= ChessConstants.KING)
+            {
+                pieceIcon.sprite = pieceSprites[pt];
+                pieceIcon.color = (pm.elementalPiece != null)
+                    ? GetElementTextColor(pm.elementalPiece.elementId)
+                    : Color.white;
+                pieceIcon.enabled = true;
+            }
+            else
+            {
+                pieceIcon.enabled = false;
+            }
+        }
 
         string text = BuildTooltipText(pm);
         tooltipText.text = text;
@@ -120,6 +168,7 @@ public class PieceTooltipUI : MonoBehaviour
         {
             tooltipPanel.SetActive(false);
             lastHoveredPiece = null;
+            lastPieceType = -1;
         }
     }
 
