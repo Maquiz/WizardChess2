@@ -67,6 +67,7 @@ public class GameMaster : MonoBehaviour
     // Wizard chess systems
     public SquareEffectManager squareEffectManager;
     public AbilityExecutor abilityExecutor;
+    public MultiStepMoveController multiStepController;
     public int turnNumber = 0;
     public bool isDraftPhase = false;
 
@@ -112,6 +113,8 @@ public class GameMaster : MonoBehaviour
         squareEffectManager.Init(this);
         abilityExecutor = this.gameObject.AddComponent<AbilityExecutor>();
         abilityExecutor.Init(this, squareEffectManager);
+        multiStepController = this.gameObject.AddComponent<MultiStepMoveController>();
+        multiStepController.Init(this);
 
         // Online multiplayer (must come before deck setup — rebuilds MatchConfig.draftData from Photon properties)
         if (MatchConfig.isOnlineMatch)
@@ -144,6 +147,9 @@ public class GameMaster : MonoBehaviour
 
         // In-game pause menu
         inGameMenuUI = this.gameObject.AddComponent<InGameMenuUI>();
+
+        // Move explanation tooltip (shows why moves are invalid)
+        this.gameObject.AddComponent<MoveExplanationUI>();
 
         // Game log panel
         GameLogUI logUI = this.gameObject.AddComponent<GameLogUI>();
@@ -224,6 +230,12 @@ public class GameMaster : MonoBehaviour
 
         // Block human input during remote player's turn (online multiplayer)
         if (networkController != null && networkController.IsRemotePlayerTurn())
+        {
+            return;
+        }
+
+        // Block input during multi-step move execution
+        if (multiStepController != null && multiStepController.IsExecutingMultiStep)
         {
             return;
         }
@@ -405,11 +417,21 @@ public class GameMaster : MonoBehaviour
                                 {
                                     int fromX = selectedPiece.curx, fromY = selectedPiece.cury;
                                     GameLogUI.LogPieceMove(turnNumber, currentMove, selectedPiece, s.x, s.y);
-                                    selectedPiece.movePiece(s.x, s.y, s);
-                                    if (networkController != null)
-                                        networkController.SendMove(fromX, fromY, s.x, s.y);
-                                    deSelectPiece();
-                                    EndTurn();
+
+                                    // Check for Lightning Knight double-jump
+                                    KnightMoveData moveData = LightningKnightPassive.GetMoveData(selectedPiece, s.x, s.y);
+                                    if (moveData != null && moveData.IsDoubleJump)
+                                    {
+                                        ExecuteDoubleJump(selectedPiece, moveData, s, fromX, fromY);
+                                    }
+                                    else
+                                    {
+                                        selectedPiece.movePiece(s.x, s.y, s);
+                                        if (networkController != null)
+                                            networkController.SendMove(fromX, fromY, s.x, s.y);
+                                        deSelectPiece();
+                                        EndTurn();
+                                    }
                                 }
                             }
                             else
@@ -477,6 +499,13 @@ public class GameMaster : MonoBehaviour
     /// </summary>
     public bool TryCapture(PieceMove attacker, PieceMove defender)
     {
+        // Safety check: Kings should never be captured in chess
+        if (defender.piece == ChessConstants.KING)
+        {
+            Debug.LogError("[TryCapture] Attempted to capture a king! This should never happen.");
+            return false;
+        }
+
         // Check attacker's passive: OnBeforeCapture
         if (attacker.elementalPiece != null && attacker.elementalPiece.passive != null)
         {
@@ -522,6 +551,45 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Execute a Lightning Knight double-jump (two animated L-moves).
+    /// </summary>
+    private void ExecuteDoubleJump(PieceMove piece, KnightMoveData moveData, Square finalDest, int fromX, int fromY)
+    {
+        if (multiStepController == null || moveData.IntermediateSquare == null)
+        {
+            // Fallback to regular move
+            piece.movePiece(finalDest.x, finalDest.y, finalDest);
+            if (networkController != null)
+                networkController.SendMove(fromX, fromY, finalDest.x, finalDest.y);
+            deSelectPiece();
+            EndTurn();
+            return;
+        }
+
+        piece.hideMovesHelper();
+
+        // Build the two-step sequence
+        var steps = new System.Collections.Generic.List<MoveStep>();
+
+        // Step 1: Move to intermediate L-jump square
+        MoveStep step1 = MoveStep.MoveTo(piece, moveData.IntermediateSquare, false);
+        steps.Add(step1);
+
+        // Step 2: Move to final destination (record in history)
+        MoveStep step2 = MoveStep.MoveTo(piece, finalDest, true);
+        steps.Add(step2);
+
+        // Execute with callback to end turn
+        multiStepController.ExecuteSteps(steps, false, () =>
+        {
+            if (networkController != null)
+                networkController.SendMove(fromX, fromY, finalDest.x, finalDest.y);
+            deSelectPiece();
+            EndTurn();
+        });
+    }
+
     //Game Piece Control
     public void deSelectPiece()
     {
@@ -559,6 +627,13 @@ public class GameMaster : MonoBehaviour
 
     public void takePiece(PieceMove p)
     {
+        // Final safety net: Never capture kings
+        if (p.piece == ChessConstants.KING)
+        {
+            Debug.LogError("[takePiece] Attempted to take a king! This violates chess rules.");
+            return;
+        }
+
         //Currently just moves the piece doesnt score or move it into a position where it can come back
         p.pieceTaken();
     }

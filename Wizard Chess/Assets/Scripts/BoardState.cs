@@ -137,13 +137,8 @@ public class BoardState
         PieceMove king = kingColor == ChessConstants.WHITE ? whiteKing : blackKing;
         if (king == null) return false;
 
-        // Bedrock Throne: Earth King on starting square is immune to check
-        if (king.elementalPiece != null
-            && king.elementalPiece.passive is EarthKingPassive
-            && EarthKingPassive.IsOnStartingSquare(king))
-        {
-            return false;
-        }
+        // Stone Shield (Earth King) does NOT prevent check - only prevents capture
+        // So we just check if the king's square is attacked
 
         int opponentColor = kingColor == ChessConstants.WHITE ? ChessConstants.BLACK : ChessConstants.WHITE;
         return IsSquareAttackedBy(king.curx, king.cury, opponentColor);

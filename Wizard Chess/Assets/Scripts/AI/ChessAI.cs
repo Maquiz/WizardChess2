@@ -390,6 +390,7 @@ public class ChessAI : MonoBehaviour
 
     /// <summary>
     /// Execute a normal move. Returns true if successful, false if blocked (e.g. by passive).
+    /// For multi-step moves (Lightning Knight double-jump), uses coroutine with delays.
     /// </summary>
     private bool ExecuteMove(PieceMove piece, Square target)
     {
@@ -424,6 +425,16 @@ public class ChessAI : MonoBehaviour
             GameLogUI.LogPieceMove(gm.turnNumber, aiColor, piece, target.x, target.y);
         }
 
+        // Check for Lightning Knight double-jump (multi-step move)
+        KnightMoveData moveData = LightningKnightPassive.GetMoveData(piece, target.x, target.y);
+        if (moveData != null && moveData.IsDoubleJump && gm.multiStepController != null)
+        {
+            piece.hideMovesHelper();
+            ExecuteDoubleJumpAI(piece, moveData, target);
+            return true;  // Coroutine handles EndTurn
+        }
+
+        // Standard single move
         piece.movePiece(target.x, target.y, target);
 
         // Clean up selection state
@@ -435,6 +446,32 @@ public class ChessAI : MonoBehaviour
         Debug.Log("[AI] " + DifficultyName() + " moved " + piece.printPieceName() +
                   " to " + piece.printSquare(target.x, target.y));
         return true;
+    }
+
+    /// <summary>
+    /// Execute a Lightning Knight double-jump with visible animation between steps.
+    /// </summary>
+    private void ExecuteDoubleJumpAI(PieceMove piece, KnightMoveData moveData, Square finalDest)
+    {
+        var steps = new List<MoveStep>();
+
+        // Step 1: Move to intermediate L-jump square
+        steps.Add(MoveStep.MoveTo(piece, moveData.IntermediateSquare, false));
+
+        // Step 2: Move to final destination (record in history)
+        steps.Add(MoveStep.MoveTo(piece, finalDest, true));
+
+        // Execute with AI delays (0.5s between steps)
+        gm.multiStepController.ExecuteSteps(steps, true, () =>
+        {
+            gm.isPieceSelected = false;
+            gm.selectedPiece = null;
+            gm.EndTurn();
+
+            Debug.Log("[AI] " + DifficultyName() + " double-jumped " + piece.printPieceName() +
+                      " via " + piece.printSquare(moveData.IntermediateSquare.x, moveData.IntermediateSquare.y) +
+                      " to " + piece.printSquare(finalDest.x, finalDest.y));
+        });
     }
 
     private bool ExecuteAbility(PieceMove piece, Square target)

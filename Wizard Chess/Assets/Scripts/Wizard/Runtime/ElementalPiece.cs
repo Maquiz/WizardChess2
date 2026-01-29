@@ -21,6 +21,7 @@ public class ElementalPiece : MonoBehaviour
 
     // Per-game flags
     public bool hasUsedReactiveBlink = false; // Lightning King passive (once per game)
+    public bool hasUsedStoneShield = false;   // Earth King passive (once per game)
 
     public void Init(int element, IPassiveAbility passiveAbility, IActiveAbility activeAbility, int activeCooldown)
     {

@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Backdraft (CD: 8): All Fire Squares on the board capture enemy pieces (not kings)
 /// adjacent to them, then all Fire Squares are removed.
+/// Uses MultiStepMoveController for sequential animated captures.
 /// </summary>
 public class FireKingActive : IActiveAbility
 {
@@ -22,6 +24,8 @@ public class FireKingActive : IActiveAbility
 
     public bool Execute(PieceMove piece, Square target, BoardState bs, SquareEffectManager sem)
     {
+        MultiStepMoveController controller = piece.gm.multiStepController;
+
         List<SquareEffect> fireEffects = sem.GetAllEffectsOfType(SquareEffectType.Fire);
         List<PieceMove> toCaptureList = new List<PieceMove>();
 
@@ -47,15 +51,45 @@ public class FireKingActive : IActiveAbility
             }
         }
 
-        // Capture all found enemies — via TryCapture for passive hooks
+        // If no controller, fall back to instant execution
+        if (controller == null)
+        {
+            return ExecuteInstant(piece, toCaptureList, sem);
+        }
+
+        // Build step sequence
+        List<MoveStep> steps = new List<MoveStep>();
+
+        // Capture each enemy with delay between for visual effect
+        foreach (var victim in toCaptureList)
+        {
+            steps.Add(MoveStep.Capture(piece, victim));
+        }
+
+        // Final step: remove all fire squares
+        steps.Add(MoveStep.Custom(() =>
+        {
+            sem.RemoveAllEffectsOfType(SquareEffectType.Fire);
+            Debug.Log("[Backdraft] Fire consumed - all fire squares removed.");
+        }, 0.2f));
+
+        // Execute sequence
+        controller.ExecuteSteps(steps, null);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Fallback instant execution when controller unavailable.
+    /// </summary>
+    private bool ExecuteInstant(PieceMove piece, List<PieceMove> toCaptureList, SquareEffectManager sem)
+    {
         foreach (var p in toCaptureList)
         {
             piece.gm.TryCapture(piece, p);
         }
 
-        // Remove all fire squares
         sem.RemoveAllEffectsOfType(SquareEffectType.Fire);
-
         return true;
     }
 }

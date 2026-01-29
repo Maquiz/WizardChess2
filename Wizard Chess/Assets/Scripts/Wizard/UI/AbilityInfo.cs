@@ -45,7 +45,7 @@ public static class AbilityInfo
                 case ChessConstants.KNIGHT: return "Tremor Hop";
                 case ChessConstants.BISHOP: return "Earthen Shield";
                 case ChessConstants.QUEEN: return "Tectonic Presence";
-                case ChessConstants.KING: return "Bedrock Throne";
+                case ChessConstants.KING: return "Stone Shield";
             }
         }
         else if (elementId == ChessConstants.ELEMENT_LIGHTNING)
@@ -94,7 +94,7 @@ public static class AbilityInfo
                 case ChessConstants.KNIGHT: return "After moving, one adjacent enemy is Stunned for 1 turn.";
                 case ChessConstants.BISHOP: return "When captured, the capturing piece is Stunned for 1 turn.";
                 case ChessConstants.QUEEN: return "All friendly Stone Walls have +1 HP.";
-                case ChessConstants.KING: return "Cannot be checked while on starting square.";
+                case ChessConstants.KING: return "Once per game, survives capture and destroys the attacker.";
             }
         }
         else if (elementId == ChessConstants.ELEMENT_LIGHTNING)

@@ -249,4 +249,45 @@ public class LightningQueenTests
         // enemy2 at (2,4): push direction (-1,0), pushed to (0,4)
         Assert.AreEqual(0, enemy2.curx, "Enemy2 should be pushed left");
     }
+
+    [Test]
+    public void Active_Execute_NeverPushesKing()
+    {
+        // Kings are immune to Tempest push - they cannot be pushed off the board
+        // This prevents the ability from capturing kings, which violates chess rules
+        var queen = builder.PlaceElementalPiece(ChessConstants.QUEEN, ChessConstants.WHITE, 3, 4,
+            ChessConstants.ELEMENT_LIGHTNING);
+        builder.PlacePiece(ChessConstants.KING, ChessConstants.WHITE, 4, 7);
+
+        // Place enemy king in push range at (4,4) - would be pushed off at (6,4) or beyond
+        var enemyKing = builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 4);
+
+        var target = builder.GetSquare(3, 4);
+        queen.elementalPiece.active.Execute(queen, target, builder.BoardState, builder.SEM);
+
+        // Enemy king should NOT be pushed - it stays in its original position
+        Assert.AreEqual(4, enemyKing.curx, "Enemy king should not be pushed by Tempest");
+        Assert.AreEqual(4, enemyKing.cury, "Enemy king should stay at original y position");
+    }
+
+    [Test]
+    public void Active_Execute_KingImmune_EvenAtBoardEdge()
+    {
+        // Test that king at board edge (would be pushed off) is immune
+        var queen = builder.PlaceElementalPiece(ChessConstants.QUEEN, ChessConstants.WHITE, 5, 4,
+            ChessConstants.ELEMENT_LIGHTNING);
+        builder.PlacePiece(ChessConstants.KING, ChessConstants.WHITE, 4, 7);
+
+        // Place enemy king at (7,4) - one square from edge in push direction
+        var enemyKing = builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 7, 4);
+
+        var target = builder.GetSquare(5, 4);
+        queen.elementalPiece.active.Execute(queen, target, builder.BoardState, builder.SEM);
+
+        // Enemy king should NOT be pushed off the board
+        Assert.AreEqual(7, enemyKing.curx, "Enemy king at edge should not be pushed");
+        Assert.AreEqual(4, enemyKing.cury);
+        // King should still be on the board
+        Assert.IsNotNull(builder.BoardState.GetPieceAt(7, 4), "Enemy king should still be on the board");
+    }
 }

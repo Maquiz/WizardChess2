@@ -3,6 +3,10 @@ using System.Collections;
 using DG.Tweening;
 using System.Globalization;
 using System.Collections.Generic;
+using System;
+
+// Default arc height for piece movement animations (in units)
+// Adjust this value to change how high pieces hop when moving
 
 //Control of moving from one square to anotehr
 public class PieceMove : MonoBehaviour
@@ -36,6 +40,10 @@ public class PieceMove : MonoBehaviour
     public ElementalPiece elementalPiece;
 
     private Vector3 hiddenIsland = new Vector3(-1000f, -1000f, -1000f);
+
+    // Animation settings
+    public static float DefaultArcHeight = 1.2f;  // Base height for piece hop (increased for knights)
+    public static float ArcHeightPerUnit = 0.3f;  // Additional arc height per unit of horizontal distance
 
     public void createPiece(int _piece, int _color, MeshCollider _mc, MeshFilter _mf, MeshRenderer _mr)
     {
@@ -116,11 +124,10 @@ public class PieceMove : MonoBehaviour
         removePieceFromSquare();
         hideMovesHelper();
         Transform t = this.gameObject.transform;
-        t.DOPause();
-        t.DOMove(new Vector3(this.transform.position.x, 1, this.transform.position.z), .5f);
-        t.DOComplete();
-        t.DOMove(new Vector3(square.gameObject.transform.position.x, this.transform.position.y, square.gameObject.transform.position.z), .5f);
-        t.DOComplete();
+        t.DOKill(); // Kill any existing tweens instead of forcing completion
+        // Animate with parabolic arc to avoid clipping through other pieces
+        Vector3 destPos = new Vector3(square.gameObject.transform.position.x, t.position.y, square.gameObject.transform.position.z);
+        AnimateWithArc(destPos, 0.4f, DefaultArcHeight);
 
         if (isSet) { firstMove = false; } else { isSet = true; }
 
@@ -187,6 +194,183 @@ public class PieceMove : MonoBehaviour
         createPieceMoves(piece);
     }
 
+    // ========== Parabolic Arc Animation System ==========
+
+    /// <summary>
+    /// Animate piece along a parabolic arc from current position to destination.
+    /// Uses DOTween's DOPath with CatmullRom for smooth curved movement.
+    /// Arc height scales with horizontal distance so knights clear other pieces.
+    /// </summary>
+    /// <param name="destination">Target world position</param>
+    /// <param name="duration">Animation duration in seconds</param>
+    /// <param name="arcHeight">Height of the arc above the higher of start/end Y positions (-1 for auto)</param>
+    /// <returns>The DOTween tween for chaining or waiting</returns>
+    public Tween AnimateWithArc(Vector3 destination, float duration = 0.4f, float arcHeight = -1f)
+    {
+        Transform t = this.gameObject.transform;
+        Vector3 start = t.position;
+
+        // Calculate horizontal distance (ignoring Y)
+        float horizontalDistance = Vector2.Distance(
+            new Vector2(start.x, start.z),
+            new Vector2(destination.x, destination.z)
+        );
+
+        // Auto-calculate arc height based on distance if not specified
+        // Knights move ~2.2 units, adjacent pieces move ~1 unit
+        if (arcHeight < 0)
+        {
+            arcHeight = DefaultArcHeight + (horizontalDistance * ArcHeightPerUnit);
+        }
+
+        // Calculate apex point at midpoint, raised above the higher Y position
+        float apexY = Mathf.Max(start.y, destination.y) + arcHeight;
+        Vector3 apex = new Vector3(
+            (start.x + destination.x) / 2f,
+            apexY,
+            (start.z + destination.z) / 2f
+        );
+
+        // Create 3-point path: start -> apex -> end
+        Vector3[] path = new Vector3[] { start, apex, destination };
+
+        return t.DOPath(path, duration, PathType.CatmullRom)
+            .SetEase(Ease.InOutQuad)
+            .SetOptions(false); // Don't close the path
+    }
+
+    // ========== Multi-Step Move Animation System ==========
+
+    /// <summary>
+    /// Animate piece to destination square without updating board state.
+    /// Returns the Tween so callers can wait on completion.
+    /// Uses parabolic arc animation to avoid clipping through other pieces.
+    /// </summary>
+    public Tween AnimateToSquare(Square destination, float duration = 0.4f)
+    {
+        Vector3 targetPos = new Vector3(
+            destination.gameObject.transform.position.x,
+            this.transform.position.y,
+            destination.gameObject.transform.position.z
+        );
+        return AnimateWithArc(targetPos, duration, DefaultArcHeight);
+    }
+
+    /// <summary>
+    /// Coroutine that animates piece to destination and yields until animation completes.
+    /// Does not update board state - use UpdateBoardStateOnly() separately.
+    /// </summary>
+    public IEnumerator AnimateToSquareCoroutine(Square destination, float duration = 0.4f)
+    {
+        Tween tween = AnimateToSquare(destination, duration);
+        yield return tween.WaitForCompletion();
+    }
+
+    /// <summary>
+    /// Update board state and piece position tracking without animation.
+    /// Used by MultiStepMoveController to separate state from animation.
+    /// </summary>
+    public void UpdateBoardStateOnly(int toX, int toY, Square square)
+    {
+        int fromX = curx;
+        int fromY = cury;
+
+        // Update square references
+        removePieceFromSquare();
+
+        if (isSet) { firstMove = false; } else { isSet = true; }
+
+        setLastPieceLocation(curx, cury);
+        setPieceLocation(toX, toY);
+
+        square.piece = this;
+        square.taken = true;
+        curSquare = square;
+        last = square.gameObject;
+
+        // Update centralized board state
+        gm.UpdateBoardState(this, fromX, fromY, toX, toY);
+    }
+
+    /// <summary>
+    /// Perform a complete animated move with board state update.
+    /// Returns a coroutine that completes when animation finishes.
+    /// This is the preferred method for multi-step moves.
+    /// </summary>
+    public IEnumerator MovePieceAnimated(int toX, int toY, Square square, float duration = 0.4f, Action onComplete = null)
+    {
+        // Update state first
+        UpdateBoardStateOnly(toX, toY, square);
+
+        // Then animate
+        yield return AnimateToSquareCoroutine(square, duration);
+
+        // Handle post-move hooks (en passant, promotion, castling, passives)
+        HandlePostMoveEffects(toX, toY, square);
+
+        // Record move in history
+        ChessMove cm = new ChessMove(this);
+        gm.moveHistory.Push(cm);
+        createPieceMoves(piece);
+
+        onComplete?.Invoke();
+    }
+
+    /// <summary>
+    /// Handle special move effects (en passant, promotion, castling, passives).
+    /// Called after board state is updated but position may still be animating.
+    /// </summary>
+    private void HandlePostMoveEffects(int toX, int toY, Square square)
+    {
+        int fromX = lastx;
+        int fromY = lasty;
+
+        // Handle en passant capture
+        if (piece == ChessConstants.PAWN && fromX != toX
+            && gm.enPassantTarget != null
+            && gm.enPassantTarget.x == toX && gm.enPassantTarget.y == toY)
+        {
+            PieceMove epCaptured = gm.boardState.GetPieceAt(toX, fromY);
+            if (epCaptured != null && epCaptured.color != color
+                && epCaptured.piece == ChessConstants.PAWN)
+            {
+                gm.RemovePieceFromBoardState(toX, fromY);
+                Square epSquare = gm.boardRows[fromY].transform.GetChild(toX).GetComponent<Square>();
+                if (epSquare != null)
+                {
+                    epSquare.taken = false;
+                    epSquare.piece = null;
+                }
+                epCaptured.pieceTaken();
+            }
+        }
+
+        // Set en passant target if pawn moved 2 squares
+        if (piece == ChessConstants.PAWN && System.Math.Abs(toY - fromY) == 2)
+        {
+            gm.enPassantTarget = getSquare(toX, (fromY + toY) / 2);
+        }
+        else
+        {
+            gm.enPassantTarget = null;
+        }
+
+        // Check for pawn promotion
+        checkPromotion();
+
+        // Handle castling rook movement
+        if (piece == ChessConstants.KING && System.Math.Abs(toX - fromX) == 2)
+        {
+            executeCastle(toX > fromX);
+        }
+
+        // Elemental passive: after move hook
+        if (elementalPiece != null && elementalPiece.passive != null)
+        {
+            elementalPiece.passive.OnAfterMove(this, fromX, fromY, toX, toY, gm.boardState);
+        }
+    }
+
     public bool checkMoves(int x, int y)
     {
         if (!showMoves)
@@ -198,12 +382,25 @@ public class PieceMove : MonoBehaviour
         return moveSet.Contains((x, y));
     }
 
+    /// <summary>
+    /// Check if a move is valid without showing move indicators.
+    /// Use this for UI queries that shouldn't trigger visual side effects.
+    /// </summary>
+    public bool IsMoveValid(int x, int y)
+    {
+        return moveSet.Contains((x, y));
+    }
+
+    // Debug toggle for move validation logging
+    public static bool DebugMoveValidation = false;
+
     public void createPieceMoves(int piece)
     {
         //1 pawn, 2 rook, 3 knight, 4 bishop, 5 queen, 6 king,
         //Color: 1 Black, 2 White
 
         moves.Clear();
+        MoveRejectionTracker.Clear();
 
         // Generate pseudo-legal moves based on piece type
         if (piece == ChessConstants.KING)
@@ -232,10 +429,24 @@ public class PieceMove : MonoBehaviour
             createPawnMoves();
         }
 
-        // Elemental passive: modify generated moves
+        // Elemental passive: modify generated moves (track removed moves)
         if (elementalPiece != null && elementalPiece.passive != null)
         {
+            List<Square> beforeModify = new List<Square>(moves);
             moves = elementalPiece.passive.ModifyMoveGeneration(moves, this, gm.boardState);
+
+            // Track moves removed by elemental passive
+            HashSet<(int, int)> afterSet = new HashSet<(int, int)>();
+            foreach (Square sq in moves) afterSet.Add((sq.x, sq.y));
+            foreach (Square sq in beforeModify)
+            {
+                if (!afterSet.Contains((sq.x, sq.y)))
+                {
+                    string elementName = GetElementName(elementalPiece.elementId);
+                    MoveRejectionTracker.AddRejection(sq.x, sq.y, MoveRejectionReason.ElementalPassiveBlocked,
+                        elementName + " passive");
+                }
+            }
         }
 
         // Filter moves blocked by square effects (fire, stone walls, etc.)
@@ -248,6 +459,12 @@ public class PieceMove : MonoBehaviour
                 {
                     unblocked.Add(move);
                 }
+                else
+                {
+                    string effectName = gm.squareEffectManager.GetBlockingEffectName(move.x, move.y);
+                    MoveRejectionTracker.AddRejection(move.x, move.y, MoveRejectionReason.SquareEffectBlocked,
+                        effectName);
+                }
             }
             moves = unblocked;
         }
@@ -257,6 +474,37 @@ public class PieceMove : MonoBehaviour
 
         // Filter out moves that would leave king in check
         filterIllegalMoves();
+
+        // Debug output
+        if (DebugMoveValidation && MoveRejectionTracker.HasRejections())
+        {
+            LogMoveValidationDebug();
+        }
+    }
+
+    private string GetElementName(int elementId)
+    {
+        switch (elementId)
+        {
+            case ChessConstants.ELEMENT_FIRE: return "Fire";
+            case ChessConstants.ELEMENT_EARTH: return "Earth";
+            case ChessConstants.ELEMENT_LIGHTNING: return "Lightning";
+            default: return "Unknown";
+        }
+    }
+
+    private void LogMoveValidationDebug()
+    {
+        UnityEngine.Debug.Log("=== " + printPieceName() + " Move Validation ===");
+        UnityEngine.Debug.Log("Legal moves: " + moves.Count);
+        UnityEngine.Debug.Log("Rejected squares: " + MoveRejectionTracker.RejectionCount);
+
+        foreach (var kvp in MoveRejectionTracker.CurrentRejections)
+        {
+            string details = kvp.Value.Details ?? "";
+            if (!string.IsNullOrEmpty(details)) details = " - " + details;
+            UnityEngine.Debug.Log("  X (" + kvp.Key.Item1 + "," + kvp.Key.Item2 + "): " + kvp.Value.Reason + details);
+        }
     }
 
     /// <summary>
@@ -274,23 +522,42 @@ public class PieceMove : MonoBehaviour
             {
                 PieceMove defender = move.piece;
                 bool captureAllowed = true;
+                string blockReason = null;
 
                 // Check attacker's passive
                 if (elementalPiece != null && elementalPiece.passive != null)
                 {
                     if (!elementalPiece.passive.OnBeforeCapture(this, defender, gm.boardState))
+                    {
                         captureAllowed = false;
+                        string elemName = GetElementName(elementalPiece.elementId);
+                        blockReason = "attacker's " + elemName + " passive";
+                    }
                 }
 
                 // Check defender's passive
                 if (captureAllowed && defender.elementalPiece != null && defender.elementalPiece.passive != null)
                 {
                     if (!defender.elementalPiece.passive.OnBeforeCapture(this, defender, gm.boardState))
+                    {
                         captureAllowed = false;
+                        string elemName = GetElementName(defender.elementalPiece.elementId);
+                        blockReason = "defender's " + elemName + " passive";
+                    }
                 }
 
                 if (captureAllowed)
+                {
                     allowed.Add(move);
+                }
+                else
+                {
+                    // Track the rejection
+                    MoveRejectionReason reason = (blockReason != null && blockReason.Contains("attacker"))
+                        ? MoveRejectionReason.AttackerCannotCapture
+                        : MoveRejectionReason.CaptureProtected;
+                    MoveRejectionTracker.AddRejection(move.x, move.y, reason, blockReason);
+                }
             }
             else
             {
@@ -326,6 +593,10 @@ public class PieceMove : MonoBehaviour
                 legalMoves.Add(move);
                 moveSet.Add((move.x, move.y));
             }
+            else
+            {
+                MoveRejectionTracker.AddRejection(move.x, move.y, MoveRejectionReason.WouldLeaveKingInCheck);
+            }
         }
         moves = legalMoves;
     }
@@ -335,13 +606,19 @@ public class PieceMove : MonoBehaviour
         (int x, int y) [] kingSquares = new[] {(0, -1), (0, 1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, 1), (-1, -1)};
         //No Check checking
         for (int index = 0; index< kingSquares.Length; index++) {
-            if (isCoordsInBounds(curx + kingSquares[index].x) && isCoordsInBounds(cury + kingSquares[index].y)) {
-                Square curSquareChecker = getSquare(curx + kingSquares[index].x, cury + kingSquares[index].y);
+            int nx = curx + kingSquares[index].x;
+            int ny = cury + kingSquares[index].y;
+            if (isCoordsInBounds(nx) && isCoordsInBounds(ny)) {
+                Square curSquareChecker = getSquare(nx, ny);
                 if (curSquareChecker != null && curSquareChecker.taken)
                 {
                     if (color != curSquareChecker.piece.color)
                     {
                         moves.Add(curSquareChecker);
+                    }
+                    else
+                    {
+                        MoveRejectionTracker.AddRejection(nx, ny, MoveRejectionReason.BlockedByFriendlyPiece);
                     }
                 }
                 else
@@ -363,15 +640,31 @@ public class PieceMove : MonoBehaviour
         for (int index = 0; index < bishopSquares.Length; index++) {
             int i = curx;
             int j = cury;
+            bool blocked = false;
             while (isCoordsInBounds(i + bishopSquares[index].x) && isCoordsInBounds(j + bishopSquares[index].y))
             {
-                Square curSquareChecker = getSquare(i + bishopSquares[index].x, j + bishopSquares[index].y);
+                int nx = i + bishopSquares[index].x;
+                int ny = j + bishopSquares[index].y;
+                Square curSquareChecker = getSquare(nx, ny);
                 if (curSquareChecker.taken)
                 {
                     if (color != curSquareChecker.piece.color)
                     {
                         moves.Add(curSquareChecker);
-                        break;
+                    }
+                    else
+                    {
+                        MoveRejectionTracker.AddRejection(nx, ny, MoveRejectionReason.BlockedByFriendlyPiece);
+                    }
+                    blocked = true;
+                    // Track remaining squares in this direction as blocked by path
+                    int pi = nx;
+                    int pj = ny;
+                    while (isCoordsInBounds(pi + bishopSquares[index].x) && isCoordsInBounds(pj + bishopSquares[index].y))
+                    {
+                        pi += bishopSquares[index].x;
+                        pj += bishopSquares[index].y;
+                        MoveRejectionTracker.AddRejection(pi, pj, MoveRejectionReason.BlockedByPiecePath);
                     }
                     break;
                 }
@@ -386,14 +679,20 @@ public class PieceMove : MonoBehaviour
     {
         (int x, int y)[] knightSquares = new[] { (1, 2), (2, 1), (-1, 2), (-2, 1), (1, -2), (2, -1), (-1, -2), (-2, -1) };
         for (int index = 0; index < knightSquares.Length; index++) {
-            if (isCoordsInBounds(curx + knightSquares[index].x) && isCoordsInBounds(cury + knightSquares[index].y))
+            int nx = curx + knightSquares[index].x;
+            int ny = cury + knightSquares[index].y;
+            if (isCoordsInBounds(nx) && isCoordsInBounds(ny))
             {
-                Square curSquareChecker = getSquare(curx + knightSquares[index].x, cury + knightSquares[index].y);
+                Square curSquareChecker = getSquare(nx, ny);
                 if (curSquareChecker != null && curSquareChecker.taken)
                 {
                     if (color != curSquareChecker.piece.color)
                     {
                         moves.Add(curSquareChecker);
+                    }
+                    else
+                    {
+                        MoveRejectionTracker.AddRejection(nx, ny, MoveRejectionReason.BlockedByFriendlyPiece);
                     }
                 }
                 else
@@ -406,70 +705,105 @@ public class PieceMove : MonoBehaviour
 
     public void createRookMoves()
     {
+        // Helper to track remaining squares as blocked after hitting a piece
+        void trackBlockedPath(int startX, int startY, int dx, int dy)
+        {
+            int px = startX + dx;
+            int py = startY + dy;
+            while (isCoordsInBounds(px) && isCoordsInBounds(py))
+            {
+                MoveRejectionTracker.AddRejection(px, py, MoveRejectionReason.BlockedByPiecePath);
+                px += dx;
+                py += dy;
+            }
+        }
+
+        // Direction: +Y
         int i = cury;
         while (isCoordsInBounds(i + 1))
         {
-
-            Square curSquareChecker = getSquare(curx, i + 1);
+            int ny = i + 1;
+            Square curSquareChecker = getSquare(curx, ny);
             if (curSquareChecker.taken)
             {
                 if (color != curSquareChecker.piece.color)
                 {
                     moves.Add(curSquareChecker);
-                    break;
                 }
+                else
+                {
+                    MoveRejectionTracker.AddRejection(curx, ny, MoveRejectionReason.BlockedByFriendlyPiece);
+                }
+                trackBlockedPath(curx, ny, 0, 1);
                 break;
             }
             moves.Add(curSquareChecker);
             i++;
-
         }
 
+        // Direction: -Y
         i = cury;
         while (isCoordsInBounds(i - 1))
         {
-            Square curSquareChecker = getSquare(curx, i - 1);
+            int ny = i - 1;
+            Square curSquareChecker = getSquare(curx, ny);
             if (curSquareChecker.taken)
             {
                 if (color != curSquareChecker.piece.color)
                 {
                     moves.Add(curSquareChecker);
-                    break;
                 }
+                else
+                {
+                    MoveRejectionTracker.AddRejection(curx, ny, MoveRejectionReason.BlockedByFriendlyPiece);
+                }
+                trackBlockedPath(curx, ny, 0, -1);
                 break;
             }
             moves.Add(curSquareChecker);
             i--;
         }
 
+        // Direction: -X
         i = curx;
         while (isCoordsInBounds(i - 1))
         {
-            Square curSquareChecker = getSquare(i - 1, cury);
+            int nx = i - 1;
+            Square curSquareChecker = getSquare(nx, cury);
             if (curSquareChecker.taken)
             {
                 if (color != curSquareChecker.piece.color)
                 {
                     moves.Add(curSquareChecker);
-                    break;
                 }
+                else
+                {
+                    MoveRejectionTracker.AddRejection(nx, cury, MoveRejectionReason.BlockedByFriendlyPiece);
+                }
+                trackBlockedPath(nx, cury, -1, 0);
                 break;
             }
             moves.Add(curSquareChecker);
             i--;
         }
 
+        // Direction: +X
         i = curx;
-        while (isCoordsInBounds(i + 1))//!getSquare(i, cury).taken || 
+        while (isCoordsInBounds(i + 1))
         {
-            Square curSquareChecker = getSquare(i + 1, cury);
+            int nx = i + 1;
+            Square curSquareChecker = getSquare(nx, cury);
             if (curSquareChecker.taken)
             {
                 if (color != curSquareChecker.piece.color)
                 {
                     moves.Add(curSquareChecker);
-                    break;
                 }
+                else
+                {
+                    MoveRejectionTracker.AddRejection(nx, cury, MoveRejectionReason.BlockedByFriendlyPiece);
+                }
+                trackBlockedPath(nx, cury, 1, 0);
                 break;
             }
             moves.Add(curSquareChecker);
@@ -485,7 +819,8 @@ public class PieceMove : MonoBehaviour
         // Forward one square
         if (isCoordsInBounds(cury + direction))
         {
-            Square curSquareChecker = getSquare(curx, cury + direction);
+            int ny = cury + direction;
+            Square curSquareChecker = getSquare(curx, ny);
             if (curSquareChecker != null && !curSquareChecker.taken)
             {
                 moves.Add(curSquareChecker);
@@ -493,27 +828,44 @@ public class PieceMove : MonoBehaviour
                 // Forward two squares on first move (only if one square ahead is also clear)
                 if (firstMove && isCoordsInBounds(cury + (2 * direction)))
                 {
-                    Square twoAhead = getSquare(curx, cury + (2 * direction));
+                    int ny2 = cury + (2 * direction);
+                    Square twoAhead = getSquare(curx, ny2);
                     if (twoAhead != null && !twoAhead.taken)
                     {
                         moves.Add(twoAhead);
                     }
+                    else if (twoAhead != null && twoAhead.taken)
+                    {
+                        MoveRejectionTracker.AddRejection(curx, ny2, MoveRejectionReason.BlockedByPiecePath);
+                    }
                 }
+            }
+            else if (curSquareChecker != null && curSquareChecker.taken)
+            {
+                // Pawn cannot capture forward
+                MoveRejectionTracker.AddRejection(curx, ny, MoveRejectionReason.PawnCannotCaptureForward);
             }
         }
 
         // Diagonal captures
         if (isCoordsInBounds(cury + direction))
         {
+            int ny = cury + direction;
+
             // Capture to the right
             if (isCoordsInBounds(curx + 1))
             {
-                Square curSquareChecker = getSquare(curx + 1, cury + direction);
+                int nx = curx + 1;
+                Square curSquareChecker = getSquare(nx, ny);
                 if (curSquareChecker != null && curSquareChecker.taken)
                 {
                     if (color != curSquareChecker.piece.color)
                     {
                         moves.Add(curSquareChecker);
+                    }
+                    else
+                    {
+                        MoveRejectionTracker.AddRejection(nx, ny, MoveRejectionReason.BlockedByFriendlyPiece);
                     }
                 }
             }
@@ -521,12 +873,17 @@ public class PieceMove : MonoBehaviour
             // Capture to the left
             if (isCoordsInBounds(curx - 1))
             {
-                Square curSquareChecker = getSquare(curx - 1, cury + direction);
+                int nx = curx - 1;
+                Square curSquareChecker = getSquare(nx, ny);
                 if (curSquareChecker != null && curSquareChecker.taken)
                 {
                     if (color != curSquareChecker.piece.color)
                     {
                         moves.Add(curSquareChecker);
+                    }
+                    else
+                    {
+                        MoveRejectionTracker.AddRejection(nx, ny, MoveRejectionReason.BlockedByFriendlyPiece);
                     }
                 }
             }
@@ -699,74 +1056,134 @@ public class PieceMove : MonoBehaviour
     /// </summary>
     private void addCastlingMoves()
     {
-        if (!firstMove) return;
-        if (gm.boardState == null) return;
-        if (gm.boardState.IsKingInCheck(color)) return;
-
         int homeRank = (color == ChessConstants.WHITE) ? 7 : 0;
+
+        // Track rejections for kingside castle square (g-file)
+        int kingsideCastleX = curx + 2;
+        // Track rejections for queenside castle square (c-file)
+        int queensideCastleX = curx - 2;
+
+        if (!firstMove)
+        {
+            MoveRejectionTracker.AddRejection(kingsideCastleX, homeRank, MoveRejectionReason.CastlingKingMoved);
+            MoveRejectionTracker.AddRejection(queensideCastleX, homeRank, MoveRejectionReason.CastlingKingMoved);
+            return;
+        }
+        if (gm.boardState == null) return;
+        if (gm.boardState.IsKingInCheck(color))
+        {
+            MoveRejectionTracker.AddRejection(kingsideCastleX, homeRank, MoveRejectionReason.CastlingInCheck);
+            MoveRejectionTracker.AddRejection(queensideCastleX, homeRank, MoveRejectionReason.CastlingInCheck);
+            return;
+        }
+
         if (cury != homeRank) return;
 
         // Kingside castle (O-O)
-        if (canCastleKingside(homeRank))
+        MoveRejectionReason kingsideRejection;
+        if (canCastleKingsideWithReason(homeRank, out kingsideRejection))
         {
-            Square castleSquare = getSquare(curx + 2, homeRank);
+            Square castleSquare = getSquare(kingsideCastleX, homeRank);
             if (castleSquare != null)
             {
                 moves.Add(castleSquare);
             }
+        }
+        else if (kingsideRejection != MoveRejectionReason.None)
+        {
+            MoveRejectionTracker.AddRejection(kingsideCastleX, homeRank, kingsideRejection);
         }
 
         // Queenside castle (O-O-O)
-        if (canCastleQueenside(homeRank))
+        MoveRejectionReason queensideRejection;
+        if (canCastleQueensideWithReason(homeRank, out queensideRejection))
         {
-            Square castleSquare = getSquare(curx - 2, homeRank);
+            Square castleSquare = getSquare(queensideCastleX, homeRank);
             if (castleSquare != null)
             {
                 moves.Add(castleSquare);
             }
         }
+        else if (queensideRejection != MoveRejectionReason.None)
+        {
+            MoveRejectionTracker.AddRejection(queensideCastleX, homeRank, queensideRejection);
+        }
     }
 
-    private bool canCastleKingside(int homeRank)
+    private bool canCastleKingsideWithReason(int homeRank, out MoveRejectionReason rejection)
     {
+        rejection = MoveRejectionReason.None;
+
         // Check rook is in place and hasn't moved
         PieceMove rook = gm.boardState.GetPieceAt(7, homeRank);
         if (rook == null || rook.piece != ChessConstants.ROOK || rook.color != color || !rook.firstMove)
+        {
+            rejection = MoveRejectionReason.CastlingRookMoved;
             return false;
+        }
 
         // Check squares between king and rook are empty
         if (!gm.boardState.IsSquareEmpty(5, homeRank) || !gm.boardState.IsSquareEmpty(6, homeRank))
+        {
+            rejection = MoveRejectionReason.CastlingPathBlocked;
             return false;
+        }
 
         // Check king doesn't pass through or end in check
         int opponentColor = (color == ChessConstants.WHITE) ? ChessConstants.BLACK : ChessConstants.WHITE;
         if (gm.boardState.IsSquareAttackedBy(5, homeRank, opponentColor) ||
             gm.boardState.IsSquareAttackedBy(6, homeRank, opponentColor))
+        {
+            rejection = MoveRejectionReason.CastlingThroughCheck;
             return false;
+        }
+
+        return true;
+    }
+
+    private bool canCastleKingside(int homeRank)
+    {
+        MoveRejectionReason unused;
+        return canCastleKingsideWithReason(homeRank, out unused);
+    }
+
+    private bool canCastleQueensideWithReason(int homeRank, out MoveRejectionReason rejection)
+    {
+        rejection = MoveRejectionReason.None;
+
+        // Check rook is in place and hasn't moved
+        PieceMove rook = gm.boardState.GetPieceAt(0, homeRank);
+        if (rook == null || rook.piece != ChessConstants.ROOK || rook.color != color || !rook.firstMove)
+        {
+            rejection = MoveRejectionReason.CastlingRookMoved;
+            return false;
+        }
+
+        // Check squares between king and rook are empty
+        if (!gm.boardState.IsSquareEmpty(1, homeRank) ||
+            !gm.boardState.IsSquareEmpty(2, homeRank) ||
+            !gm.boardState.IsSquareEmpty(3, homeRank))
+        {
+            rejection = MoveRejectionReason.CastlingPathBlocked;
+            return false;
+        }
+
+        // Check king doesn't pass through or end in check
+        int opponentColor = (color == ChessConstants.WHITE) ? ChessConstants.BLACK : ChessConstants.WHITE;
+        if (gm.boardState.IsSquareAttackedBy(2, homeRank, opponentColor) ||
+            gm.boardState.IsSquareAttackedBy(3, homeRank, opponentColor))
+        {
+            rejection = MoveRejectionReason.CastlingThroughCheck;
+            return false;
+        }
 
         return true;
     }
 
     private bool canCastleQueenside(int homeRank)
     {
-        // Check rook is in place and hasn't moved
-        PieceMove rook = gm.boardState.GetPieceAt(0, homeRank);
-        if (rook == null || rook.piece != ChessConstants.ROOK || rook.color != color || !rook.firstMove)
-            return false;
-
-        // Check squares between king and rook are empty
-        if (!gm.boardState.IsSquareEmpty(1, homeRank) ||
-            !gm.boardState.IsSquareEmpty(2, homeRank) ||
-            !gm.boardState.IsSquareEmpty(3, homeRank))
-            return false;
-
-        // Check king doesn't pass through or end in check
-        int opponentColor = (color == ChessConstants.WHITE) ? ChessConstants.BLACK : ChessConstants.WHITE;
-        if (gm.boardState.IsSquareAttackedBy(2, homeRank, opponentColor) ||
-            gm.boardState.IsSquareAttackedBy(3, homeRank, opponentColor))
-            return false;
-
-        return true;
+        MoveRejectionReason unused;
+        return canCastleQueensideWithReason(homeRank, out unused);
     }
 
     /// <summary>
@@ -784,10 +1201,11 @@ public class PieceMove : MonoBehaviour
             Square rookDestSquare = getSquare(rookToX, homeRank);
             if (rookDestSquare != null)
             {
-                // Update visual position
+                // Update visual position with arc animation
                 rook.removePieceFromSquare();
                 Transform t = rook.gameObject.transform;
-                t.DOMove(new Vector3(rookDestSquare.gameObject.transform.position.x, t.position.y, rookDestSquare.gameObject.transform.position.z), .5f);
+                Vector3 rookDest = new Vector3(rookDestSquare.gameObject.transform.position.x, t.position.y, rookDestSquare.gameObject.transform.position.z);
+                rook.AnimateWithArc(rookDest, 0.5f, DefaultArcHeight);
 
                 // Update state
                 rook.setLastPieceLocation(rook.curx, rook.cury);

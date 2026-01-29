@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 using System.Collections.Generic;
 
 [TestFixture]
@@ -20,98 +21,196 @@ public class EarthKingTests
         builder.Cleanup();
     }
 
-    // ========== EarthKingPassive (Bedrock Throne) ==========
+    // ========== King Capture Prevention ==========
+    // In standard chess, kings can NEVER be captured - the game ends at checkmate.
+    // The TryCapture safety guard enforces this rule before any passives are checked.
 
     [Test]
-    public void BedrockThrone_WhiteKingOnStartingSquare_NotInCheck()
+    public void KingCapture_AlwaysBlocked()
     {
-        // White earth king on starting square e1 = (4,7)
-        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 4, 7, ChessConstants.ELEMENT_EARTH);
+        // Any king (Earth or otherwise) should never be capturable
+        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 4, 4, ChessConstants.ELEMENT_EARTH);
+        builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
+        var attacker = builder.PlacePiece(ChessConstants.QUEEN, ChessConstants.BLACK, 4, 5);
+
+        builder.BoardState.RecalculateAttacks();
+
+        // Expect the error log from the safety guard
+        LogAssert.Expect(LogType.Error, "[TryCapture] Attempted to capture a king! This should never happen.");
+
+        bool captureAllowed = builder.GM.TryCapture(attacker, earthKing);
+
+        Assert.IsFalse(captureAllowed, "King capture should always be blocked");
+        // King survives
+        PieceMove kingOnBoard = builder.BoardState.GetPieceAt(4, 4);
+        Assert.AreEqual(earthKing, kingOnBoard, "King should survive - capture is never allowed");
+    }
+
+    [Test]
+    public void KingCapture_NonEarthKing_AlsoBlocked()
+    {
+        // Normal (non-earth) king - capture should also be blocked
+        var normalKing = builder.PlacePiece(ChessConstants.KING, ChessConstants.WHITE, 4, 4);
+        builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
+        var attacker = builder.PlacePiece(ChessConstants.QUEEN, ChessConstants.BLACK, 4, 5);
+
+        builder.BoardState.RecalculateAttacks();
+
+        LogAssert.Expect(LogType.Error, "[TryCapture] Attempted to capture a king! This should never happen.");
+
+        bool captureAllowed = builder.GM.TryCapture(attacker, normalKing);
+        Assert.IsFalse(captureAllowed, "Non-earth king capture should also be blocked");
+    }
+
+    // ========== EarthKingPassive (Stone Shield) ==========
+    // Note: Stone Shield never actually triggers in normal gameplay because:
+    // 1. Kings can never be captured (TryCapture blocks before passive check)
+    // 2. Checkmate detection ends the game before capture is attempted
+    // These tests verify the passive WOULD work if somehow invoked directly.
+
+    [Test]
+    public void StoneShield_FlagStartsFalse()
+    {
+        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 4, 4, ChessConstants.ELEMENT_EARTH);
         builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
 
-        // Place an enemy rook directly attacking the king's square
-        builder.PlacePiece(ChessConstants.ROOK, ChessConstants.BLACK, 4, 3);
+        Assert.IsFalse(earthKing.elementalPiece.hasUsedStoneShield, "Shield flag should start false");
+    }
+
+    [Test]
+    public void StoneShield_DirectInvocation_PreventsCapture()
+    {
+        // Test the passive directly (bypassing TryCapture safety guard)
+        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 4, 4, ChessConstants.ELEMENT_EARTH);
+        builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
+        var attacker = builder.PlacePiece(ChessConstants.QUEEN, ChessConstants.BLACK, 4, 5);
+
+        builder.BoardState.RecalculateAttacks();
+
+        // Invoke passive directly
+        var passive = earthKing.elementalPiece.passive as EarthKingPassive;
+        Assert.IsNotNull(passive);
+
+        bool allowCapture = passive.OnBeforeCapture(attacker, earthKing, builder.BoardState);
+
+        Assert.IsFalse(allowCapture, "Stone Shield passive should return false (prevent capture)");
+        Assert.IsTrue(earthKing.elementalPiece.hasUsedStoneShield, "Shield should be marked as used");
+    }
+
+    [Test]
+    public void StoneShield_DirectInvocation_DestroysAttacker()
+    {
+        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 4, 4, ChessConstants.ELEMENT_EARTH);
+        builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
+        var attacker = builder.PlacePiece(ChessConstants.QUEEN, ChessConstants.BLACK, 4, 5);
+
+        builder.BoardState.RecalculateAttacks();
+        int attackerX = attacker.curx;
+        int attackerY = attacker.cury;
+
+        var passive = earthKing.elementalPiece.passive as EarthKingPassive;
+        passive.OnBeforeCapture(attacker, earthKing, builder.BoardState);
+
+        // Attacker should be removed from board state
+        PieceMove pieceAtAttackerPos = builder.BoardState.GetPieceAt(attackerX, attackerY);
+        Assert.IsNull(pieceAtAttackerPos, "Attacker should be removed when Stone Shield activates");
+    }
+
+    [Test]
+    public void StoneShield_DirectInvocation_SecondAttemptAllows()
+    {
+        // After shield is used, passive returns true (would allow capture)
+        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 4, 4, ChessConstants.ELEMENT_EARTH);
+        builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
+        var attacker1 = builder.PlacePiece(ChessConstants.QUEEN, ChessConstants.BLACK, 4, 5);
+
+        builder.BoardState.RecalculateAttacks();
+
+        var passive = earthKing.elementalPiece.passive as EarthKingPassive;
+
+        // First invocation - shield activates
+        passive.OnBeforeCapture(attacker1, earthKing, builder.BoardState);
+        Assert.IsTrue(earthKing.elementalPiece.hasUsedStoneShield);
+
+        // Second invocation - passive returns true (would allow, but TryCapture still blocks)
+        var attacker2 = builder.PlacePiece(ChessConstants.ROOK, ChessConstants.BLACK, 3, 4);
+        builder.BoardState.RecalculateAttacks();
+
+        bool allowSecond = passive.OnBeforeCapture(attacker2, earthKing, builder.BoardState);
+        Assert.IsTrue(allowSecond, "Passive should return true after shield is used");
+    }
+
+    [Test]
+    public void StoneShield_CheckStillWorks()
+    {
+        // Earth King should still be able to be put in check (shield only prevents capture)
+        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 4, 4, ChessConstants.ELEMENT_EARTH);
+        builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
+
+        // Rook attacks the king's square
+        builder.PlacePiece(ChessConstants.ROOK, ChessConstants.BLACK, 4, 2);
 
         builder.BoardState.RecalculateAttacks();
         bool inCheck = builder.BoardState.IsKingInCheck(ChessConstants.WHITE);
-        Assert.IsFalse(inCheck, "Earth king on starting square should not be in check (Bedrock Throne)");
+
+        Assert.IsTrue(inCheck, "Earth King should still be in check (shield only prevents capture)");
     }
 
     [Test]
-    public void BedrockThrone_WhiteKingOffStartingSquare_CanBeInCheck()
+    public void StoneShield_CheckmateStillWorks()
     {
-        // White earth king moved to (3,6) -- NOT starting square
-        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 3, 6, ChessConstants.ELEMENT_EARTH);
-        builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
+        // Classic back-rank mate position: King trapped by own pawns
+        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 0, 7, ChessConstants.ELEMENT_EARTH);
+        builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 0, 0);
 
-        // Place an enemy rook attacking king at (3,6)
-        builder.PlacePiece(ChessConstants.ROOK, ChessConstants.BLACK, 3, 2);
+        // Own pawns blocking escape
+        builder.PlacePiece(ChessConstants.PAWN, ChessConstants.WHITE, 0, 6);
+        builder.PlacePiece(ChessConstants.PAWN, ChessConstants.WHITE, 1, 6);
+
+        // Rook delivers mate on back rank
+        builder.PlacePiece(ChessConstants.ROOK, ChessConstants.BLACK, 7, 7);
 
         builder.BoardState.RecalculateAttacks();
+
         bool inCheck = builder.BoardState.IsKingInCheck(ChessConstants.WHITE);
-        Assert.IsTrue(inCheck, "Earth king off starting square should be in check normally");
+        Assert.IsTrue(inCheck, "Earth King should be in check in this position");
+
+        // Generate king's moves - should have none (checkmate)
+        earthKing.createPieceMoves(earthKing.piece);
+        Assert.AreEqual(0, earthKing.moves.Count, "Checkmated Earth King should have no legal moves");
     }
 
     [Test]
-    public void BedrockThrone_BlackKingOnStartingSquare_NotInCheck()
+    public void StoneShield_DirectInvocation_WorksAgainstAnyPieceType()
     {
-        builder.PlacePiece(ChessConstants.KING, ChessConstants.WHITE, 4, 7);
-        // Black earth king on starting square e8 = (4,0)
-        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0, ChessConstants.ELEMENT_EARTH);
-
-        // Place an enemy rook directly attacking the king
-        builder.PlacePiece(ChessConstants.ROOK, ChessConstants.WHITE, 4, 5);
-
-        builder.BoardState.RecalculateAttacks();
-        bool inCheck = builder.BoardState.IsKingInCheck(ChessConstants.BLACK);
-        Assert.IsFalse(inCheck, "Black earth king on starting square should not be in check");
-    }
-
-    [Test]
-    public void BedrockThrone_BlackKingOffStartingSquare_CanBeInCheck()
-    {
-        builder.PlacePiece(ChessConstants.KING, ChessConstants.WHITE, 4, 7);
-        // Black earth king moved to (5,1) -- NOT starting square
-        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.BLACK, 5, 1, ChessConstants.ELEMENT_EARTH);
-
-        // Place an enemy rook attacking king at (5,1)
-        builder.PlacePiece(ChessConstants.ROOK, ChessConstants.WHITE, 5, 5);
-
-        builder.BoardState.RecalculateAttacks();
-        bool inCheck = builder.BoardState.IsKingInCheck(ChessConstants.BLACK);
-        Assert.IsTrue(inCheck, "Black earth king off starting square should be in check normally");
-    }
-
-    [Test]
-    public void BedrockThrone_NonEarthKingOnStartingSquare_CanBeInCheck()
-    {
-        // Normal (non-earth) white king on starting square
-        builder.PlacePiece(ChessConstants.KING, ChessConstants.WHITE, 4, 7);
+        // Test passive works against different piece types (bypassing TryCapture)
+        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 4, 4, ChessConstants.ELEMENT_EARTH);
         builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
-
-        // Attack white king with rook
-        builder.PlacePiece(ChessConstants.ROOK, ChessConstants.BLACK, 4, 3);
+        var pawn = builder.PlacePiece(ChessConstants.PAWN, ChessConstants.BLACK, 3, 3);
 
         builder.BoardState.RecalculateAttacks();
-        bool inCheck = builder.BoardState.IsKingInCheck(ChessConstants.WHITE);
-        Assert.IsTrue(inCheck, "Non-earth king on starting square should still be in check");
+
+        var passive = earthKing.elementalPiece.passive as EarthKingPassive;
+        bool allowCapture = passive.OnBeforeCapture(pawn, earthKing, builder.BoardState);
+
+        Assert.IsFalse(allowCapture, "Stone Shield passive should work against pawn attacks");
+        Assert.IsTrue(earthKing.elementalPiece.hasUsedStoneShield, "Shield should be marked as used");
     }
 
     [Test]
-    public void BedrockThrone_IsOnStartingSquare_ChecksCorrectly()
+    public void StoneShield_DirectInvocation_WorksOnAnySquare()
     {
-        // Test the static helper method directly
-        var whiteKing = builder.PlacePiece(ChessConstants.KING, ChessConstants.WHITE, 4, 7);
-        Assert.IsTrue(EarthKingPassive.IsOnStartingSquare(whiteKing), "White king at (4,7) should be on starting square");
+        // Earth King not on starting square - passive should still work
+        var earthKing = builder.PlaceElementalPiece(ChessConstants.KING, ChessConstants.WHITE, 2, 3, ChessConstants.ELEMENT_EARTH);
+        builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
+        var attacker = builder.PlacePiece(ChessConstants.QUEEN, ChessConstants.BLACK, 2, 5);
 
-        var whiteKingMoved = builder.PlacePiece(ChessConstants.KING, ChessConstants.WHITE, 3, 6);
-        Assert.IsFalse(EarthKingPassive.IsOnStartingSquare(whiteKingMoved), "White king at (3,6) should NOT be on starting square");
+        builder.BoardState.RecalculateAttacks();
 
-        var blackKing = builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 4, 0);
-        Assert.IsTrue(EarthKingPassive.IsOnStartingSquare(blackKing), "Black king at (4,0) should be on starting square");
+        var passive = earthKing.elementalPiece.passive as EarthKingPassive;
+        bool allowCapture = passive.OnBeforeCapture(attacker, earthKing, builder.BoardState);
 
-        var blackKingMoved = builder.PlacePiece(ChessConstants.KING, ChessConstants.BLACK, 5, 1);
-        Assert.IsFalse(EarthKingPassive.IsOnStartingSquare(blackKingMoved), "Black king at (5,1) should NOT be on starting square");
+        Assert.IsFalse(allowCapture, "Stone Shield passive should work regardless of king's position");
     }
 
     // ========== EarthKingActive (Sanctuary) ==========

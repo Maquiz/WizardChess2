@@ -4,6 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Inferno Line: Choose a cardinal direction; create Fire Squares in a line.
 /// First enemy piece in the line is captured.
+/// Uses MultiStepMoveController for sequential animated captures and fire creation.
 /// </summary>
 public class FireRookActive : IActiveAbility
 {
@@ -44,9 +45,59 @@ public class FireRookActive : IActiveAbility
 
     public bool Execute(PieceMove piece, Square target, BoardState bs, SquareEffectManager sem)
     {
+        MultiStepMoveController controller = piece.gm.multiStepController;
+
         int dx = System.Math.Sign(target.x - piece.curx);
         int dy = System.Math.Sign(target.y - piece.cury);
 
+        // If no controller, fall back to instant execution
+        if (controller == null)
+        {
+            return ExecuteInstant(piece, dx, dy, bs, sem);
+        }
+
+        // Build step sequence: capture then create fire for each square
+        List<MoveStep> steps = new List<MoveStep>();
+        int captureCount = 0;
+
+        for (int i = 1; i <= _params.lineLength; i++)
+        {
+            int nx = piece.curx + dx * i;
+            int ny = piece.cury + dy * i;
+            if (!bs.IsInBounds(nx, ny)) break;
+
+            // Check for capture target
+            PieceMove targetPiece = bs.GetPieceAt(nx, ny);
+            if (captureCount < _params.maxCaptures && targetPiece != null
+                && targetPiece.color != piece.color && targetPiece.piece != ChessConstants.KING)
+            {
+                // Capture step
+                steps.Add(MoveStep.Capture(piece, targetPiece));
+                captureCount++;
+            }
+
+            // Fire creation step (with delay for visual effect)
+            int fireX = nx;
+            int fireY = ny;
+            int fireDuration = _params.fireDuration;
+            int fireOwner = piece.color;
+            steps.Add(MoveStep.Custom(() =>
+            {
+                sem.CreateEffect(fireX, fireY, SquareEffectType.Fire, fireDuration, fireOwner);
+            }, 0.1f));
+        }
+
+        // Execute sequence
+        controller.ExecuteSteps(steps, null);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Fallback instant execution when controller unavailable.
+    /// </summary>
+    private bool ExecuteInstant(PieceMove piece, int dx, int dy, BoardState bs, SquareEffectManager sem)
+    {
         int captureCount = 0;
         for (int i = 1; i <= _params.lineLength; i++)
         {

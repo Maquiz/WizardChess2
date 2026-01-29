@@ -118,6 +118,28 @@ public class SquareEffectManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Get the name of the effect blocking a square, for UI display.
+    /// Returns a human-readable name like "Fire", "Stone Wall", etc.
+    /// </summary>
+    public string GetBlockingEffectName(int x, int y)
+    {
+        SquareEffect effect = GetEffectAt(x, y);
+        if (effect == null) return "Unknown effect";
+
+        switch (effect.effectType)
+        {
+            case SquareEffectType.Fire:
+                return "Fire";
+            case SquareEffectType.StoneWall:
+                return "Stone Wall";
+            case SquareEffectType.LightningField:
+                return "Lightning Field";
+            default:
+                return effect.effectType.ToString();
+        }
+    }
+
+    /// <summary>
     /// Get all active effects of a specific type.
     /// </summary>
     public List<SquareEffect> GetAllEffectsOfType(SquareEffectType type)

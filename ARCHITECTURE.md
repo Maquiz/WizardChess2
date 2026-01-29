@@ -1,6 +1,6 @@
 # ARCHITECTURE.md — WizardChess2 Class Reference
 
-> **Last updated:** 2026-01-27
+> **Last updated:** 2026-01-29
 >
 > This document is the source of truth for class responsibilities, public APIs, and system data flow.
 > Update this file whenever classes are added/removed or public interfaces change.
@@ -156,11 +156,17 @@ MainMenu Scene                           Board Scene
 
    PATH A: Normal Move
      4. Validate checkMoves() → HashSet O(1) lookup
-     5. Capture? TryCapture() → [NEW] passive.OnBeforeCapture() (can prevent)
-                              → takePiece() → pieceTaken() → BoardState.RemovePiece()
+     5. Capture? TryCapture() → **King safety guard** (kings cannot be captured)
+                              → [NEW] passive.OnBeforeCapture() (can prevent)
+                              → takePiece() → **King safety net** → pieceTaken() → BoardState.RemovePiece()
                               → [NEW] passive.OnAfterCapture()
                               → [NEW] passive.OnPieceCaptured() (defender)
-     6. PieceMove.movePiece() → DOTween animation
+     6. [NEW] Check for multi-step move (e.g., Lightning Knight double-jump)
+        6a. If double-jump: ExecuteDoubleJump() → MultiStepMoveController.ExecuteSteps()
+            → Step 1: Animate to intermediate L-jump square
+            → Step 2: Animate to final destination
+            → Callback: EndTurn()
+        6b. Else: PieceMove.movePiece() → DOTween animation
                               → BoardState.MovePiece() + RecalculateAttacks()
                               → En passant / castling / promotion
                               → [NEW] passive.OnAfterMove()
@@ -198,7 +204,7 @@ EndTurn():
 
 ```
 1. GameMaster.Start()        → Creates board squares, initializes BoardState
-                             → Creates SquareEffectManager, AbilityExecutor
+                             → Creates SquareEffectManager, AbilityExecutor, MultiStepMoveController
                              → Creates GameLogUI (scrollable move/event log)
 2. Pieces fall onto squares  → Square.OnTriggerEnter()
 3. PieceMove.setIntitialPiece() → Registers with BoardState, generates initial moves
@@ -243,6 +249,7 @@ EndTurn():
 | `showMoves` | `bool` | Move display toggle |
 | `squareEffectManager` | `SquareEffectManager` | **[NEW]** Manages square effects |
 | `abilityExecutor` | `AbilityExecutor` | **[NEW]** Handles ability targeting mode |
+| `multiStepController` | `MultiStepMoveController` | **[NEW]** Orchestrates multi-step move animations |
 | `turnNumber` | `int` | **[NEW]** Current turn counter |
 | `isDraftPhase` | `bool` | **[NEW]** Blocks gameplay during draft |
 | `networkController` | `NetworkGameController` | **[NEW]** Online multiplayer controller (null if offline) |
@@ -256,10 +263,11 @@ EndTurn():
 | `UpdateBoardState` | `(PieceMove piece, int fromX, int fromY, int toX, int toY)` | Update BoardState after a move |
 | `RemovePieceFromBoardState` | `(int x, int y)` | Remove captured piece from BoardState |
 | `selectPiece` | `(Transform t, PieceMove piece)` | Select a piece and generate its moves |
-| `takePiece` | `(PieceMove p)` | Execute a capture |
+| `takePiece` | `(PieceMove p)` | Execute a capture (includes king safety net - refuses to take kings) |
 | `EndTurn` | `()` | **[NEW]** Swap turn, tick effects/cooldowns, evaluate state |
 | `EnterAbilityMode` | `(PieceMove piece)` | **[NEW]** Enter ability targeting mode |
-| `TryCapture` | `(PieceMove attacker, PieceMove defender) → bool` | **[NEW]** Capture with passive hooks (returns false if blocked) |
+| `TryCapture` | `(PieceMove attacker, PieceMove defender) → bool` | **[NEW]** Capture with passive hooks. **King safety guard** at start blocks king captures (returns false). |
+| `ExecuteDoubleJump` | `(PieceMove, KnightMoveData, Square, int, int)` | **[NEW]** Execute Lightning Knight double-jump via MultiStepMoveController |
 
 #### Private/Public Utility Methods
 | Method | Description |
@@ -298,7 +306,7 @@ EndTurn():
 | `IsInBounds` | `(int x, int y) → bool` | Bounds check |
 | `GetAllPieces` | `(int color) → List<PieceMove>` | Get all pieces of a color |
 | `IsSquareAttackedBy` | `(int x, int y, int attackerColor) → bool` | O(1) attack query |
-| `IsKingInCheck` | `(int kingColor) → bool` | Is king in check? (Bedrock Throne: Earth King immune on starting square) |
+| `IsKingInCheck` | `(int kingColor) → bool` | Is king in check? |
 | `RecalculateAttacks` | `()` | Rebuild attack maps for both colors |
 | `WouldMoveLeaveKingInCheck` | `(PieceMove piece, int toX, int toY) → bool` | Simulate move to test legality |
 | `Clone` | `() → BoardState` | Shallow copy for simulation |
@@ -329,14 +337,38 @@ EndTurn():
 | `gm` | `GameMaster` | GameMaster reference |
 | `elementalPiece` | `ElementalPiece` | **[NEW]** Optional elemental component |
 
+#### Static Fields
+| Field | Type | Description |
+|-------|------|-------------|
+| `DefaultArcHeight` | `float` | **[NEW]** Height of parabolic arc for piece movement (default 0.5 units) |
+| `DebugMoveValidation` | `bool` | **[NEW]** Enable console logging of move rejections |
+
 #### Move Generation Pipeline (createPieceMoves)
 ```
-1. Generate pseudo-legal moves (King/Queen/Bishop/Knight/Rook/Pawn)
-2. [NEW] passive.ModifyMoveGeneration() — add/remove moves based on element
-3. [NEW] Filter squares blocked by SquareEffectManager
-4. [NEW] FilterProtectedCaptures() — remove captures blocked by passive abilities
-5. filterIllegalMoves() — remove moves that leave king in check
+1. MoveRejectionTracker.Clear() — start fresh tracking
+2. Generate pseudo-legal moves (King/Queen/Bishop/Knight/Rook/Pawn)
+   - Track BlockedByFriendlyPiece, BlockedByPiecePath rejections
+3. [NEW] passive.ModifyMoveGeneration() — add/remove moves based on element
+   - Track ElementalPassiveBlocked rejections
+4. [NEW] Filter squares blocked by SquareEffectManager
+   - Track SquareEffectBlocked rejections
+5. [NEW] FilterProtectedCaptures() — remove captures blocked by passive abilities
+   - Track CaptureProtected, AttackerCannotCapture rejections
+6. filterIllegalMoves() — remove moves that leave king in check
+   - Track WouldLeaveKingInCheck rejections
+7. If DebugMoveValidation: log all rejections to console
 ```
+
+#### Animation Methods (Parabolic Arc & Multi-Step)
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `AnimateWithArc` | `(Vector3 dest, float duration, float arcHeight) → Tween` | **[NEW]** Animate with parabolic arc using DOPath CatmullRom |
+| `AnimateToSquare` | `(Square dest, float duration) → Tween` | **[NEW]** Animate to square with arc (calls AnimateWithArc) |
+| `AnimateToSquareCoroutine` | `(Square dest, float duration) → IEnumerator` | **[NEW]** Coroutine wrapper for animation |
+| `UpdateBoardStateOnly` | `(int toX, int toY, Square sq)` | **[NEW]** Update board state without animation |
+| `MovePieceAnimated` | `(int toX, int toY, Square sq, float dur, Action) → IEnumerator` | **[NEW]** Full animated move with state update |
+
+**Arc Animation:** All piece movements (including castling rook) use `AnimateWithArc()` to create a parabolic path that clears other pieces, preventing 3D model collision during moves.
 
 #### Promotion Methods
 | Method | Description |
@@ -533,6 +565,7 @@ Unchanged from original architecture. See previous documentation.
 | `cooldown` | `CooldownTracker` | Cooldown state |
 | `pieceMove` | `PieceMove` | Associated PieceMove |
 | `hasUsedReactiveBlink` | `bool` | Lightning King once-per-game flag |
+| `hasUsedStoneShield` | `bool` | Earth King once-per-game flag |
 
 | Method | Description |
 |--------|-------------|
@@ -606,6 +639,7 @@ Unchanged from original architecture. See previous documentation.
 | `IsSquareBlocked(x, y, PieceMove) → bool` | Movement query |
 | `GetEffectAt(x, y) → SquareEffect` | Get effect at position |
 | `GetAllEffectsOfType(type) → List` | Filter query |
+| `GetBlockingEffectName(x, y) → string` | **[NEW]** Human-readable name of blocking effect |
 | `stoneWallBonusHP` | Earth Queen bonus HP |
 
 #### AbilityExecutor
@@ -658,6 +692,104 @@ Unchanged from original architecture. See previous documentation.
 | `Init(GameMaster, DraftData)` | Initialize with GameMaster and draft data |
 
 **Activation:** Added by `GameMaster.Start()` when `MatchConfig.useDeckSystem` is true. Uses `boardState.GetAllPieces()` (like FireVsEarthSetup) for reliability, then derives each piece's deck-slot index from its type and starting column via `GetPieceIndex()`. Applies elements to all pieces (no ELEMENT_NONE skip).
+
+#### MoveStep
+**File:** `Scripts/Wizard/Runtime/MoveStep.cs`
+**Inherits:** Plain C# class
+**Role:** Data structure representing one step in a multi-step move sequence. Used by `MultiStepMoveController` to orchestrate sequential animations for abilities like Lightning Knight double-jump, Chain Strike, Tempest, etc.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `Type` | `MoveStepType` | Type of step (MoveTo, Capture, Custom) |
+| `Piece` | `PieceMove` | Piece being moved |
+| `Destination` | `Square` | Target square for MoveTo steps |
+| `CaptureTarget` | `PieceMove` | Victim for Capture steps |
+| `CustomAction` | `Action` | Arbitrary action for Custom steps |
+| `IntermediateSquare` | `Square` | Optional: waypoint for multi-leg moves |
+| `RecordInHistory` | `bool` | Whether to record this step in move history |
+| `Duration` | `float` | Animation duration override |
+
+| Static Factory | Description |
+|----------------|-------------|
+| `MoveTo(piece, dest, recordHistory)` | Create a move step |
+| `Capture(attacker, victim)` | Create a capture step |
+| `Custom(action, waitDuration)` | Create a custom action step |
+
+#### MultiStepMoveController
+**File:** `Scripts/Wizard/Runtime/MultiStepMoveController.cs`
+**Inherits:** `MonoBehaviour` (attached to GameMaster object)
+**Role:** Orchestrates sequential animations for multi-step moves and abilities. Provides visible delays between steps (especially for AI) so players can follow the action.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `IsExecutingMultiStep` | `bool` | True while executing, blocks input |
+| `aiStepDelay` | `float` | Delay between AI steps (0.5s) |
+| `playerStepDelay` | `float` | Delay between player steps (0.15s) |
+| `defaultAnimationDuration` | `float` | Default animation duration (0.4s) |
+| `CurrentPiece` | `PieceMove` | Piece currently being moved |
+
+| Method | Description |
+|--------|-------------|
+| `Init(GameMaster)` | Initialize with GameMaster reference |
+| `ExecuteSteps(List<MoveStep>, bool isAI, Action)` | Execute step sequence with optional completion callback |
+| `CreateDoubleMove(piece, intermediate, final)` | Helper for knight double-jump |
+| `CreateSingleMove(piece, dest)` | Helper for single animated move |
+
+**Usage Pattern:**
+1. Ability `Execute()` builds `List<MoveStep>` describing the sequence
+2. Calls `multiStepController.ExecuteSteps(steps, onComplete)`
+3. Controller executes steps sequentially with animations and delays
+4. `onComplete` callback triggers when all steps finish (e.g., `EndTurn()`)
+
+#### KnightMoveData
+**File:** `Scripts/Wizard/Abilities/Lightning/LightningKnightPassive.cs`
+**Inherits:** Plain C# class
+**Role:** Metadata for knight moves distinguishing single L-jumps from double-jumps (Lightning Knight passive).
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `FinalDestination` | `Square` | Final landing square |
+| `IntermediateSquare` | `Square` | L-jump waypoint (null for standard moves) |
+| `IsDoubleJump` | `bool` | True if this is an extended double-jump |
+
+**Static Lookup:** `LightningKnightPassive.GetMoveData(piece, x, y)` returns `KnightMoveData` for the destination, or null if not a Lightning Knight move.
+
+#### MoveRejectionTracker
+**File:** `Scripts/Wizard/Runtime/MoveRejectionTracker.cs`
+**Inherits:** Static class + supporting types
+**Role:** Tracks why moves are rejected during move validation. Used for debugging (console logs) and UI feedback (tooltips explaining why a square is invalid).
+
+| Enum Value | Description |
+|------------|-------------|
+| `None` | Move is valid |
+| `OutOfBounds` | Square outside 8x8 board |
+| `BlockedByFriendlyPiece` | Friendly piece on target |
+| `BlockedByPiecePath` | Piece blocks sliding path |
+| `ElementalPassiveBlocked` | Elemental passive removed this move |
+| `SquareEffectBlocked` | Fire/Wall/etc. blocks entry |
+| `CaptureProtected` | Defender's passive prevents capture |
+| `AttackerCannotCapture` | Attacker's passive prevents capture |
+| `WouldLeaveKingInCheck` | Move leaves own king in check |
+| `CastlingKingMoved` | King has moved, can't castle |
+| `CastlingRookMoved` | Rook has moved or missing |
+| `CastlingPathBlocked` | Pieces between king and rook |
+| `CastlingThroughCheck` | King passes through attacked square |
+| `CastlingInCheck` | King currently in check |
+| `EnPassantNotAvailable` | No en passant target |
+| `PawnCannotCaptureForward` | Pawn can only capture diagonally |
+
+| Static Method | Description |
+|---------------|-------------|
+| `Clear()` | Clear all rejections (call at start of move generation) |
+| `AddRejection(x, y, reason, details)` | Track a rejected square |
+| `GetRejection(x, y) → MoveRejection` | Get rejection for a square |
+| `GetExplanation(x, y) → string` | Human-readable explanation |
+| `GetFriendlyText(reason) → string` | Convert reason to user text |
+| `HasRejections() → bool` | Whether any rejections tracked |
+| `RejectionCount → int` | Number of rejected squares |
+| `CurrentRejections → Dictionary` | Read-only copy of all rejections |
+
+**Usage:** `PieceMove.createPieceMoves()` calls `Clear()` at start, then `AddRejection()` at each validation stage. `MoveExplanationUI` queries `GetExplanation()` when hovering invalid squares.
 
 ---
 
@@ -765,6 +897,25 @@ Unchanged from original architecture. See previous documentation.
 **File:** `Scripts/Wizard/UI/AbilityUI.cs`
 **Inherits:** `MonoBehaviour`
 **Role:** In-game ability button display. Shows ability name, cooldown, piece icon (tinted by element), and triggers ability mode. Pre-loads all 6 piece icon sprites from `Resources/ChessIcons/` at startup via `PieceIndexHelper.GetIconResourcePath()`. Updates the icon sprite in `ShowAbilityForPiece()` based on `piece.piece`, so the icon automatically reflects promotion. Creates the icon Image at runtime if not assigned via Inspector.
+
+#### MoveExplanationUI
+**File:** `Scripts/Wizard/UI/MoveExplanationUI.cs`
+**Inherits:** `MonoBehaviour` (attached to GameMaster object)
+**Role:** Displays tooltips explaining why moves are invalid. When a piece is selected and the player hovers over an invalid square, shows a tooltip with the rejection reason after a short delay (0.3s).
+
+| Field/Property | Type | Description |
+|----------------|------|-------------|
+| `showDelay` | `float` | Hover delay before showing tooltip (default 0.3s) |
+| `tooltipOffset` | `Vector2` | Offset from mouse cursor |
+
+| Method | Description |
+|--------|-------------|
+| `ShowExplanation(x, y)` | Force-show explanation for a square |
+| `HideTooltip()` | Hide the tooltip |
+
+**UI Creation:** Creates its own Canvas (ScreenSpaceOverlay) with Panel + TextMeshPro at runtime via `CreateTooltipUI()`. No prefab required.
+
+**Data Source:** Queries `MoveRejectionTracker.GetExplanation(x, y)` to get human-readable rejection reasons populated during `PieceMove.createPieceMoves()`.
 
 #### SquareEffectUI
 **File:** `Scripts/Wizard/UI/SquareEffectUI.cs`
@@ -1092,7 +1243,7 @@ public ClassName(XxxParams p) { _params = p; }              // config injection
 | `EarthBishopActive.cs` | `EarthBishopActive` | Active (CD:5) | **Petrify** — Target enemy becomes Stone Wall for 2 turns |
 | `EarthQueenPassive.cs` | `EarthQueenPassive` | Passive | **Tectonic Presence** — +1 HP to all friendly Stone Walls |
 | `EarthQueenActive.cs` | `EarthQueenActive` | Active (CD:7) | **Continental Divide** — Line of Stone Walls (3 HP, 5 sq) |
-| `EarthKingPassive.cs` | `EarthKingPassive` | Passive | **Bedrock Throne** — Cannot be checked on starting square |
+| `EarthKingPassive.cs` | `EarthKingPassive` | Passive | **Stone Shield** — Once per game, survives capture and destroys attacker |
 | `EarthKingActive.cs` | `EarthKingActive` | Active (CD:8) | **Sanctuary** — Adjacent Stone Walls, king+allies immobilized |
 
 #### Lightning (`Scripts/Wizard/Abilities/Lightning/`)
@@ -1107,7 +1258,7 @@ public ClassName(XxxParams p) { _params = p; }              // config injection
 | `LightningBishopPassive.cs` | `LightningBishopPassive` | Passive | **Voltage Burst** — Singe adjacent enemies after 3+ sq move |
 | `LightningBishopActive.cs` | `LightningBishopActive` | Active (CD:5) | **Arc Flash** — Swap positions with any friendly piece |
 | `LightningQueenPassive.cs` | `LightningQueenPassive` | Passive | **Swiftness** — Can move as Knight (L-shape), no capture |
-| `LightningQueenActive.cs` | `LightningQueenActive` | Active (CD:7) | **Tempest** — Push enemies within 3 sq two squares away |
+| `LightningQueenActive.cs` | `LightningQueenActive` | Active (CD:7) | **Tempest** — Push enemies within 3 sq two squares away (kings immune) |
 | `LightningKingPassive.cs` | `LightningKingPassive` | Passive | **Reactive Blink** — Once per game, move to safe sq within 2 when checked |
 | `LightningKingActive.cs` | `LightningKingActive` | Active (CD:8) | **Static Field** — Lightning field on adjacent squares for 2 turns |
 
@@ -1147,6 +1298,15 @@ public ClassName(XxxParams p) { _params = p; }              // config injection
 | `Stunned` | Cannot move for N turns |
 | `Singed` | Auto-captured when attacked |
 
+### MoveStepType
+**File:** `Scripts/Wizard/Runtime/MoveStep.cs`
+
+| Value | Description |
+|-------|-------------|
+| `MoveTo` | Animate piece to destination square |
+| `Capture` | Capture a piece (remove from board) |
+| `Custom` | Execute arbitrary action (effects, pushes) |
+
 ### MouseUI (private)
 **File:** `Scripts/GameMaster.cs`
 
@@ -1165,6 +1325,7 @@ GameMaster ──────► PieceUI                 (UI indicators)
 GameMaster ──────► LineRenderer            (move preview line)
 GameMaster ──────► SquareEffectManager     [NEW] (manages square effects)
 GameMaster ──────► AbilityExecutor         [NEW] (ability targeting mode)
+GameMaster ──────► MultiStepMoveController [NEW] (multi-step move orchestration)
 
 PieceUI ─────────► PieceMove               (detects piece type changes for icon swap)
 
@@ -1264,6 +1425,22 @@ ChessAI ─────────► AIEvaluation           [NEW] (move scorin
 ChessAI ─────────► BoardState             [NEW] (piece queries, attack maps)
 ChessAI ─────────► AbilityExecutor        [NEW] (ability execution)
 ChessAI ─────────► GameLogUI              [NEW] (move/ability logging)
+ChessAI ─────────► MultiStepMoveController [NEW] (animated double-jumps)
+ChessAI ─────────► LightningKnightPassive  [NEW] (double-jump detection)
+
+MultiStepMoveController ► GameMaster       [NEW] (game state access)
+MultiStepMoveController ► PieceMove        [NEW] (animation methods)
+MultiStepMoveController ► MoveStep         [NEW] (step data)
+MultiStepMoveController ► DOTween          [NEW] (animation)
+
+MoveStep ────────► PieceMove               [NEW] (piece reference)
+MoveStep ────────► Square                  [NEW] (destination reference)
+
+LightningKnightPassive ► KnightMoveData    [NEW] (move metadata tracking)
+LightningPawnActive ──► MultiStepMoveController [NEW] (chain strike animation)
+LightningQueenActive ─► MultiStepMoveController [NEW] (tempest push animation)
+FireRookActive ───────► MultiStepMoveController [NEW] (inferno line animation)
+FireKingActive ───────► MultiStepMoveController [NEW] (backdraft animation)
 AIEvaluation ────► BoardState             [NEW] (position queries, attack maps)
 AIEvaluation ────► ChessConstants         [NEW] (piece types, element IDs)
 AIMatchPanel ────► MainMenuUI             [NEW] (navigation)
@@ -1428,7 +1605,7 @@ Scripts/
 ├── WizardChess.asmdef         Assembly definition for game scripts
 ├── GameMaster.cs              Core orchestrator (modified — conditional DeckBasedSetup)
 ├── BoardState.cs              Board state manager (modified)
-├── PieceMove.cs               Per-piece logic (modified)
+├── PieceMove.cs               Per-piece logic (modified — arc animation, rejection tracking)
 ├── Square.cs                  Board square (modified)
 ├── ChessMove.cs               Move recording (modified)
 ├── ChessConstants.cs          Constants + enums (modified)
@@ -1495,11 +1672,14 @@ Scripts/
     │   ├── CooldownTracker.cs          Cooldown state
     │   ├── StatusEffect.cs             Status effect data
     │   ├── SquareEffect.cs             Square effect component
-    │   ├── SquareEffectManager.cs      Effect manager singleton
+    │   ├── SquareEffectManager.cs      Effect manager singleton (modified — GetBlockingEffectName)
     │   ├── AbilityExecutor.cs          Ability targeting mode
     │   ├── AbilityFactory.cs           Ability instance factory
-    │   ├── FireVsEarthSetup.cs        Auto-assigns Fire/Earth to teams
-    │   └── DeckBasedSetup.cs          Per-piece element setup from decks
+    │   ├── MoveStep.cs                 Multi-step move data class
+    │   ├── MultiStepMoveController.cs  Multi-step move orchestrator
+    │   ├── MoveRejectionTracker.cs     Move rejection tracking for debug/UI (NEW)
+    │   ├── FireVsEarthSetup.cs         Auto-assigns Fire/Earth to teams
+    │   └── DeckBasedSetup.cs           Per-piece element setup from decks
     └── UI/
         ├── AbilityUI.cs                Ability button + cooldown
         ├── AbilityInfo.cs              Static ability/effect name/description lookups
@@ -1508,6 +1688,7 @@ Scripts/
         ├── GameLogUI.cs                Scrollable in-game move/event log
         ├── GameOverUI.cs               Game over overlay + scene reset
         ├── InGameMenuUI.cs             In-game pause menu (resign, draw, settings, exit)
+        ├── MoveExplanationUI.cs        Invalid move tooltip with rejection reasons (NEW)
         ├── SettingsUI.cs               Resolution and display mode settings panel
         ├── PieceTooltipUI.cs           Mouse-over piece info tooltip
         ├── ElementParticleUI.cs        Element-colored particle effects on pieces
@@ -1570,7 +1751,7 @@ Tests/
         │   ├── EarthKnightTests.cs         Tremor Hop + Earthquake
         │   ├── EarthBishopTests.cs         Earthen Shield + Petrify
         │   ├── EarthQueenTests.cs          Tectonic Presence + Continental Divide
-        │   └── EarthKingTests.cs           Bedrock Throne + Sanctuary
+        │   └── EarthKingTests.cs           Stone Shield + Sanctuary
         └── Lightning/
             ├── LightningPawnTests.cs       Energized + Chain Strike
             ├── LightningRookTests.cs       Overcharge + Thunder Strike
