@@ -1,6 +1,6 @@
 # ARCHITECTURE.md — WizardChess2 Class Reference
 
-> **Last updated:** 2026-01-29
+> **Last updated:** 2026-01-29 (Ice & Shadow elements added)
 >
 > This document is the source of truth for class responsibilities, public APIs, and system data flow.
 > Update this file whenever classes are added/removed or public interfaces change.
@@ -440,6 +440,8 @@ EndTurn():
 | `ELEMENT_FIRE` | `1` | **[NEW]** Fire element |
 | `ELEMENT_EARTH` | `2` | **[NEW]** Earth element |
 | `ELEMENT_LIGHTNING` | `3` | **[NEW]** Lightning element |
+| `ELEMENT_ICE` | `4` | **[NEW]** Ice element (freeze/slow theme) |
+| `ELEMENT_SHADOW` | `5` | **[NEW]** Shadow element (stealth/deception theme) |
 
 #### Static Methods
 | Method | Signature | Description |
@@ -566,6 +568,7 @@ Unchanged from original architecture. See previous documentation.
 | `pieceMove` | `PieceMove` | Associated PieceMove |
 | `hasUsedReactiveBlink` | `bool` | Lightning King once-per-game flag |
 | `hasUsedStoneShield` | `bool` | Earth King once-per-game flag |
+| `hasUsedFrozenHeart` | `bool` | Ice King once-per-game flag (NEW) |
 
 | Method | Description |
 |--------|-------------|
@@ -575,6 +578,11 @@ Unchanged from original architecture. See previous documentation.
 | `RemoveStatusEffect(type)` | Remove status |
 | `IsStunned() → bool` | Convenience check |
 | `IsSinged() → bool` | Convenience check |
+| `IsFrozen() → bool` | Ice status check (NEW) |
+| `IsChilled() → bool` | Ice status check (NEW) |
+| `IsVeiled() → bool` | Shadow status check (NEW) |
+| `IsMarked() → bool` | Shadow status check (NEW) |
+| `CannotMove() → bool` | Returns true if Stunned or Frozen (NEW) |
 | `AddImmunity(SquareEffectType)` | Grant effect immunity |
 | `IsImmuneToEffect(SquareEffectType) → bool` | Check immunity |
 | `OnTurnStart(int)` | Tick cooldowns (own turn) and status effects (opponent turn) |
@@ -594,7 +602,7 @@ Unchanged from original architecture. See previous documentation.
 
 #### StatusEffect
 **File:** `Scripts/Wizard/Runtime/StatusEffect.cs`
-**Role:** Tracks a status effect on a piece (Stunned, Singed).
+**Role:** Tracks a status effect on a piece (Stunned, Singed, Frozen, Chilled, Veiled, Marked).
 
 | Property | Description |
 |----------|-------------|
@@ -1204,7 +1212,7 @@ OnlineMatchPanel → PhotonConnectionManager.JoinRandomRoom/CreateRoom/JoinRoom
 
 ### Ability Classes
 
-36 ability classes (6 piece types × 2 abilities × 3 elements).
+60 ability classes (6 piece types × 2 abilities × 5 elements).
 
 **Constructor injection pattern:** Abilities with tunable parameters accept a params object from `AbilityBalanceConfig` via constructor injection. Each has a parameterless fallback constructor with hardcoded defaults:
 ```csharp
@@ -1262,6 +1270,38 @@ public ClassName(XxxParams p) { _params = p; }              // config injection
 | `LightningKingPassive.cs` | `LightningKingPassive` | Passive | **Reactive Blink** — Once per game, move to safe sq within 2 when checked |
 | `LightningKingActive.cs` | `LightningKingActive` | Active (CD:8) | **Static Field** — Lightning field on adjacent squares for 2 turns |
 
+#### Ice (`Scripts/Wizard/Abilities/Ice/`)
+| File | Class | Type | Description |
+|------|-------|------|-------------|
+| `IcePawnPassive.cs` | `IcePawnPassive` | Passive | **Frostbite** — Adjacent enemies become Chilled when this captures |
+| `IcePawnActive.cs` | `IcePawnActive` | Active (CD:3) | **Flash Freeze** — Freeze enemy within 2 squares for 1 turn |
+| `IceRookPassive.cs` | `IceRookPassive` | Passive | **Glacial Wake** — Departure square becomes Ice for 2 turns |
+| `IceRookActive.cs` | `IceRookActive` | Active (CD:5) | **Avalanche** — Ice line (4 sq), push and Chill enemies |
+| `IceKnightPassive.cs` | `IceKnightPassive` | Passive | **Frozen Hoof** — Freeze one adjacent enemy after landing |
+| `IceKnightActive.cs` | `IceKnightActive` | Active (CD:4) | **Blizzard Leap** — Knight move + Ice on all adjacent squares |
+| `IceBishopPassive.cs` | `IceBishopPassive` | Passive | **Rime Trail** — All traversed squares become Ice after 3+ sq move |
+| `IceBishopActive.cs` | `IceBishopActive` | Active (CD:5) | **Deep Freeze** — Freeze target enemy and all adjacent enemies |
+| `IceQueenPassive.cs` | `IceQueenPassive` | Passive | **Permafrost Aura** — Immune to Ice, Frozen, and Chilled |
+| `IceQueenActive.cs` | `IceQueenActive` | Active (CD:7) | **Absolute Zero** — 3x3 Ice zone, freeze all enemies inside |
+| `IceKingPassive.cs` | `IceKingPassive` | Passive | **Frozen Heart** — Once per game, freeze all checking pieces |
+| `IceKingActive.cs` | `IceKingActive` | Active (CD:8) | **Glacial Fortress** — Ice on 8 adjacent squares + Ice immunity |
+
+#### Shadow (`Scripts/Wizard/Abilities/Shadow/`)
+| File | Class | Type | Description |
+|------|-------|------|-------------|
+| `ShadowPawnPassive.cs` | `ShadowPawnPassive` | Passive | **Shadow Step** — Become Veiled after non-capture move |
+| `ShadowPawnActive.cs` | `ShadowPawnActive` | Active (CD:3) | **Shadow Lunge** — Capture enemy 1-2 squares forward |
+| `ShadowRookPassive.cs` | `ShadowRookPassive` | Passive | **Looming Presence** — Mark adjacent enemies at turn start |
+| `ShadowRookActive.cs` | `ShadowRookActive` | Active (CD:5) | **Shadowmeld** — Teleport within 4 sq, leave ShadowVeil |
+| `ShadowKnightPassive.cs` | `ShadowKnightPassive` | Passive | **Phantom Rider** — Become Veiled after capturing |
+| `ShadowKnightActive.cs` | `ShadowKnightActive` | Active (CD:4) | **Doppelganger** — Create Shadow Decoy on knight-move square |
+| `ShadowBishopPassive.cs` | `ShadowBishopPassive` | Passive | **Dark Corners** — Leave ShadowVeil after 3+ sq move |
+| `ShadowBishopActive.cs` | `ShadowBishopActive` | Active (CD:5) | **Eclipse** — Veil all friendly pieces in 2x2 area |
+| `ShadowQueenPassive.cs` | `ShadowQueenPassive` | Passive | **Mistress of Shadows** — Permanently Veiled, +1 to Veil durations |
+| `ShadowQueenActive.cs` | `ShadowQueenActive` | Active (CD:7) | **Umbral Assault** — Move up to 3 sq, Mark adjacent enemies |
+| `ShadowKingPassive.cs` | `ShadowKingPassive` | Passive | **Cloak of Shadows** — Permanently Veiled (check still visible) |
+| `ShadowKingActive.cs` | `ShadowKingActive` | Active (CD:8) | **Shadow Swap** — Swap with friendly within 3, both Veiled |
+
 ---
 
 ## Enums
@@ -1288,6 +1328,9 @@ public ClassName(XxxParams p) { _params = p; }              // config injection
 | `Fire` | Blocks movement, area denial |
 | `StoneWall` | Blocks movement, has HP |
 | `LightningField` | Doesn't block, stuns on entry |
+| `Ice` | Doesn't block, may cause slide effect |
+| `ShadowVeil` | Doesn't block, hides piece type on square |
+| `ShadowDecoy` | Fake piece, disappears when "captured" |
 
 ### StatusEffectType
 **File:** `Scripts/ChessConstants.cs`
@@ -1297,6 +1340,10 @@ public ClassName(XxxParams p) { _params = p; }              // config injection
 | `None` | No effect |
 | `Stunned` | Cannot move for N turns |
 | `Singed` | Auto-captured when attacked |
+| `Frozen` | Cannot move (ice-themed, like Stunned) |
+| `Chilled` | Halved movement range for sliding pieces |
+| `Veiled` | Piece type hidden from opponent |
+| `Marked` | Bonus damage on next attack |
 
 ### MoveStepType
 **File:** `Scripts/Wizard/Runtime/MoveStep.cs`
@@ -1659,10 +1706,24 @@ Scripts/
     │       ├── LightningBishopPassive.cs LightningBishopActive.cs
     │       ├── LightningQueenPassive.cs LightningQueenActive.cs
     │       └── LightningKingPassive.cs  LightningKingActive.cs
+    │   ├── Ice/                          Ice element abilities (NEW)
+    │       ├── IcePawnPassive.cs IcePawnActive.cs
+    │       ├── IceRookPassive.cs IceRookActive.cs
+    │       ├── IceKnightPassive.cs IceKnightActive.cs
+    │       ├── IceBishopPassive.cs IceBishopActive.cs
+    │       ├── IceQueenPassive.cs IceQueenActive.cs
+    │       └── IceKingPassive.cs IceKingActive.cs
+    │   └── Shadow/                       Shadow element abilities (NEW)
+    │       ├── ShadowPawnPassive.cs ShadowPawnActive.cs
+    │       ├── ShadowRookPassive.cs ShadowRookActive.cs
+    │       ├── ShadowKnightPassive.cs ShadowKnightActive.cs
+    │       ├── ShadowBishopPassive.cs ShadowBishopActive.cs
+    │       ├── ShadowQueenPassive.cs ShadowQueenActive.cs
+    │       └── ShadowKingPassive.cs ShadowKingActive.cs
     ├── Data/
     │   ├── ElementDefinition.cs        ScriptableObject
     │   ├── AbilityDefinition.cs        ScriptableObject
-    │   └── AbilityBalanceConfig.cs     Balance config SO + 36 param classes
+    │   └── AbilityBalanceConfig.cs     Balance config SO + 60 param classes (Ice/Shadow added)
     ├── Draft/
     │   ├── DraftManager.cs             Draft orchestrator
     │   ├── DraftUI.cs                  Draft screen UI

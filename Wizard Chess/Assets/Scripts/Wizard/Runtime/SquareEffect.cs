@@ -60,6 +60,16 @@ public class SquareEffect : MonoBehaviour
             case SquareEffectType.LightningField:
                 // Lightning fields don't block movement
                 return false;
+            case SquareEffectType.Ice:
+                // Ice doesn't block movement (but may cause slide effect)
+                return false;
+            case SquareEffectType.ShadowVeil:
+                // Shadow veil doesn't block movement
+                return false;
+            case SquareEffectType.ShadowDecoy:
+                // Shadow decoy appears as a piece but doesn't block movement
+                // (it gets "captured" when attacked, disappearing)
+                return false;
             default:
                 return false;
         }

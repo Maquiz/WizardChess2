@@ -15,6 +15,10 @@ public static class AbilityFactory
                 return CreateEarthPassive(pieceType);
             case ChessConstants.ELEMENT_LIGHTNING:
                 return CreateLightningPassive(pieceType);
+            case ChessConstants.ELEMENT_ICE:
+                return CreateIcePassive(pieceType);
+            case ChessConstants.ELEMENT_SHADOW:
+                return CreateShadowPassive(pieceType);
             default:
                 return null;
         }
@@ -30,6 +34,10 @@ public static class AbilityFactory
                 return CreateEarthActive(pieceType);
             case ChessConstants.ELEMENT_LIGHTNING:
                 return CreateLightningActive(pieceType);
+            case ChessConstants.ELEMENT_ICE:
+                return CreateIceActive(pieceType);
+            case ChessConstants.ELEMENT_SHADOW:
+                return CreateShadowActive(pieceType);
             default:
                 return null;
         }
@@ -182,6 +190,94 @@ public static class AbilityFactory
                 return cfg != null ? new LightningQueenActive(cfg.lightning.queenActive) : new LightningQueenActive();
             case ChessConstants.KING:
                 return cfg != null ? new LightningKingActive(cfg.lightning.kingActive) : new LightningKingActive();
+            default: return null;
+        }
+    }
+
+    // ========== Ice ==========
+
+    private static IPassiveAbility CreateIcePassive(int pieceType)
+    {
+        var cfg = AbilityBalanceConfig.Instance;
+        switch (pieceType)
+        {
+            case ChessConstants.PAWN:
+                return cfg != null ? new IcePawnPassive(cfg.ice.pawnPassive) : new IcePawnPassive();
+            case ChessConstants.ROOK:
+                return cfg != null ? new IceRookPassive(cfg.ice.rookPassive) : new IceRookPassive();
+            case ChessConstants.KNIGHT:
+                return cfg != null ? new IceKnightPassive(cfg.ice.knightPassive) : new IceKnightPassive();
+            case ChessConstants.BISHOP:
+                return cfg != null ? new IceBishopPassive(cfg.ice.bishopPassive) : new IceBishopPassive();
+            case ChessConstants.QUEEN:
+                return cfg != null ? new IceQueenPassive(cfg.ice.queenPassive) : new IceQueenPassive();
+            case ChessConstants.KING:
+                return cfg != null ? new IceKingPassive(cfg.ice.kingPassive) : new IceKingPassive();
+            default: return null;
+        }
+    }
+
+    private static IActiveAbility CreateIceActive(int pieceType)
+    {
+        var cfg = AbilityBalanceConfig.Instance;
+        switch (pieceType)
+        {
+            case ChessConstants.PAWN:
+                return cfg != null ? new IcePawnActive(cfg.ice.pawnActive) : new IcePawnActive();
+            case ChessConstants.ROOK:
+                return cfg != null ? new IceRookActive(cfg.ice.rookActive) : new IceRookActive();
+            case ChessConstants.KNIGHT:
+                return cfg != null ? new IceKnightActive(cfg.ice.knightActive) : new IceKnightActive();
+            case ChessConstants.BISHOP:
+                return cfg != null ? new IceBishopActive(cfg.ice.bishopActive) : new IceBishopActive();
+            case ChessConstants.QUEEN:
+                return cfg != null ? new IceQueenActive(cfg.ice.queenActive) : new IceQueenActive();
+            case ChessConstants.KING:
+                return cfg != null ? new IceKingActive(cfg.ice.kingActive) : new IceKingActive();
+            default: return null;
+        }
+    }
+
+    // ========== Shadow ==========
+
+    private static IPassiveAbility CreateShadowPassive(int pieceType)
+    {
+        var cfg = AbilityBalanceConfig.Instance;
+        switch (pieceType)
+        {
+            case ChessConstants.PAWN:
+                return cfg != null ? new ShadowPawnPassive(cfg.shadow.pawnPassive) : new ShadowPawnPassive();
+            case ChessConstants.ROOK:
+                return cfg != null ? new ShadowRookPassive(cfg.shadow.rookPassive) : new ShadowRookPassive();
+            case ChessConstants.KNIGHT:
+                return cfg != null ? new ShadowKnightPassive(cfg.shadow.knightPassive) : new ShadowKnightPassive();
+            case ChessConstants.BISHOP:
+                return cfg != null ? new ShadowBishopPassive(cfg.shadow.bishopPassive) : new ShadowBishopPassive();
+            case ChessConstants.QUEEN:
+                return cfg != null ? new ShadowQueenPassive(cfg.shadow.queenPassive) : new ShadowQueenPassive();
+            case ChessConstants.KING:
+                return cfg != null ? new ShadowKingPassive(cfg.shadow.kingPassive) : new ShadowKingPassive();
+            default: return null;
+        }
+    }
+
+    private static IActiveAbility CreateShadowActive(int pieceType)
+    {
+        var cfg = AbilityBalanceConfig.Instance;
+        switch (pieceType)
+        {
+            case ChessConstants.PAWN:
+                return cfg != null ? new ShadowPawnActive(cfg.shadow.pawnActive) : new ShadowPawnActive();
+            case ChessConstants.ROOK:
+                return cfg != null ? new ShadowRookActive(cfg.shadow.rookActive) : new ShadowRookActive();
+            case ChessConstants.KNIGHT:
+                return cfg != null ? new ShadowKnightActive(cfg.shadow.knightActive) : new ShadowKnightActive();
+            case ChessConstants.BISHOP:
+                return cfg != null ? new ShadowBishopActive(cfg.shadow.bishopActive) : new ShadowBishopActive();
+            case ChessConstants.QUEEN:
+                return cfg != null ? new ShadowQueenActive(cfg.shadow.queenActive) : new ShadowQueenActive();
+            case ChessConstants.KING:
+                return cfg != null ? new ShadowKingActive(cfg.shadow.kingActive) : new ShadowKingActive();
             default: return null;
         }
     }

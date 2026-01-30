@@ -46,6 +46,8 @@ public static class ChessConstants
     public const int ELEMENT_FIRE = 1;
     public const int ELEMENT_EARTH = 2;
     public const int ELEMENT_LIGHTNING = 3;
+    public const int ELEMENT_ICE = 4;
+    public const int ELEMENT_SHADOW = 5;
 
     // Piece value for capture-prevention checks (Earth Pawn passive)
     public static int PieceValue(int pieceType)
@@ -71,7 +73,10 @@ public enum SquareEffectType
     None,
     Fire,
     StoneWall,
-    LightningField
+    LightningField,
+    Ice,           // Ice: Causes slide when entered
+    ShadowVeil,    // Shadow: Hides piece type while on this square
+    ShadowDecoy    // Shadow: Fake piece that disappears when attacked
 }
 
 /// <summary>
@@ -81,5 +86,9 @@ public enum StatusEffectType
 {
     None,
     Stunned,
-    Singed
+    Singed,
+    Frozen,    // Ice: Cannot move (like Stunned but ice-themed)
+    Chilled,   // Ice: Reduced movement range for sliding pieces
+    Veiled,    // Shadow: Piece type hidden from opponent
+    Marked     // Shadow: Bonus damage on next attack
 }

@@ -33,6 +33,8 @@ public class AbilityBalanceConfig : ScriptableObject
             case ChessConstants.ELEMENT_FIRE: return fire.GetTextOverride(pieceType);
             case ChessConstants.ELEMENT_EARTH: return earth.GetTextOverride(pieceType);
             case ChessConstants.ELEMENT_LIGHTNING: return lightning.GetTextOverride(pieceType);
+            case ChessConstants.ELEMENT_ICE: return ice.GetTextOverride(pieceType);
+            case ChessConstants.ELEMENT_SHADOW: return shadow.GetTextOverride(pieceType);
             default: return null;
         }
     }
@@ -48,6 +50,12 @@ public class AbilityBalanceConfig : ScriptableObject
 
     [Header("Lightning Abilities")]
     public LightningAbilityParams lightning = new LightningAbilityParams();
+
+    [Header("Ice Abilities")]
+    public IceAbilityParams ice = new IceAbilityParams();
+
+    [Header("Shadow Abilities")]
+    public ShadowAbilityParams shadow = new ShadowAbilityParams();
 }
 
 // ============================================================
@@ -494,6 +502,279 @@ public class LtKingActiveParams
 {
     [Tooltip("Duration of lightning field on adjacent squares (turns)")]
     public int fieldDuration = 2;
+}
+
+// ============================================================
+// Ice Ability Params
+// ============================================================
+
+[System.Serializable]
+public class IceAbilityParams
+{
+    public AbilityTextOverride pawnText = new AbilityTextOverride();
+    public IcePawnPassiveParams pawnPassive = new IcePawnPassiveParams();
+    public IcePawnActiveParams pawnActive = new IcePawnActiveParams();
+    public AbilityTextOverride rookText = new AbilityTextOverride();
+    public IceRookPassiveParams rookPassive = new IceRookPassiveParams();
+    public IceRookActiveParams rookActive = new IceRookActiveParams();
+    public AbilityTextOverride knightText = new AbilityTextOverride();
+    public IceKnightPassiveParams knightPassive = new IceKnightPassiveParams();
+    public IceKnightActiveParams knightActive = new IceKnightActiveParams();
+    public AbilityTextOverride bishopText = new AbilityTextOverride();
+    public IceBishopPassiveParams bishopPassive = new IceBishopPassiveParams();
+    public IceBishopActiveParams bishopActive = new IceBishopActiveParams();
+    public AbilityTextOverride queenText = new AbilityTextOverride();
+    public IceQueenPassiveParams queenPassive = new IceQueenPassiveParams();
+    public IceQueenActiveParams queenActive = new IceQueenActiveParams();
+    public AbilityTextOverride kingText = new AbilityTextOverride();
+    public IceKingPassiveParams kingPassive = new IceKingPassiveParams();
+    public IceKingActiveParams kingActive = new IceKingActiveParams();
+
+    public AbilityTextOverride GetTextOverride(int pieceType)
+    {
+        switch (pieceType)
+        {
+            case ChessConstants.PAWN: return pawnText;
+            case ChessConstants.ROOK: return rookText;
+            case ChessConstants.KNIGHT: return knightText;
+            case ChessConstants.BISHOP: return bishopText;
+            case ChessConstants.QUEEN: return queenText;
+            case ChessConstants.KING: return kingText;
+            default: return null;
+        }
+    }
+}
+
+[System.Serializable]
+public class IcePawnPassiveParams
+{
+    [Tooltip("Duration of Chilled status on adjacent enemies after capture (turns)")]
+    public int chillDuration = 2;
+}
+
+[System.Serializable]
+public class IcePawnActiveParams
+{
+    [Tooltip("Maximum range for Flash Freeze targeting (squares)")]
+    public int range = 2;
+    [Tooltip("Duration of Frozen status on target (turns)")]
+    public int freezeDuration = 1;
+}
+
+[System.Serializable]
+public class IceRookPassiveParams
+{
+    [Tooltip("Duration of Ice left on departure square (turns)")]
+    public int iceDuration = 2;
+}
+
+[System.Serializable]
+public class IceRookActiveParams
+{
+    [Tooltip("Length of ice line created (squares)")]
+    public int lineLength = 4;
+    [Tooltip("Duration of Ice on line squares (turns)")]
+    public int iceDuration = 2;
+    [Tooltip("Distance enemies are pushed back (squares)")]
+    public int pushDistance = 1;
+    [Tooltip("Duration of Chilled status on hit enemies (turns)")]
+    public int chillDuration = 2;
+}
+
+[System.Serializable]
+public class IceKnightPassiveParams
+{
+    [Tooltip("Duration of Frozen status on adjacent enemy after landing (turns)")]
+    public int freezeDuration = 1;
+}
+
+[System.Serializable]
+public class IceKnightActiveParams
+{
+    [Tooltip("Duration of Ice AoE around landing square (turns)")]
+    public int iceDuration = 2;
+}
+
+[System.Serializable]
+public class IceBishopPassiveParams
+{
+    [Tooltip("Minimum move distance to trigger Rime Trail (squares)")]
+    public int minMoveDistance = 3;
+    [Tooltip("Duration of Ice on trail squares (turns)")]
+    public int iceDuration = 2;
+}
+
+[System.Serializable]
+public class IceBishopActiveParams
+{
+    [Tooltip("Duration of Frozen status on target and adjacent enemies (turns)")]
+    public int freezeDuration = 2;
+}
+
+[System.Serializable]
+public class IceQueenPassiveParams
+{
+    // Permafrost Aura: immunity to Ice effects, no tunable parameters
+}
+
+[System.Serializable]
+public class IceQueenActiveParams
+{
+    [Tooltip("Radius of the ice zone around target (1 = 3x3)")]
+    public int aoeRadius = 1;
+    [Tooltip("Duration of Ice in the zone (turns)")]
+    public int iceDuration = 3;
+    [Tooltip("Duration of Frozen status on enemies in zone (turns)")]
+    public int freezeDuration = 1;
+}
+
+[System.Serializable]
+public class IceKingPassiveParams
+{
+    // Frozen Heart: once per game freeze all checking pieces, no tunable parameters
+}
+
+[System.Serializable]
+public class IceKingActiveParams
+{
+    [Tooltip("Duration of Ice on adjacent squares (turns)")]
+    public int iceDuration = 3;
+    [Tooltip("Duration of Ice immunity for king (turns)")]
+    public int immunityDuration = 2;
+}
+
+// ============================================================
+// Shadow Ability Params
+// ============================================================
+
+[System.Serializable]
+public class ShadowAbilityParams
+{
+    public AbilityTextOverride pawnText = new AbilityTextOverride();
+    public ShadowPawnPassiveParams pawnPassive = new ShadowPawnPassiveParams();
+    public ShadowPawnActiveParams pawnActive = new ShadowPawnActiveParams();
+    public AbilityTextOverride rookText = new AbilityTextOverride();
+    public ShadowRookPassiveParams rookPassive = new ShadowRookPassiveParams();
+    public ShadowRookActiveParams rookActive = new ShadowRookActiveParams();
+    public AbilityTextOverride knightText = new AbilityTextOverride();
+    public ShadowKnightPassiveParams knightPassive = new ShadowKnightPassiveParams();
+    public ShadowKnightActiveParams knightActive = new ShadowKnightActiveParams();
+    public AbilityTextOverride bishopText = new AbilityTextOverride();
+    public ShadowBishopPassiveParams bishopPassive = new ShadowBishopPassiveParams();
+    public ShadowBishopActiveParams bishopActive = new ShadowBishopActiveParams();
+    public AbilityTextOverride queenText = new AbilityTextOverride();
+    public ShadowQueenPassiveParams queenPassive = new ShadowQueenPassiveParams();
+    public ShadowQueenActiveParams queenActive = new ShadowQueenActiveParams();
+    public AbilityTextOverride kingText = new AbilityTextOverride();
+    public ShadowKingPassiveParams kingPassive = new ShadowKingPassiveParams();
+    public ShadowKingActiveParams kingActive = new ShadowKingActiveParams();
+
+    public AbilityTextOverride GetTextOverride(int pieceType)
+    {
+        switch (pieceType)
+        {
+            case ChessConstants.PAWN: return pawnText;
+            case ChessConstants.ROOK: return rookText;
+            case ChessConstants.KNIGHT: return knightText;
+            case ChessConstants.BISHOP: return bishopText;
+            case ChessConstants.QUEEN: return queenText;
+            case ChessConstants.KING: return kingText;
+            default: return null;
+        }
+    }
+}
+
+[System.Serializable]
+public class ShadowPawnPassiveParams
+{
+    [Tooltip("Duration of Veiled status after non-capture move (turns)")]
+    public int veilDuration = 2;
+}
+
+[System.Serializable]
+public class ShadowPawnActiveParams
+{
+    [Tooltip("Maximum forward capture range (squares)")]
+    public int maxForwardRange = 2;
+}
+
+[System.Serializable]
+public class ShadowRookPassiveParams
+{
+    [Tooltip("Duration of Marked status on adjacent enemies (turns)")]
+    public int markDuration = 2;
+}
+
+[System.Serializable]
+public class ShadowRookActiveParams
+{
+    [Tooltip("Maximum teleport range (Chebyshev distance)")]
+    public int teleportRange = 4;
+    [Tooltip("Duration of ShadowVeil left on departure square (turns)")]
+    public int veilDuration = 2;
+}
+
+[System.Serializable]
+public class ShadowKnightPassiveParams
+{
+    [Tooltip("Duration of Veiled status after capture (turns)")]
+    public int veilDuration = 2;
+}
+
+[System.Serializable]
+public class ShadowKnightActiveParams
+{
+    [Tooltip("Duration of ShadowDecoy on target square (turns)")]
+    public int decoyDuration = 3;
+}
+
+[System.Serializable]
+public class ShadowBishopPassiveParams
+{
+    [Tooltip("Minimum move distance to leave ShadowVeil (squares)")]
+    public int minMoveDistance = 3;
+    [Tooltip("Duration of ShadowVeil on departure square (turns)")]
+    public int veilDuration = 2;
+}
+
+[System.Serializable]
+public class ShadowBishopActiveParams
+{
+    [Tooltip("Radius of the veil area (1 = 2x2)")]
+    public int aoeRadius = 1;
+    [Tooltip("Duration of Veiled status on affected pieces (turns)")]
+    public int veilDuration = 3;
+}
+
+[System.Serializable]
+public class ShadowQueenPassiveParams
+{
+    [Tooltip("Bonus turns added to all Veil durations")]
+    public int veilBonus = 1;
+}
+
+[System.Serializable]
+public class ShadowQueenActiveParams
+{
+    [Tooltip("Maximum move range for Umbral Assault (squares)")]
+    public int moveRange = 3;
+    [Tooltip("Duration of Marked status on adjacent enemies after move (turns)")]
+    public int markDuration = 2;
+}
+
+[System.Serializable]
+public class ShadowKingPassiveParams
+{
+    // Cloak of Shadows: permanent veil (doesn't hide check), no tunable parameters
+}
+
+[System.Serializable]
+public class ShadowKingActiveParams
+{
+    [Tooltip("Maximum swap range (Chebyshev distance)")]
+    public int swapRange = 3;
+    [Tooltip("Duration of Veiled status on both pieces after swap (turns)")]
+    public int veilDuration = 2;
 }
 
 // ============================================================

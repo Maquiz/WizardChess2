@@ -80,10 +80,11 @@ public class PieceMove : MonoBehaviour
         //Check if you are taking or piece if the player color = piece color
         if (!gm.isPieceSelected && gm.currentMove == color)
         {
-            // Stunned pieces cannot move (but can still use active abilities)
-            if (elementalPiece != null && elementalPiece.IsStunned())
+            // Stunned or Frozen pieces cannot move (but can still use active abilities)
+            if (elementalPiece != null && elementalPiece.CannotMove())
             {
-                Debug.Log(printPieceName() + " is stunned and cannot move!");
+                string status = elementalPiece.IsStunned() ? "stunned" : "frozen";
+                Debug.Log(printPieceName() + " is " + status + " and cannot move!");
                 return;
             }
 
@@ -429,6 +430,15 @@ public class PieceMove : MonoBehaviour
             createPawnMoves();
         }
 
+        // Apply Chilled status effect: halve movement range for sliding pieces
+        if (elementalPiece != null && elementalPiece.IsChilled())
+        {
+            if (piece == ChessConstants.ROOK || piece == ChessConstants.BISHOP || piece == ChessConstants.QUEEN)
+            {
+                moves = FilterChilledMoves(moves);
+            }
+        }
+
         // Elemental passive: modify generated moves (track removed moves)
         if (elementalPiece != null && elementalPiece.passive != null)
         {
@@ -489,6 +499,8 @@ public class PieceMove : MonoBehaviour
             case ChessConstants.ELEMENT_FIRE: return "Fire";
             case ChessConstants.ELEMENT_EARTH: return "Earth";
             case ChessConstants.ELEMENT_LIGHTNING: return "Lightning";
+            case ChessConstants.ELEMENT_ICE: return "Ice";
+            case ChessConstants.ELEMENT_SHADOW: return "Shadow";
             default: return "Unknown";
         }
     }
@@ -565,6 +577,63 @@ public class PieceMove : MonoBehaviour
             }
         }
         moves = allowed;
+    }
+
+    /// <summary>
+    /// Filter moves for Chilled pieces - halve the maximum range in each direction.
+    /// Sliding pieces (Rook, Bishop, Queen) have reduced movement when Chilled.
+    /// </summary>
+    private List<Square> FilterChilledMoves(List<Square> originalMoves)
+    {
+        // Group moves by direction from current position
+        Dictionary<(int, int), List<(Square sq, int dist)>> directionMoves = new Dictionary<(int, int), List<(Square sq, int dist)>>();
+
+        foreach (Square move in originalMoves)
+        {
+            int dx = move.x - curx;
+            int dy = move.y - cury;
+
+            // Normalize direction
+            int dirX = dx == 0 ? 0 : (dx > 0 ? 1 : -1);
+            int dirY = dy == 0 ? 0 : (dy > 0 ? 1 : -1);
+
+            var dirKey = (dirX, dirY);
+            if (!directionMoves.ContainsKey(dirKey))
+            {
+                directionMoves[dirKey] = new List<(Square, int)>();
+            }
+
+            int distance = UnityEngine.Mathf.Max(UnityEngine.Mathf.Abs(dx), UnityEngine.Mathf.Abs(dy));
+            directionMoves[dirKey].Add((move, distance));
+        }
+
+        List<Square> filteredMoves = new List<Square>();
+
+        foreach (var kvp in directionMoves)
+        {
+            // Sort by distance
+            kvp.Value.Sort((a, b) => a.dist.CompareTo(b.dist));
+
+            // Find max distance in this direction
+            int maxDist = kvp.Value.Count > 0 ? kvp.Value[kvp.Value.Count - 1].dist : 0;
+
+            // Halved range (minimum 1)
+            int allowedRange = UnityEngine.Mathf.Max(1, maxDist / 2);
+
+            foreach (var (sq, dist) in kvp.Value)
+            {
+                if (dist <= allowedRange)
+                {
+                    filteredMoves.Add(sq);
+                }
+                else
+                {
+                    MoveRejectionTracker.AddRejection(sq.x, sq.y, MoveRejectionReason.ElementalPassiveBlocked, "Chilled (range halved)");
+                }
+            }
+        }
+
+        return filteredMoves;
     }
 
     /// <summary>

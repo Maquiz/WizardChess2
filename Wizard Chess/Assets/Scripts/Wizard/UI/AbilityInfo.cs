@@ -10,6 +10,8 @@ public static class AbilityInfo
             case ChessConstants.ELEMENT_FIRE: return "Fire";
             case ChessConstants.ELEMENT_EARTH: return "Earth";
             case ChessConstants.ELEMENT_LIGHTNING: return "Lightning";
+            case ChessConstants.ELEMENT_ICE: return "Ice";
+            case ChessConstants.ELEMENT_SHADOW: return "Shadow";
             default: return "None";
         }
     }
@@ -58,6 +60,30 @@ public static class AbilityInfo
                 case ChessConstants.BISHOP: return "Voltage Burst";
                 case ChessConstants.QUEEN: return "Swiftness";
                 case ChessConstants.KING: return "Reactive Blink";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_ICE)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Frostbite";
+                case ChessConstants.ROOK: return "Glacial Wake";
+                case ChessConstants.KNIGHT: return "Frozen Hoof";
+                case ChessConstants.BISHOP: return "Rime Trail";
+                case ChessConstants.QUEEN: return "Permafrost Aura";
+                case ChessConstants.KING: return "Frozen Heart";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_SHADOW)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Shadow Step";
+                case ChessConstants.ROOK: return "Looming Presence";
+                case ChessConstants.KNIGHT: return "Phantom Rider";
+                case ChessConstants.BISHOP: return "Dark Corners";
+                case ChessConstants.QUEEN: return "Mistress of Shadows";
+                case ChessConstants.KING: return "Cloak of Shadows";
             }
         }
         return "None";
@@ -109,6 +135,30 @@ public static class AbilityInfo
                 case ChessConstants.KING: return "Once per game, when checked, blink to a safe square within 2.";
             }
         }
+        else if (elementId == ChessConstants.ELEMENT_ICE)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "When capturing, adjacent enemies become Chilled.";
+                case ChessConstants.ROOK: return "After moving, departure square becomes Ice for 2 turns.";
+                case ChessConstants.KNIGHT: return "After landing, one adjacent enemy is Frozen for 1 turn.";
+                case ChessConstants.BISHOP: return "After moving 3+ squares, all traversed squares become Ice.";
+                case ChessConstants.QUEEN: return "Immune to all Ice effects (Ice squares, Frozen, Chilled).";
+                case ChessConstants.KING: return "Once per game, when checked, freeze all checking pieces.";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_SHADOW)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "After a non-capture move, become Veiled (type hidden).";
+                case ChessConstants.ROOK: return "At turn start, all adjacent enemies become Marked.";
+                case ChessConstants.KNIGHT: return "After capturing, become Veiled for 2 turns.";
+                case ChessConstants.BISHOP: return "After moving 3+ squares, leave ShadowVeil on departure.";
+                case ChessConstants.QUEEN: return "Always Veiled. All friendly Veil durations +1 turn.";
+                case ChessConstants.KING: return "Permanently Veiled (type hidden, but check still visible).";
+            }
+        }
         return "";
     }
 
@@ -156,6 +206,30 @@ public static class AbilityInfo
                 case ChessConstants.BISHOP: return "Arc Flash";
                 case ChessConstants.QUEEN: return "Tempest";
                 case ChessConstants.KING: return "Static Field";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_ICE)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Flash Freeze";
+                case ChessConstants.ROOK: return "Avalanche";
+                case ChessConstants.KNIGHT: return "Blizzard Leap";
+                case ChessConstants.BISHOP: return "Deep Freeze";
+                case ChessConstants.QUEEN: return "Absolute Zero";
+                case ChessConstants.KING: return "Glacial Fortress";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_SHADOW)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Shadow Lunge";
+                case ChessConstants.ROOK: return "Shadowmeld";
+                case ChessConstants.KNIGHT: return "Doppelganger";
+                case ChessConstants.BISHOP: return "Eclipse";
+                case ChessConstants.QUEEN: return "Umbral Assault";
+                case ChessConstants.KING: return "Shadow Swap";
             }
         }
         return "Ability";
@@ -207,6 +281,30 @@ public static class AbilityInfo
                 case ChessConstants.KING: return "For 2 turns, enemies moving adjacent are Stunned.";
             }
         }
+        else if (elementId == ChessConstants.ELEMENT_ICE)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Freeze an enemy within 2 squares for 1 turn.";
+                case ChessConstants.ROOK: return "Ice line in a direction. Push and Chill enemies.";
+                case ChessConstants.KNIGHT: return "Knight move + create Ice on all 8 adjacent squares.";
+                case ChessConstants.BISHOP: return "Freeze target enemy and all adjacent enemies.";
+                case ChessConstants.QUEEN: return "3x3 Ice zone on target. Freeze all enemies inside.";
+                case ChessConstants.KING: return "Create Ice on all 8 adjacent squares + gain Ice immunity.";
+            }
+        }
+        else if (elementId == ChessConstants.ELEMENT_SHADOW)
+        {
+            switch (pieceType)
+            {
+                case ChessConstants.PAWN: return "Capture an enemy 1-2 squares directly forward.";
+                case ChessConstants.ROOK: return "Teleport within 4 sq. Leave ShadowVeil on departure.";
+                case ChessConstants.KNIGHT: return "Create a Shadow Decoy on any knight-move square.";
+                case ChessConstants.BISHOP: return "Veil all friendly pieces in a 2x2 area.";
+                case ChessConstants.QUEEN: return "Move up to 3 sq, Mark all adjacent enemies after.";
+                case ChessConstants.KING: return "Swap with any friendly piece within 3 sq. Both Veiled.";
+            }
+        }
         return "";
     }
 
@@ -219,6 +317,9 @@ public static class AbilityInfo
             case SquareEffectType.Fire: return "Fire Square";
             case SquareEffectType.StoneWall: return "Stone Wall";
             case SquareEffectType.LightningField: return "Lightning Field";
+            case SquareEffectType.Ice: return "Ice Square";
+            case SquareEffectType.ShadowVeil: return "Shadow Veil";
+            case SquareEffectType.ShadowDecoy: return "Shadow Decoy";
             default: return "None";
         }
     }
@@ -233,6 +334,12 @@ public static class AbilityInfo
                 return "Blocks movement for all pieces. Has hit points and can be destroyed by attacks. Created by Earth abilities. Earth Queen grants +1 HP to all friendly Stone Walls.";
             case SquareEffectType.LightningField:
                 return "Does NOT block movement. Any piece that enters a Lightning Field square is Stunned. Created by Lightning King's active ability.";
+            case SquareEffectType.Ice:
+                return "Does NOT block movement. Pieces entering may slide in their movement direction. Ice Queens are immune. Created by various Ice abilities.";
+            case SquareEffectType.ShadowVeil:
+                return "Does NOT block movement. Pieces standing on this square have their type hidden from the opponent. Created by Shadow abilities.";
+            case SquareEffectType.ShadowDecoy:
+                return "Appears as a fake piece. When 'captured', disappears without being a real capture. Created by Shadow Knight's Doppelganger ability.";
             default: return "";
         }
     }
@@ -244,6 +351,9 @@ public static class AbilityInfo
             case SquareEffectType.Fire: return "FF6600";
             case SquareEffectType.StoneWall: return "996633";
             case SquareEffectType.LightningField: return "3399FF";
+            case SquareEffectType.Ice: return "66CCFF";
+            case SquareEffectType.ShadowVeil: return "663399";
+            case SquareEffectType.ShadowDecoy: return "330066";
             default: return "FFFFFF";
         }
     }
@@ -256,6 +366,10 @@ public static class AbilityInfo
         {
             case StatusEffectType.Stunned: return "Stunned";
             case StatusEffectType.Singed: return "Singed";
+            case StatusEffectType.Frozen: return "Frozen";
+            case StatusEffectType.Chilled: return "Chilled";
+            case StatusEffectType.Veiled: return "Veiled";
+            case StatusEffectType.Marked: return "Marked";
             default: return "None";
         }
     }
@@ -268,6 +382,14 @@ public static class AbilityInfo
                 return "Cannot move or use abilities for the duration. Caused by Earth Knight (Tremor Hop / Earthquake), Earth Bishop (Earthen Shield), and Lightning Field squares.";
             case StatusEffectType.Singed:
                 return "Automatically captured when attacked by any piece. One-hit vulnerability. Caused by Fire Knight (Splash Damage) and Lightning Bishop (Voltage Burst).";
+            case StatusEffectType.Frozen:
+                return "Cannot move or use abilities for the duration. Caused by various Ice abilities. Ice Queens are immune.";
+            case StatusEffectType.Chilled:
+                return "Sliding pieces (Rook, Bishop, Queen) have halved movement range. Caused by Ice Pawn and Ice Rook abilities.";
+            case StatusEffectType.Veiled:
+                return "Piece type is hidden from the opponent (shown as '?'). Check status is still visible. Caused by various Shadow abilities.";
+            case StatusEffectType.Marked:
+                return "Takes bonus damage on next attack. Marked pieces can be captured even when normally protected. Caused by Shadow Rook and Shadow Queen abilities.";
             default: return "";
         }
     }
@@ -278,6 +400,10 @@ public static class AbilityInfo
         {
             case StatusEffectType.Stunned: return "FFAA00";
             case StatusEffectType.Singed: return "FF6600";
+            case StatusEffectType.Frozen: return "66CCFF";
+            case StatusEffectType.Chilled: return "99DDFF";
+            case StatusEffectType.Veiled: return "663399";
+            case StatusEffectType.Marked: return "FF0066";
             default: return "FFFFFF";
         }
     }

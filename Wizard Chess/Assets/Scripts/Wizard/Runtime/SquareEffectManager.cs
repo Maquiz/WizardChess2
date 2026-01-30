@@ -134,8 +134,35 @@ public class SquareEffectManager : MonoBehaviour
                 return "Stone Wall";
             case SquareEffectType.LightningField:
                 return "Lightning Field";
+            case SquareEffectType.Ice:
+                return "Ice";
+            case SquareEffectType.ShadowVeil:
+                return "Shadow Veil";
+            case SquareEffectType.ShadowDecoy:
+                return "Shadow Decoy";
             default:
                 return effect.effectType.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Check if a square has a ShadowDecoy effect.
+    /// </summary>
+    public bool HasShadowDecoy(int x, int y)
+    {
+        SquareEffect effect = GetEffectAt(x, y);
+        return effect != null && effect.effectType == SquareEffectType.ShadowDecoy;
+    }
+
+    /// <summary>
+    /// Remove a ShadowDecoy when it's "captured" (destroyed without a real capture).
+    /// </summary>
+    public void RemoveShadowDecoy(int x, int y)
+    {
+        SquareEffect effect = GetEffectAt(x, y);
+        if (effect != null && effect.effectType == SquareEffectType.ShadowDecoy)
+        {
+            RemoveEffect(effect);
         }
     }
 

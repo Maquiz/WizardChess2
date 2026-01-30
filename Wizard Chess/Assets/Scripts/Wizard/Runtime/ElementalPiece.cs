@@ -22,6 +22,7 @@ public class ElementalPiece : MonoBehaviour
     // Per-game flags
     public bool hasUsedReactiveBlink = false; // Lightning King passive (once per game)
     public bool hasUsedStoneShield = false;   // Earth King passive (once per game)
+    public bool hasUsedFrozenHeart = false;   // Ice King passive (once per game)
 
     public void Init(int element, IPassiveAbility passiveAbility, IActiveAbility activeAbility, int activeCooldown)
     {
@@ -92,6 +93,46 @@ public class ElementalPiece : MonoBehaviour
     public bool IsSinged()
     {
         return HasStatusEffect(StatusEffectType.Singed);
+    }
+
+    /// <summary>
+    /// Whether this piece is frozen (cannot move, like Stunned but ice-themed).
+    /// </summary>
+    public bool IsFrozen()
+    {
+        return HasStatusEffect(StatusEffectType.Frozen);
+    }
+
+    /// <summary>
+    /// Whether this piece is chilled (reduced movement range for sliding pieces).
+    /// </summary>
+    public bool IsChilled()
+    {
+        return HasStatusEffect(StatusEffectType.Chilled);
+    }
+
+    /// <summary>
+    /// Whether this piece is veiled (type hidden from opponent).
+    /// </summary>
+    public bool IsVeiled()
+    {
+        return HasStatusEffect(StatusEffectType.Veiled);
+    }
+
+    /// <summary>
+    /// Whether this piece is marked (bonus damage on next attack).
+    /// </summary>
+    public bool IsMarked()
+    {
+        return HasStatusEffect(StatusEffectType.Marked);
+    }
+
+    /// <summary>
+    /// Whether this piece cannot move due to Stunned or Frozen status.
+    /// </summary>
+    public bool CannotMove()
+    {
+        return IsStunned() || IsFrozen();
     }
 
     // ========== Immunities ==========
