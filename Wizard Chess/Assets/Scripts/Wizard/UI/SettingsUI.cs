@@ -5,6 +5,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Reusable settings panel with resolution selector and fullscreen/windowed toggle.
 /// Created at runtime and shown as a fullscreen overlay. Used by both MainMenuUI and InGameMenuUI.
+/// On mobile: hides resolution/fullscreen options (locked to device), shows haptic feedback toggle instead.
 /// </summary>
 public class SettingsUI : MonoBehaviour
 {
@@ -12,8 +13,17 @@ public class SettingsUI : MonoBehaviour
     private Text resolutionText;
     private Image fullscreenBtnBg;
     private Image windowedBtnBg;
+    private Image hapticOnBtnBg;
+    private Image hapticOffBtnBg;
     private Font uiFont;
     private System.Action onClose;
+
+    // Desktop-only elements
+    private GameObject resolutionSection;
+    private GameObject displayModeSection;
+
+    // Mobile-only elements
+    private GameObject hapticSection;
 
     private List<Resolution> uniqueResolutions;
     private int currentResolutionIndex;
@@ -48,6 +58,10 @@ public class SettingsUI : MonoBehaviour
     private void CollectResolutions()
     {
         uniqueResolutions = new List<Resolution>();
+
+        // Skip on mobile - resolution is locked
+        if (PlatformDetector.IsMobile) return;
+
         HashSet<string> seen = new HashSet<string>();
 
         Resolution[] all = Screen.resolutions;
@@ -90,7 +104,7 @@ public class SettingsUI : MonoBehaviour
         Image overlayBg = overlay.AddComponent<Image>();
         overlayBg.color = new Color(0f, 0f, 0f, 0.7f);
 
-        // Center panel
+        // Center panel - adjust size based on platform
         GameObject panel = new GameObject("SettingsPanel");
         panel.transform.SetParent(overlay.transform, false);
 
@@ -99,25 +113,49 @@ public class SettingsUI : MonoBehaviour
         panelRt.anchorMax = new Vector2(0.5f, 0.5f);
         panelRt.pivot = new Vector2(0.5f, 0.5f);
         panelRt.anchoredPosition = Vector2.zero;
-        panelRt.sizeDelta = new Vector2(420, 280);
+
+        // Mobile panel is smaller (fewer options)
+        float panelHeight = PlatformDetector.IsMobile ? 200f : 280f;
+        panelRt.sizeDelta = new Vector2(420, panelHeight);
 
         Image panelBg = panel.AddComponent<Image>();
         panelBg.color = new Color(0.12f, 0.12f, 0.18f, 0.95f);
 
         // Title
+        float titleY = PlatformDetector.IsMobile ? 70f : 110f;
         CreateLabel(panel.transform, "Title", "SETTINGS", 26, FontStyle.Bold,
-            Color.white, new Vector2(0, 110));
+            Color.white, new Vector2(0, titleY));
 
+        if (PlatformDetector.IsMobile)
+        {
+            CreateMobileUI(panel.transform);
+        }
+        else
+        {
+            CreateDesktopUI(panel.transform);
+        }
+
+        // Back button - position adjusted for panel size
+        float backButtonY = PlatformDetector.IsMobile ? -65f : -105f;
+        CreateActionButton(panel.transform, "BackButton", "Back",
+            new Color(0.4f, 0.4f, 0.4f), new Vector2(0, backButtonY), OnBackClicked);
+    }
+
+    private void CreateDesktopUI(Transform panel)
+    {
         // Resolution section
-        CreateLabel(panel.transform, "ResLabel", "Resolution", 16, FontStyle.Normal,
+        resolutionSection = new GameObject("ResolutionSection");
+        resolutionSection.transform.SetParent(panel, false);
+
+        CreateLabel(panel, "ResLabel", "Resolution", 16, FontStyle.Normal,
             new Color(0.7f, 0.7f, 0.8f), new Vector2(0, 65));
 
         // [<] 1920 x 1080 [>]
-        CreateArrowButton(panel.transform, "ResLeft", "<",
+        CreateArrowButton(panel, "ResLeft", "<",
             new Vector2(-140, 35), OnResolutionLeft);
 
         GameObject resTextObj = new GameObject("ResolutionText");
-        resTextObj.transform.SetParent(panel.transform, false);
+        resTextObj.transform.SetParent(panel, false);
 
         RectTransform resTextRt = resTextObj.AddComponent<RectTransform>();
         resTextRt.anchorMin = new Vector2(0.5f, 0.5f);
@@ -132,52 +170,92 @@ public class SettingsUI : MonoBehaviour
         resolutionText.color = Color.white;
         resolutionText.alignment = TextAnchor.MiddleCenter;
 
-        CreateArrowButton(panel.transform, "ResRight", ">",
+        CreateArrowButton(panel, "ResRight", ">",
             new Vector2(140, 35), OnResolutionRight);
 
         // Display Mode section
-        CreateLabel(panel.transform, "ModeLabel", "Display Mode", 16, FontStyle.Normal,
+        displayModeSection = new GameObject("DisplayModeSection");
+        displayModeSection.transform.SetParent(panel, false);
+
+        CreateLabel(panel, "ModeLabel", "Display Mode", 16, FontStyle.Normal,
             new Color(0.7f, 0.7f, 0.8f), new Vector2(0, -10));
 
-        GameObject fsBtnObj = CreateModeButton(panel.transform, "FullscreenBtn",
+        GameObject fsBtnObj = CreateModeButton(panel, "FullscreenBtn",
             "Fullscreen", new Vector2(-80, -42));
         fsBtnObj.GetComponent<Button>().onClick.AddListener(OnFullscreenClicked);
         fullscreenBtnBg = fsBtnObj.GetComponent<Image>();
 
-        GameObject winBtnObj = CreateModeButton(panel.transform, "WindowedBtn",
+        GameObject winBtnObj = CreateModeButton(panel, "WindowedBtn",
             "Windowed", new Vector2(80, -42));
         winBtnObj.GetComponent<Button>().onClick.AddListener(OnWindowedClicked);
         windowedBtnBg = winBtnObj.GetComponent<Image>();
+    }
 
-        // Back button
-        CreateActionButton(panel.transform, "BackButton", "Back",
-            new Color(0.4f, 0.4f, 0.4f), new Vector2(0, -105), OnBackClicked);
+    private void CreateMobileUI(Transform panel)
+    {
+        // Haptic Feedback section
+        hapticSection = new GameObject("HapticSection");
+        hapticSection.transform.SetParent(panel, false);
+
+        CreateLabel(panel, "HapticLabel", "Haptic Feedback (Vibration)", 16, FontStyle.Normal,
+            new Color(0.7f, 0.7f, 0.8f), new Vector2(0, 25));
+
+        GameObject onBtnObj = CreateModeButton(panel, "HapticOnBtn",
+            "On", new Vector2(-80, -7));
+        onBtnObj.GetComponent<Button>().onClick.AddListener(OnHapticOnClicked);
+        hapticOnBtnBg = onBtnObj.GetComponent<Image>();
+
+        GameObject offBtnObj = CreateModeButton(panel, "HapticOffBtn",
+            "Off", new Vector2(80, -7));
+        offBtnObj.GetComponent<Button>().onClick.AddListener(OnHapticOffClicked);
+        hapticOffBtnBg = offBtnObj.GetComponent<Image>();
     }
 
     // ========== State ==========
 
     private void RefreshState()
     {
-        // Update resolution text
-        if (uniqueResolutions.Count > 0)
+        if (PlatformDetector.IsMobile)
         {
-            Resolution r = uniqueResolutions[currentResolutionIndex];
-            resolutionText.text = r.width + " x " + r.height;
+            UpdateHapticButtons();
         }
         else
         {
-            resolutionText.text = Screen.width + " x " + Screen.height;
-        }
+            // Update resolution text
+            if (resolutionText != null)
+            {
+                if (uniqueResolutions.Count > 0)
+                {
+                    Resolution r = uniqueResolutions[currentResolutionIndex];
+                    resolutionText.text = r.width + " x " + r.height;
+                }
+                else
+                {
+                    resolutionText.text = Screen.width + " x " + Screen.height;
+                }
+            }
 
-        // Update fullscreen/windowed highlight
-        UpdateModeButtons();
+            // Update fullscreen/windowed highlight
+            UpdateModeButtons();
+        }
     }
 
     private void UpdateModeButtons()
     {
+        if (fullscreenBtnBg == null || windowedBtnBg == null) return;
+
         bool isFs = Screen.fullScreen;
         fullscreenBtnBg.color = isFs ? ACTIVE_COLOR : INACTIVE_COLOR;
         windowedBtnBg.color = isFs ? INACTIVE_COLOR : ACTIVE_COLOR;
+    }
+
+    private void UpdateHapticButtons()
+    {
+        if (hapticOnBtnBg == null || hapticOffBtnBg == null) return;
+
+        bool isOn = HapticFeedback.Enabled;
+        hapticOnBtnBg.color = isOn ? ACTIVE_COLOR : INACTIVE_COLOR;
+        hapticOffBtnBg.color = isOn ? INACTIVE_COLOR : ACTIVE_COLOR;
     }
 
     // ========== Event Handlers ==========
@@ -219,6 +297,19 @@ public class SettingsUI : MonoBehaviour
         Screen.fullScreenMode = FullScreenMode.Windowed;
         Screen.fullScreen = false;
         UpdateModeButtons();
+    }
+
+    private void OnHapticOnClicked()
+    {
+        HapticFeedback.Enabled = true;
+        HapticFeedback.Vibrate(); // Give feedback that it's enabled
+        UpdateHapticButtons();
+    }
+
+    private void OnHapticOffClicked()
+    {
+        HapticFeedback.Enabled = false;
+        UpdateHapticButtons();
     }
 
     private void OnBackClicked()

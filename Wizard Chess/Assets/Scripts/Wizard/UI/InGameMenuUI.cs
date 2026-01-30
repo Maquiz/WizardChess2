@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// In-game pause menu with Resign, Offer a Draw, Exit to Main Menu, and Resume.
-/// Accessible via Escape key or a bottom-right pause button.
+/// Accessible via Escape key (desktop), on-screen button, or back gesture (mobile).
 /// Blocks board input while open. Attached to GameMaster object.
 /// </summary>
 public class InGameMenuUI : MonoBehaviour
@@ -16,6 +16,7 @@ public class InGameMenuUI : MonoBehaviour
 
     private GameMaster gm;
     private Canvas canvas;
+    private IInputService inputService;
 
     // UI elements
     private GameObject menuButton;
@@ -34,6 +35,13 @@ public class InGameMenuUI : MonoBehaviour
         canvas = FindFirstObjectByType<Canvas>();
         uiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
+        // Subscribe to input service menu toggle
+        inputService = InputServiceLocator.Current;
+        if (inputService != null)
+        {
+            inputService.OnMenuToggle += OnMenuToggleRequested;
+        }
+
         if (canvas != null)
         {
             CreateMenuButton();
@@ -43,6 +51,15 @@ public class InGameMenuUI : MonoBehaviour
 
             settingsUI = gameObject.AddComponent<SettingsUI>();
             settingsUI.Init(canvas, OnSettingsClose);
+        }
+    }
+
+    void OnDestroy()
+    {
+        // Unsubscribe from input events
+        if (inputService != null)
+        {
+            inputService.OnMenuToggle -= OnMenuToggleRequested;
         }
     }
 
@@ -72,37 +89,49 @@ public class InGameMenuUI : MonoBehaviour
             menuButton.SetActive(gm.isSetupComplete && !gm.isDraftPhase);
         }
 
-        // Escape key handling
-        if (Input.GetKeyDown(KeyCode.Escape))
+        // Note: Menu toggle is handled via OnMenuToggleRequested from input service
+    }
+
+    /// <summary>
+    /// Handle menu toggle request from input service (Escape key or mobile back button).
+    /// </summary>
+    private void OnMenuToggleRequested()
+    {
+        if (gm == null) return;
+
+        bool isGameOver = gm.currentGameState == GameState.WhiteWins
+                       || gm.currentGameState == GameState.BlackWins
+                       || gm.currentGameState == GameState.Stalemate
+                       || gm.currentGameState == GameState.Draw;
+        if (isGameOver) return;
+
+        // If draw offer popup is showing, ignore toggle (must accept/decline)
+        if (isDrawOfferReceived) return;
+
+        // If settings panel is open, close it and return to menu
+        if (settingsUI != null && settingsUI.IsVisible)
         {
-            // If draw offer popup is showing, ignore Escape (must accept/decline)
-            if (isDrawOfferReceived) return;
+            settingsUI.Hide();
+            return;
+        }
 
-            // If settings panel is open, close it and return to menu
-            if (settingsUI != null && settingsUI.IsVisible)
+        if (isConfirmOpen)
+        {
+            // Close confirm dialog only
+            CloseConfirmDialog();
+        }
+        else if (IsMenuOpen)
+        {
+            CloseMenu();
+        }
+        else
+        {
+            // Only open during playable states
+            if (gm.currentGameState == GameState.Playing
+                || gm.currentGameState == GameState.WhiteInCheck
+                || gm.currentGameState == GameState.BlackInCheck)
             {
-                settingsUI.Hide();
-                return;
-            }
-
-            if (isConfirmOpen)
-            {
-                // Close confirm dialog only
-                CloseConfirmDialog();
-            }
-            else if (IsMenuOpen)
-            {
-                CloseMenu();
-            }
-            else
-            {
-                // Only open during playable states
-                if (gm.currentGameState == GameState.Playing
-                    || gm.currentGameState == GameState.WhiteInCheck
-                    || gm.currentGameState == GameState.BlackInCheck)
-                {
-                    OpenMenu();
-                }
+                OpenMenu();
             }
         }
     }
@@ -111,6 +140,9 @@ public class InGameMenuUI : MonoBehaviour
 
     private void CreateMenuButton()
     {
+        bool isPortrait = Screen.height > Screen.width;
+        float btnSize = isPortrait ? 40f : 50f;
+
         menuButton = new GameObject("PauseMenuButton");
         menuButton.transform.SetParent(canvas.transform, false);
 
@@ -118,8 +150,8 @@ public class InGameMenuUI : MonoBehaviour
         rt.anchorMin = new Vector2(1f, 0f);
         rt.anchorMax = new Vector2(1f, 0f);
         rt.pivot = new Vector2(1f, 0f);
-        rt.anchoredPosition = new Vector2(-15, 15);
-        rt.sizeDelta = new Vector2(50, 50);
+        rt.anchoredPosition = new Vector2(-10, 10);
+        rt.sizeDelta = new Vector2(btnSize, btnSize);
 
         Image bg = menuButton.AddComponent<Image>();
         bg.color = new Color(0.25f, 0.25f, 0.35f, 0.85f);
@@ -139,7 +171,7 @@ public class InGameMenuUI : MonoBehaviour
 
         Text text = textObj.AddComponent<Text>();
         text.font = uiFont;
-        text.fontSize = 22;
+        text.fontSize = isPortrait ? 18 : 22;
         text.color = Color.white;
         text.alignment = TextAnchor.MiddleCenter;
         text.fontStyle = FontStyle.Bold;

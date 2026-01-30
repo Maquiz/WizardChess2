@@ -94,13 +94,27 @@ public class ElementParticleUI : MonoBehaviour
         var renderer = particleObj.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
 
-        // Create a simple particle material
-        Material particleMat = new Material(Shader.Find("Particles/Standard Unlit"));
-        if (particleMat != null)
+        // Try to find a particle shader, with fallbacks for builds
+        Shader particleShader = Shader.Find("Particles/Standard Unlit");
+        if (particleShader == null)
+            particleShader = Shader.Find("Mobile/Particles/Additive");
+        if (particleShader == null)
+            particleShader = Shader.Find("Legacy Shaders/Particles/Additive");
+        if (particleShader == null)
+            particleShader = Shader.Find("Sprites/Default");
+
+        if (particleShader != null)
         {
+            Material particleMat = new Material(particleShader);
             particleMat.SetColor("_Color", baseColor);
-            particleMat.SetFloat("_Mode", 1); // Additive
+            if (particleMat.HasProperty("_Mode"))
+                particleMat.SetFloat("_Mode", 1); // Additive
             renderer.material = particleMat;
+        }
+        else
+        {
+            // Last resort: use the default material (won't have custom color but won't crash)
+            Debug.LogWarning("[ElementParticleUI] No particle shader found, using default material");
         }
 
         // Start playing

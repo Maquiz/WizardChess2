@@ -22,14 +22,16 @@ public class MoveExplanationUI : MonoBehaviour
     private bool isShowingTooltip;
     private PieceMove trackedPiece;         // Piece we're tracking rejections for
     private GameMaster gm;
+    private IInputService inputService;
 
     void Start()
     {
         gm = GetComponent<GameMaster>();
         if (gm == null)
         {
-            gm = FindObjectOfType<GameMaster>();
+            gm = FindFirstObjectByType<GameMaster>();
         }
+        inputService = InputServiceLocator.Current;
 
         CreateTooltipUI();
         HideTooltip();
@@ -38,7 +40,7 @@ public class MoveExplanationUI : MonoBehaviour
     void Update()
     {
         // Only show tooltips when a piece is selected
-        if (gm == null || !gm.isPieceSelected || gm.selectedPiece == null)
+        if (gm == null || !gm.isPieceSelected || gm.selectedPiece == null || inputService == null)
         {
             HideTooltip();
             return;
@@ -52,7 +54,7 @@ public class MoveExplanationUI : MonoBehaviour
         }
 
         // Raycast to find hovered square
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(inputService.PointerPosition);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit))
@@ -151,10 +153,10 @@ public class MoveExplanationUI : MonoBehaviour
 
     private void UpdateTooltipPosition()
     {
-        if (tooltipPanel == null) return;
+        if (tooltipPanel == null || inputService == null) return;
 
         RectTransform rt = tooltipPanel.GetComponent<RectTransform>();
-        Vector2 mousePos = Input.mousePosition;
+        Vector2 mousePos = inputService.PointerPosition;
 
         // Position tooltip near the mouse cursor
         Vector2 targetPos = mousePos + tooltipOffset;
@@ -177,6 +179,8 @@ public class MoveExplanationUI : MonoBehaviour
 
     private void CreateTooltipUI()
     {
+        bool isPortrait = Screen.height > Screen.width;
+
         // Create a screen-space overlay canvas for the tooltip
         GameObject canvasObj = new GameObject("MoveExplanationCanvas");
         canvasObj.transform.SetParent(transform);
@@ -188,6 +192,7 @@ public class MoveExplanationUI : MonoBehaviour
         CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
+        scaler.matchWidthOrHeight = isPortrait ? 0f : 0.5f; // Match width on portrait for better scaling
 
         canvasObj.AddComponent<GraphicRaycaster>();
 
@@ -200,11 +205,13 @@ public class MoveExplanationUI : MonoBehaviour
 
         // Background image
         Image bg = tooltipPanel.AddComponent<Image>();
-        bg.color = new Color(0.1f, 0.1f, 0.1f, 0.9f); // Dark semi-transparent
+        bg.color = new Color(0.1f, 0.1f, 0.1f, 0.95f); // Dark semi-transparent
 
-        // Horizontal layout for padding
+        // Horizontal layout for padding - larger padding on mobile
         HorizontalLayoutGroup hlg = tooltipPanel.AddComponent<HorizontalLayoutGroup>();
-        hlg.padding = new RectOffset(12, 12, 8, 8);
+        int pad = isPortrait ? 16 : 12;
+        int padV = isPortrait ? 12 : 8;
+        hlg.padding = new RectOffset(pad, pad, padV, padV);
         hlg.childForceExpandWidth = false;
         hlg.childForceExpandHeight = false;
 
@@ -212,7 +219,7 @@ public class MoveExplanationUI : MonoBehaviour
         csf.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        // Text
+        // Text - larger font on mobile for readability
         GameObject textObj = new GameObject("TooltipText");
         textObj.transform.SetParent(tooltipPanel.transform);
 
@@ -222,15 +229,15 @@ public class MoveExplanationUI : MonoBehaviour
 
         tooltipText = textObj.AddComponent<Text>();
         tooltipText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        tooltipText.fontSize = 16;
+        tooltipText.fontSize = isPortrait ? 22 : 16;
         tooltipText.color = Color.white;
         tooltipText.alignment = TextAnchor.MiddleLeft;
         tooltipText.horizontalOverflow = HorizontalWrapMode.Wrap;
         tooltipText.verticalOverflow = VerticalWrapMode.Overflow;
 
-        // Set max width for text
+        // Set max width for text - wider on portrait to use available space
         LayoutElement le = textObj.AddComponent<LayoutElement>();
-        le.preferredWidth = 300;
+        le.preferredWidth = isPortrait ? 260 : 300;
     }
 
     /// <summary>

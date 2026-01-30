@@ -71,26 +71,7 @@ public class PieceMove : MonoBehaviour
         firstMove = true;
     }
 
-    void OnMouseDown()
-    {
-        // Block piece selection when pause menu is open
-        if (gm.inGameMenuUI != null && gm.inGameMenuUI.IsMenuOpen)
-            return;
-
-        //Check if you are taking or piece if the player color = piece color
-        if (!gm.isPieceSelected && gm.currentMove == color)
-        {
-            // Stunned or Frozen pieces cannot move (but can still use active abilities)
-            if (elementalPiece != null && elementalPiece.CannotMove())
-            {
-                string status = elementalPiece.IsStunned() ? "stunned" : "frozen";
-                Debug.Log(printPieceName() + " is " + status + " and cannot move!");
-                return;
-            }
-
-            gm.selectPiece(this.gameObject.transform, this);
-        }
-    }
+    // Note: OnMouseDown was removed - piece selection is handled by GameMaster via input service raycasting
 
     public void setIntitialPiece(int x, int y, GameObject sq)
     {

@@ -21,7 +21,9 @@
       "mcp__unityMCP__debug_request_context",
       "WebSearch",
       "WebFetch(domain:doc.photonengine.com)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "mcp__unityMCP__manage_components",
+      "Bash(find:*)"
     ]
   }
 }

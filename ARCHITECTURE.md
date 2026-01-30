@@ -1,6 +1,6 @@
 # ARCHITECTURE.md — WizardChess2 Class Reference
 
-> **Last updated:** 2026-01-29 (Ice & Shadow elements added)
+> **Last updated:** 2026-01-29 (Android mobile support added)
 >
 > This document is the source of truth for class responsibilities, public APIs, and system data flow.
 > Update this file whenever classes are added/removed or public interfaces change.
@@ -31,11 +31,24 @@
    - [UI Classes](#ui-classes)
    - [Editor Tools](#editor-tools)
    - [Ability Classes](#ability-classes)
-5. [Enums](#enums)
-6. [Dependencies Between Classes](#dependencies-between-classes)
-7. [Prefabs & Tags](#prefabs--tags)
-8. [Test System](#test-system)
-9. [File Map](#file-map)
+5. [Class Reference — Input System](#class-reference--input-system)
+   - [IInputService](#iinputservice)
+   - [InputServiceLocator](#inputservicelocator)
+   - [DesktopInputService](#desktopinputservice)
+   - [TouchInputService](#touchinputservice)
+6. [Class Reference — Platform](#class-reference--platform)
+   - [PlatformDetector](#platformdetector)
+   - [ScreenOrientationLock](#screenorientationlock)
+   - [HapticFeedback](#hapticfeedback)
+7. [Class Reference — Mobile UI](#class-reference--mobile-ui)
+   - [MobileCameraControls](#mobilecameracontrols)
+   - [MobileAbilityButton](#mobileabilitybutton)
+   - [SafeAreaHandler](#safeareahandler)
+8. [Enums](#enums)
+9. [Dependencies Between Classes](#dependencies-between-classes)
+10. [Prefabs & Tags](#prefabs--tags)
+11. [Test System](#test-system)
+12. [File Map](#file-map)
 
 ---
 
@@ -97,6 +110,24 @@
   │  PhotonConnectionManager (singleton)│
   │  NetworkGameController (RPC sync)   │
   │  OnlineMatchPanel (Menu UI)         │
+  └─────────────────────────────────────┘
+
+  ┌─────────────────────────────────────┐
+  │       Input System                  │
+  │  IInputService (interface)          │
+  │  InputServiceLocator (factory)      │
+  │  DesktopInputService (mouse/kb)     │
+  │  TouchInputService (touch/gestures) │
+  └─────────────────────────────────────┘
+
+  ┌─────────────────────────────────────┐
+  │       Platform & Mobile             │
+  │  PlatformDetector (static)          │
+  │  ScreenOrientationLock              │
+  │  HapticFeedback (static)            │
+  │  MobileCameraControls (UI)          │
+  │  MobileAbilityButton (UI)           │
+  │  SafeAreaHandler (UI)               │
   └─────────────────────────────────────┘
 ```
 
@@ -1304,6 +1335,140 @@ public ClassName(XxxParams p) { _params = p; }              // config injection
 
 ---
 
+## Class Reference — Input System
+
+The input system provides platform-agnostic input handling. Game code subscribes to `IInputService` events instead of polling `Input.*` directly.
+
+### IInputService
+**File:** `Scripts/Input/IInputService.cs`
+**Type:** Interface
+**Role:** Contract for all input services. Defines events for primary/secondary actions, ability activation, camera views, and menu toggle.
+
+#### Events
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| `OnPrimaryAction` | — | Left click / tap |
+| `OnSecondaryAction` | — | Right click (desktop only) |
+| `OnAbilityActivate` | — | Q key / long-press |
+| `OnCameraViewRequested` | `int viewIndex` | 1=White, 2=Black, 3=Top |
+| `OnMenuToggle` | — | Escape / menu button |
+
+#### Properties
+| Property | Type | Description |
+|----------|------|-------------|
+| `PointerPosition` | `Vector3` | Screen-space pointer position |
+| `IsPointerDown` | `bool` | Whether pointer is held |
+| `PrimaryActionThisFrame` | `bool` | True on frame of primary action start |
+| `SecondaryActionThisFrame` | `bool` | True on frame of secondary action start |
+
+### InputServiceLocator
+**File:** `Scripts/Input/InputServiceLocator.cs`
+**Type:** Static class
+**Role:** Service locator that provides the current input service and handles platform detection.
+
+| Method | Description |
+|--------|-------------|
+| `Current` | Get the current IInputService (lazy init) |
+| `Initialize()` | Explicitly initialize (auto-detects platform) |
+| `SetService(IInputService)` | Override with custom service (testing) |
+| `Reset()` | Clear current service |
+| `UpdateInput()` | Update input state (call each frame) |
+
+### DesktopInputService
+**File:** `Scripts/Input/DesktopInputService.cs`
+**Type:** Class implements `IInputService`
+**Role:** Mouse and keyboard input handling for PC using New Input System (`Mouse.current`, `Keyboard.current`).
+
+### TouchInputService
+**File:** `Scripts/Input/TouchInputService.cs`
+**Type:** Class implements `IInputService`
+**Role:** Touch input with tap-to-select, tap-to-move, and long-press for ability activation. Uses New Input System's `EnhancedTouch` API.
+
+| Method | Description |
+|--------|-------------|
+| `TriggerCameraView(int)` | Called by MobileCameraControls buttons |
+| `TriggerMenuToggle()` | Called by mobile menu button |
+| `TriggerAbilityActivate()` | Called by MobileAbilityButton |
+
+---
+
+## Class Reference — Platform
+
+Platform utilities for detecting device type and handling platform-specific features.
+
+### PlatformDetector
+**File:** `Scripts/Platform/PlatformDetector.cs`
+**Type:** Static class
+**Role:** Detect current platform (mobile vs desktop).
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `IsMobile` | `bool` | True on Android/iOS |
+| `IsDesktop` | `bool` | True on Windows/Mac/Linux |
+| `IsEditor` | `bool` | True in Unity Editor |
+| `HasTouchscreen` | `bool` | True if touch supported (uses `Touchscreen.current != null`) |
+
+| Method | Description |
+|--------|-------------|
+| `SetMobileInEditor(bool)` | Force mobile mode in Editor for testing |
+
+### ScreenOrientationLock
+**File:** `Scripts/Platform/ScreenOrientationLock.cs`
+**Type:** MonoBehaviour / Static class
+**Role:** Lock screen orientation to landscape on mobile.
+
+| Method | Description |
+|--------|-------------|
+| `Initialize()` | Lock to landscape (safe to call multiple times) |
+| `ForceLandscapeLeft()` | Force specific orientation |
+| `ForceLandscapeRight()` | Force specific orientation |
+| `AllowAutoRotation()` | Return to auto-rotate (landscape only) |
+
+### HapticFeedback
+**File:** `Scripts/Platform/HapticFeedback.cs`
+**Type:** Static class
+**Role:** Vibration feedback for mobile devices. Respects user preference.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `Enabled` | `bool` | User preference (persisted to PlayerPrefs) |
+
+| Method | Description |
+|--------|-------------|
+| `Vibrate()` | Trigger standard vibration |
+| `SelectionVibrate()` | Vibrate on selection |
+| `SuccessVibrate()` | Vibrate on successful action |
+| `ErrorVibrate()` | Vibrate on invalid action |
+
+---
+
+## Class Reference — Mobile UI
+
+Mobile-specific UI components. Only created when `PlatformDetector.IsMobile` is true.
+
+### MobileCameraControls
+**File:** `Scripts/UI/Mobile/MobileCameraControls.cs`
+**Type:** MonoBehaviour
+**Role:** On-screen camera view buttons (White/Black/Top) in bottom-left corner. Disabled in online matches.
+
+### MobileAbilityButton
+**File:** `Scripts/UI/Mobile/MobileAbilityButton.cs`
+**Type:** MonoBehaviour
+**Role:** On-screen ability activation button in bottom-right corner. Shows cooldown timer when not ready, calls `GameMaster.HandleAbilityActivation()`.
+
+### SafeAreaHandler
+**File:** `Scripts/UI/Mobile/SafeAreaHandler.cs`
+**Type:** MonoBehaviour (requires `RectTransform`)
+**Role:** Adjusts RectTransform anchors to respect device safe area (notches, rounded corners).
+
+| Method | Description |
+|--------|-------------|
+| `Refresh()` | Force recalculation after orientation change |
+| `GetSafeArea()` | Get current safe area rect (static) |
+| `HasNotch()` | Check if device has non-standard safe area (static) |
+
+---
+
 ## Enums
 
 ### GameState
@@ -1650,13 +1815,13 @@ One file per element-piece combination, testing both passive and active abilitie
 ```
 Scripts/
 ├── WizardChess.asmdef         Assembly definition for game scripts
-├── GameMaster.cs              Core orchestrator (modified — conditional DeckBasedSetup)
+├── GameMaster.cs              Core orchestrator (modified — IInputService, mobile UI)
 ├── BoardState.cs              Board state manager (modified)
 ├── PieceMove.cs               Per-piece logic (modified — arc animation, rejection tracking)
 ├── Square.cs                  Board square (modified)
 ├── ChessMove.cs               Move recording (modified)
 ├── ChessConstants.cs          Constants + enums (modified)
-├── CameraMove.cs              Camera control
+├── CameraMove.cs              Camera control (modified — IInputService events)
 ├── PieceUI.cs                 UI overlay
 ├── BoardUI.cs                 World-to-2D utility
 ├── OutofBounds.cs             Board boundary detection
@@ -1664,6 +1829,21 @@ Scripts/
 ├── AI/
 │   ├── ChessAI.cs                AI opponent controller (3 difficulty levels)
 │   └── AIEvaluation.cs           Static evaluation: material, positional, ability scoring
+├── Input/                        Cross-platform input abstraction (NEW)
+│   ├── IInputService.cs           Interface for input events
+│   ├── InputServiceLocator.cs     Service locator / factory
+│   ├── DesktopInputService.cs     Mouse/keyboard implementation
+│   ├── TouchInputService.cs       Touch/gesture implementation
+│   └── InputServiceUpdater.cs     MonoBehaviour for frame updates
+├── Platform/                      Platform detection & mobile support (NEW)
+│   ├── PlatformDetector.cs        IsMobile/IsDesktop detection
+│   ├── ScreenOrientationLock.cs   Force landscape on mobile
+│   └── HapticFeedback.cs          Vibration feedback utility
+├── UI/
+│   └── Mobile/                    Mobile-specific UI components (NEW)
+│       ├── MobileCameraControls.cs On-screen camera view buttons
+│       ├── MobileAbilityButton.cs  On-screen ability activation button
+│       └── SafeAreaHandler.cs      Notch/safe area adjustment
 ├── Network/
 │   ├── PhotonConnectionManager.cs DontDestroyOnLoad Photon connection singleton
 │   └── NetworkGameController.cs   In-game RPC move/ability sync, color assignment
@@ -1748,9 +1928,9 @@ Scripts/
         ├── CheckBannerUI.cs            Check state red banner
         ├── GameLogUI.cs                Scrollable in-game move/event log
         ├── GameOverUI.cs               Game over overlay + scene reset
-        ├── InGameMenuUI.cs             In-game pause menu (resign, draw, settings, exit)
+        ├── InGameMenuUI.cs             In-game pause menu (modified — IInputService events)
         ├── MoveExplanationUI.cs        Invalid move tooltip with rejection reasons (NEW)
-        ├── SettingsUI.cs               Resolution and display mode settings panel
+        ├── SettingsUI.cs               Settings panel (modified — mobile haptic feedback toggle)
         ├── PieceTooltipUI.cs           Mouse-over piece info tooltip
         ├── ElementParticleUI.cs        Element-colored particle effects on pieces
         ├── SquareEffectUI.cs           Square effect visuals

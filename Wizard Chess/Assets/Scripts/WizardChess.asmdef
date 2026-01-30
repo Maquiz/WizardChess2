@@ -3,7 +3,8 @@
     "references": [
         "DOTween.Modules",
         "PhotonUnityNetworking",
-        "PhotonRealtime"
+        "PhotonRealtime",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -9,7 +9,7 @@ public static class DeckPersistence
     private static string FilePath => System.IO.Path.Combine(Application.persistentDataPath, "decks.json");
 
     /// <summary>
-    /// Load all deck data from disk. Returns fresh data if file doesn't exist.
+    /// Load all deck data from disk. Returns fresh data with default decks if file doesn't exist.
     /// </summary>
     public static DeckSaveData Load()
     {
@@ -30,7 +30,42 @@ public static class DeckPersistence
                 Debug.LogWarning("[DeckPersistence] Failed to load decks.json: " + e.Message);
             }
         }
-        return new DeckSaveData();
+        // Create fresh data with default decks
+        return CreateDefaultDecks();
+    }
+
+    /// <summary>
+    /// Create default deck data with 3 pre-built decks: All Fire, All Earth, All Lightning.
+    /// </summary>
+    private static DeckSaveData CreateDefaultDecks()
+    {
+        DeckSaveData data = new DeckSaveData();
+
+        // Deck 1: All Fire
+        data.slots[0] = CreateElementDeck("Fire Army", ChessConstants.ELEMENT_FIRE);
+
+        // Deck 2: All Earth
+        data.slots[1] = CreateElementDeck("Earth Army", ChessConstants.ELEMENT_EARTH);
+
+        // Deck 3: All Lightning
+        data.slots[2] = CreateElementDeck("Lightning Army", ChessConstants.ELEMENT_LIGHTNING);
+
+        return data;
+    }
+
+    /// <summary>
+    /// Create a deck with all pieces set to a single element.
+    /// </summary>
+    private static DeckSlot CreateElementDeck(string name, int elementId)
+    {
+        DeckSlot deck = new DeckSlot();
+        deck.name = name;
+        deck.isEmpty = false;
+        for (int i = 0; i < 16; i++)
+        {
+            deck.elements[i] = elementId;
+        }
+        return deck;
     }
 
     /// <summary>

@@ -236,33 +236,43 @@ public class ChessAI : MonoBehaviour
     }
 
     /// <summary>
-    /// Easy: mostly random with capture awareness and safety filter.
+    /// Easy: Intentionally bad moves - tries to lose by giving away pieces.
+    /// Prefers moving valuable pieces into danger and avoids capturing.
     /// </summary>
     private float EvaluateEasy(PieceMove piece, Square target)
     {
         float score = 0f;
+        int opponentColor = (piece.color == ChessConstants.WHITE) ? ChessConstants.BLACK : ChessConstants.WHITE;
 
-        // Only consider material (captures)
+        // PENALTY for capturing (we don't want to take pieces)
         PieceMove victim = gm.boardState.GetPieceAt(target.x, target.y);
         if (victim != null && victim.color != piece.color)
         {
-            score += AIEvaluation.GetPieceValue(victim.piece);
+            score -= AIEvaluation.GetPieceValue(victim.piece) * 2f;
         }
 
-        // Safety filter: big penalty for moving to attacked square without good capture
-        int opponentColor = (piece.color == ChessConstants.WHITE) ? ChessConstants.BLACK : ChessConstants.WHITE;
+        // BONUS for moving into attacked squares (give away our pieces!)
         if (gm.boardState.IsSquareAttackedBy(target.x, target.y, opponentColor))
         {
-            bool isGoodCapture = victim != null && victim.color != piece.color &&
-                                 AIEvaluation.GetPieceValue(victim.piece) >= AIEvaluation.GetPieceValue(piece.piece);
-            if (!isGoodCapture)
+            // Higher bonus for more valuable pieces being sacrificed
+            score += AIEvaluation.GetPieceValue(piece.piece) * 3f;
+        }
+
+        // BONUS for moving pieces away from safe squares into the open
+        // Prefer moving valuable pieces (Queen, Rook) over pawns
+        score += AIEvaluation.GetPieceValue(piece.piece) * 0.5f;
+
+        // Avoid moving King into check (still need legal moves)
+        if (piece.piece == ChessConstants.KING)
+        {
+            if (gm.boardState.IsSquareAttackedBy(target.x, target.y, opponentColor))
             {
-                score -= 500f;
+                score -= 1000f; // Can't actually move into check
             }
         }
 
-        // Heavy randomness
-        score += Random.Range(0f, 200f);
+        // Some randomness to vary the bad moves
+        score += Random.Range(0f, 50f);
 
         return score;
     }
@@ -348,9 +358,10 @@ public class ChessAI : MonoBehaviour
 
         if (difficulty == 0)
         {
-            // Easy: random from top 5
+            // Easy: picks highest score (which is now the WORST move due to inverted evaluation)
+            // Random from top 3 worst moves for variety
             candidates.Sort((a, b) => b.score.CompareTo(a.score));
-            int topN = Mathf.Min(5, candidates.Count);
+            int topN = Mathf.Min(3, candidates.Count);
             return candidates[Random.Range(0, topN)];
         }
         else

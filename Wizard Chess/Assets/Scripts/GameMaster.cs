@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 /// <summary>
 /// Game state for tracking win/draw conditions
@@ -94,6 +95,60 @@ public class GameMaster : MonoBehaviour
     private Transform lastHittedObject = null;
     public bool showMoves;
 
+    // Input service
+    private IInputService inputService;
+
+    /// <summary>
+    /// Safely convert screen position to world position, handling both orthographic and perspective cameras.
+    /// Returns hiddenIsland position if conversion fails.
+    /// </summary>
+    private Vector3 SafeScreenToWorldPoint(Vector3 screenPos, float targetWorldY = 0.5f)
+    {
+        Camera cam = Camera.main;
+        if (cam == null) return hiddenIsland;
+
+        // Validate screen position
+        if (float.IsNaN(screenPos.x) || float.IsNaN(screenPos.y) ||
+            screenPos.x < 0 || screenPos.y < 0 ||
+            screenPos.x > Screen.width || screenPos.y > Screen.height)
+        {
+            return hiddenIsland;
+        }
+
+        if (cam.orthographic)
+        {
+            // For orthographic camera (top-down view), raycast to find world position
+            Ray ray = cam.ScreenPointToRay(screenPos);
+            // Project ray onto the target Y plane
+            if (Mathf.Abs(ray.direction.y) > 0.001f)
+            {
+                float t = (targetWorldY - ray.origin.y) / ray.direction.y;
+                if (t > 0)
+                {
+                    Vector3 worldPos = ray.origin + ray.direction * t;
+                    if (!float.IsNaN(worldPos.x) && !float.IsNaN(worldPos.z))
+                    {
+                        return new Vector3(worldPos.x, targetWorldY, worldPos.z);
+                    }
+                }
+            }
+            // Fallback: use simpler conversion
+            Vector3 simple = cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, cam.nearClipPlane + 1f));
+            simple.y = targetWorldY;
+            return simple;
+        }
+        else
+        {
+            // For perspective camera, use standard conversion with Z depth
+            Vector3 worldPos = cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 8.5f));
+            if (float.IsNaN(worldPos.x) || float.IsNaN(worldPos.y) || float.IsNaN(worldPos.z))
+            {
+                return hiddenIsland;
+            }
+            return worldPos;
+        }
+    }
+
     void Start()
     {
         boardPos = new GameObject[boardSize, boardSize];
@@ -102,6 +157,25 @@ public class GameMaster : MonoBehaviour
         moveHistory = new Stack<ChessMove>();
         lr = this.gameObject.AddComponent<LineRenderer>();
         swapUIIcon(MouseUI.START);
+
+        // Initialize input service (required - fail fast if not available)
+        inputService = InputServiceLocator.Current;
+        if (inputService == null)
+        {
+            Debug.LogError("[GameMaster] Input service not available! Check InputServiceLocator initialization.");
+        }
+        // Add InputServiceUpdater to handle updates
+        if (GetComponent<InputServiceUpdater>() == null)
+        {
+            this.gameObject.AddComponent<InputServiceUpdater>();
+        }
+        // Subscribe to input events
+        if (inputService != null)
+        {
+            inputService.OnAbilityActivate += HandleAbilityActivation;
+        }
+        // Initialize screen orientation lock for mobile
+        ScreenOrientationLock.Initialize();
 
         // Initialize board state manager
         boardState = new BoardState();
@@ -148,6 +222,13 @@ public class GameMaster : MonoBehaviour
         // In-game pause menu
         inGameMenuUI = this.gameObject.AddComponent<InGameMenuUI>();
 
+        // Mobile-specific UI components
+        if (PlatformDetector.IsMobile)
+        {
+            this.gameObject.AddComponent<MobileCameraControls>();
+            this.gameObject.AddComponent<MobileAbilityButton>();
+        }
+
         // Move explanation tooltip (shows why moves are invalid)
         this.gameObject.AddComponent<MoveExplanationUI>();
 
@@ -160,6 +241,15 @@ public class GameMaster : MonoBehaviour
         {
             ChessAI ai = this.gameObject.AddComponent<ChessAI>();
             ai.Init(this, MatchConfig.aiDifficulty, MatchConfig.aiColor);
+        }
+    }
+
+    void OnDestroy()
+    {
+        // Unsubscribe from input events
+        if (inputService != null)
+        {
+            inputService.OnAbilityActivate -= HandleAbilityActivation;
         }
     }
 
@@ -240,14 +330,24 @@ public class GameMaster : MonoBehaviour
             return;
         }
 
+        // Get pointer position from input service
+        if (inputService == null)
+        {
+            Debug.LogError("[GameMaster] inputService is null!");
+            return;
+        }
+        Vector3 pointerPos = inputService.PointerPosition;
+        bool primaryActionThisFrame = inputService.PrimaryActionThisFrame;
+        bool secondaryActionThisFrame = inputService.SecondaryActionThisFrame;
+
         RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(pointerPos);
 
         // Handle ability mode
         if (abilityExecutor != null && abilityExecutor.isInAbilityMode)
         {
-            // Q or Right-click: cancel ability mode, return to normal move selection
-            if (Input.GetKeyDown(KeyCode.Q) || Input.GetMouseButtonDown(1))
+            // Secondary action or ability key: cancel ability mode, return to normal move selection
+            if (secondaryActionThisFrame)
             {
                 abilityExecutor.ExitAbilityMode();
                 // Return to normal move mode (don't deselect the piece)
@@ -262,8 +362,7 @@ public class GameMaster : MonoBehaviour
 
             // LineRenderer: draw from piece to cursor (same as normal mode)
             setUpLine();
-            lr.SetPosition(1, Camera.main.ScreenToWorldPoint(
-                new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)));
+            lr.SetPosition(1, SafeScreenToWorldPoint(pointerPos));
             lr.alignment = LineAlignment.View;
 
             // Single raycast per frame for hover icons + click handling
@@ -285,7 +384,7 @@ public class GameMaster : MonoBehaviour
                     else
                         swapUIIcon(MouseUI.CANMOVE);
 
-                    if (Input.GetMouseButtonDown(0))
+                    if (primaryActionThisFrame)
                     {
                         // Capture position before Execute() — some abilities move the piece
                         int abilityPieceX = selectedPiece.curx;
@@ -297,15 +396,17 @@ public class GameMaster : MonoBehaviour
                             GameLogUI.LogAbility(turnNumber, currentMove, selectedPiece, s.x, s.y);
                             deSelectPiece();
                             EndTurn();
+                            HapticFeedback.SuccessVibrate();
                         }
                     }
                 }
                 else
                 {
                     swapUIIcon(MouseUI.CANTMOVE);
-                    if (Input.GetMouseButtonDown(0))
+                    if (primaryActionThisFrame)
                     {
                         Debug.Log("[Ability] Invalid target. Click a highlighted square, or press Q / right-click to cancel.");
+                        HapticFeedback.ErrorVibrate();
                     }
                 }
             }
@@ -318,34 +419,16 @@ public class GameMaster : MonoBehaviour
 
         if (isPieceSelected)
         {
-            if (Input.GetMouseButtonDown(1))
+            if (secondaryActionThisFrame)
             {
                 selectedPiece.hideMovesHelper();
                 deSelectPiece();
                 return;
             }
 
-            // Q key: activate ability if piece has one ready
-            if (Input.GetKeyDown(KeyCode.Q) && selectedPiece != null && selectedPiece.elementalPiece != null)
-            {
-                ElementalPiece ep = selectedPiece.elementalPiece;
-                if (ep.active != null && ep.cooldown != null && ep.cooldown.IsReady
-                    && ep.active.CanActivate(selectedPiece, boardState, squareEffectManager))
-                {
-                    selectedPiece.hideMovesHelper();
-                    EnterAbilityMode(selectedPiece);
-                    Debug.Log("[Ability] Entered ability mode for " + selectedPiece.printPieceName());
-                    return;
-                }
-                else if (ep.active != null && ep.cooldown != null && !ep.cooldown.IsReady)
-                {
-                    Debug.Log("[Ability] " + selectedPiece.printPieceName() + " ability on cooldown: " + ep.cooldown.CurrentCooldown + " turns remaining");
-                }
-            }
-
             //Line renderer
             setUpLine();
-            lr.SetPosition(1, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)));
+            lr.SetPosition(1, SafeScreenToWorldPoint(pointerPos));
             lr.alignment = LineAlignment.View;
 
             Transform lastHittedObject = null;
@@ -360,7 +443,7 @@ public class GameMaster : MonoBehaviour
                         if ((p.color != selectedPiece.color) && selectedPiece.checkMoves(p.curx, p.cury))
                         {
                             swapUIIcon(MouseUI.TAKEPIECE);
-                            if (Input.GetMouseButtonDown(0))
+                            if (primaryActionThisFrame)
                             {
                                 if (TryCapture(selectedPiece, p))
                                 {
@@ -371,11 +454,12 @@ public class GameMaster : MonoBehaviour
                                         networkController.SendMove(fromX, fromY, p.curx, p.cury);
                                     deSelectPiece();
                                     EndTurn();
+                                    HapticFeedback.SuccessVibrate();
                                 }
                             }
                         }
                         // Click own piece while another is selected: switch selection
-                        else if (p.color == selectedPiece.color && Input.GetMouseButtonDown(0))
+                        else if (p.color == selectedPiece.color && primaryActionThisFrame)
                         {
                             selectedPiece.hideMovesHelper();
                             deSelectPiece();
@@ -383,6 +467,7 @@ public class GameMaster : MonoBehaviour
                             if (canSelect)
                             {
                                 selectPiece(p.gameObject.transform, p);
+                                HapticFeedback.SelectionVibrate();
                             }
                         }
                     }
@@ -395,7 +480,7 @@ public class GameMaster : MonoBehaviour
                             if (s.taken && (s.piece.color != selectedPiece.color) && selectedPiece.checkMoves(s.x, s.y))
                             {
                                 swapUIIcon(MouseUI.TAKEPIECE);
-                                if (Input.GetMouseButtonDown(0))
+                                if (primaryActionThisFrame)
                                 {
                                     if (TryCapture(selectedPiece, s.piece))
                                     {
@@ -406,6 +491,7 @@ public class GameMaster : MonoBehaviour
                                             networkController.SendMove(fromX, fromY, s.piece.curx, s.piece.cury);
                                         deSelectPiece();
                                         EndTurn();
+                                        HapticFeedback.SuccessVibrate();
                                     }
                                 }
                             }
@@ -413,7 +499,7 @@ public class GameMaster : MonoBehaviour
                             else if (selectedPiece.checkMoves(s.x, s.y))
                             {
                                 swapUIIcon(MouseUI.CANMOVE);
-                                if (Input.GetMouseButtonDown(0))
+                                if (primaryActionThisFrame)
                                 {
                                     int fromX = selectedPiece.curx, fromY = selectedPiece.cury;
                                     GameLogUI.LogPieceMove(turnNumber, currentMove, selectedPiece, s.x, s.y);
@@ -432,6 +518,7 @@ public class GameMaster : MonoBehaviour
                                         deSelectPiece();
                                         EndTurn();
                                     }
+                                    HapticFeedback.SuccessVibrate();
                                 }
                             }
                             else
@@ -451,6 +538,70 @@ public class GameMaster : MonoBehaviour
                     lastHittedObject = null;
                 }
             }
+        }
+        else
+        {
+            // No piece selected - handle initial piece selection
+            if (primaryActionThisFrame && Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject.tag == "Piece")
+                {
+                    PieceMove p = hit.collider.gameObject.GetComponent<PieceMove>();
+                    if (p != null && p.color == currentMove)
+                    {
+                        // Check if piece can be selected (not stunned/frozen)
+                        bool canSelect = p.elementalPiece == null || !p.elementalPiece.CannotMove();
+                        if (canSelect)
+                        {
+                            selectPiece(p.gameObject.transform, p);
+                            HapticFeedback.SelectionVibrate();
+                        }
+                        else
+                        {
+                            string status = p.elementalPiece.IsStunned() ? "stunned" : "frozen";
+                            Debug.Log(p.printPieceName() + " is " + status + " and cannot move!");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handle ability activation request from input service.
+    /// Called when Q key is pressed on desktop or long-press on mobile.
+    /// </summary>
+    public void HandleAbilityActivation()
+    {
+        // In ability mode, Q cancels
+        if (abilityExecutor != null && abilityExecutor.isInAbilityMode)
+        {
+            abilityExecutor.ExitAbilityMode();
+            if (selectedPiece != null)
+            {
+                selectedPiece.createPieceMoves(selectedPiece.piece);
+                selectedPiece.showMoves = false;
+                Debug.Log("[Ability] Cancelled. Back to normal moves.");
+            }
+            return;
+        }
+
+        // No piece selected or no ability
+        if (selectedPiece == null || selectedPiece.elementalPiece == null) return;
+
+        ElementalPiece ep = selectedPiece.elementalPiece;
+        if (ep.active != null && ep.cooldown != null && ep.cooldown.IsReady
+            && ep.active.CanActivate(selectedPiece, boardState, squareEffectManager))
+        {
+            selectedPiece.hideMovesHelper();
+            EnterAbilityMode(selectedPiece);
+            Debug.Log("[Ability] Entered ability mode for " + selectedPiece.printPieceName());
+            HapticFeedback.SelectionVibrate();
+        }
+        else if (ep.active != null && ep.cooldown != null && !ep.cooldown.IsReady)
+        {
+            Debug.Log("[Ability] " + selectedPiece.printPieceName() + " ability on cooldown: " + ep.cooldown.CurrentCooldown + " turns remaining");
+            HapticFeedback.ErrorVibrate();
         }
     }
 
@@ -736,39 +887,51 @@ public class GameMaster : MonoBehaviour
         lr.endWidth = 0.50f;
         lr.startWidth = 0.5f;
         lr.positionCount = 2;
-        lr.SetPosition(0, Camera.main.ScreenToWorldPoint((selectedUI.gameObject.transform.position)));
+        // Line starts from the selected piece's world position
+        if (selectedPiece != null)
+        {
+            Vector3 piecePos = selectedPiece.transform.position;
+            lr.SetPosition(0, new Vector3(piecePos.x, piecePos.y + 0.5f, piecePos.z));
+        }
         lr.material = lineMaterial;
     }
 
     void swapUIIcon(MouseUI m)
     {
-        if (m == MouseUI.CANMOVE)
-        {
-            takeMoveUI.setTransformPosition(hiddenIsland);
-            cantMoveUI.setTransformPosition(hiddenIsland);
-            canMoveUI.followTarget(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)));
-        }
-
-        if (m == MouseUI.CANTMOVE)
-        {
-            takeMoveUI.setTransformPosition(hiddenIsland);
-            canMoveUI.setTransformPosition(hiddenIsland);
-            cantMoveUI.followTarget(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)));
-        }
-
-        if (m == MouseUI.TAKEPIECE)
-        {
-            cantMoveUI.setTransformPosition(hiddenIsland);
-            canMoveUI.setTransformPosition(hiddenIsland);
-            takeMoveUI.followTarget(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 8.5f)));
-        }
-
+        // For START mode, just hide everything - no pointer position needed
         if (m == MouseUI.START)
         {
             selectedUI.setTransformPosition(hiddenIsland);
             canMoveUI.setTransformPosition(hiddenIsland);
             cantMoveUI.setTransformPosition(hiddenIsland);
             takeMoveUI.setTransformPosition(hiddenIsland);
+            return;
+        }
+
+        // For other modes, we need pointer position
+        Vector3 pointerPos = inputService != null ? inputService.PointerPosition : Vector3.zero;
+        Vector3 worldPos = SafeScreenToWorldPoint(pointerPos);
+
+        // Don't update UI if world position is invalid
+        if (worldPos == hiddenIsland) return;
+
+        if (m == MouseUI.CANMOVE)
+        {
+            takeMoveUI.setTransformPosition(hiddenIsland);
+            cantMoveUI.setTransformPosition(hiddenIsland);
+            canMoveUI.followTarget(worldPos);
+        }
+        else if (m == MouseUI.CANTMOVE)
+        {
+            takeMoveUI.setTransformPosition(hiddenIsland);
+            canMoveUI.setTransformPosition(hiddenIsland);
+            cantMoveUI.followTarget(worldPos);
+        }
+        else if (m == MouseUI.TAKEPIECE)
+        {
+            cantMoveUI.setTransformPosition(hiddenIsland);
+            canMoveUI.setTransformPosition(hiddenIsland);
+            takeMoveUI.followTarget(worldPos);
         }
     }
 

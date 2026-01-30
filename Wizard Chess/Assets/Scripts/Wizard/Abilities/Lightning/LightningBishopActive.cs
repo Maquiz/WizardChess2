@@ -68,11 +68,11 @@ public class LightningBishopActive : IActiveAbility
         piece.firstMove = aFirstMove;
         swapTarget.firstMove = bFirstMove;
 
-        // Animate both to new positions
+        // Instantly teleport both to new positions (no travel animation to avoid knocking pieces)
         Transform tA = piece.gameObject.transform;
         Transform tB = swapTarget.gameObject.transform;
-        tA.DOMove(new Vector3(sqB.transform.position.x, tA.position.y, sqB.transform.position.z), 0.5f);
-        tB.DOMove(new Vector3(sqA.transform.position.x, tB.position.y, sqA.transform.position.z), 0.5f);
+        tA.position = new Vector3(sqB.transform.position.x, tA.position.y, sqB.transform.position.z);
+        tB.position = new Vector3(sqA.transform.position.x, tB.position.y, sqA.transform.position.z);
 
         bs.RecalculateAttacks();
 

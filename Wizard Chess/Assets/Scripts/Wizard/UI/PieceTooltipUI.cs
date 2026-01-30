@@ -16,6 +16,9 @@ public class PieceTooltipUI : MonoBehaviour
     private int lastPieceType = -1;
     private RectTransform tooltipRect;
 
+    // Input service for pointer position
+    private IInputService inputService;
+
     // Pre-loaded piece icon sprites (index 0 unused, 1-6 = PAWN..KING)
     private Sprite[] pieceSprites;
 
@@ -23,6 +26,7 @@ public class PieceTooltipUI : MonoBehaviour
     {
         gm = GetComponent<GameMaster>();
         canvas = FindFirstObjectByType<Canvas>();
+        inputService = InputServiceLocator.Current;
         LoadPieceSprites();
         if (canvas != null)
         {
@@ -103,12 +107,12 @@ public class PieceTooltipUI : MonoBehaviour
 
     void Update()
     {
-        if (canvas == null || tooltipPanel == null) return;
+        if (canvas == null || tooltipPanel == null || inputService == null) return;
 
         // Don't show tooltip during ability mode or draft phase
         if (gm != null && gm.isDraftPhase) { HideTooltip(); return; }
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(inputService.PointerPosition);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit))
@@ -251,7 +255,7 @@ public class PieceTooltipUI : MonoBehaviour
 
     private void PositionTooltip()
     {
-        Vector2 pos = Input.mousePosition;
+        Vector2 pos = inputService.PointerPosition;
         pos.x += 20;
         pos.y -= 10;
 
